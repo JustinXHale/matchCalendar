@@ -40,7 +40,12 @@ export function SchedulePage() {
         }
       />
 
-      <div id="schedule-panel" role="tabpanel" tabIndex={-1}>
+      <div
+        id="schedule-panel"
+        className="rs-schedule-panel"
+        role="tabpanel"
+        tabIndex={-1}
+      >
         {view === 'calendar' ? (
           <CalendarScheduleView />
         ) : (

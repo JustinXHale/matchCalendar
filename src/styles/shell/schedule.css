@@ -1,3 +1,10 @@
+.rs-schedule-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-md);
+  min-width: 0;
+}
+
 .rs-page-header--with-actions {
   display: flex;
   align-items: center;
