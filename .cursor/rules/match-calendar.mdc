@@ -1,0 +1,123 @@
+---
+description: Match Calendar project rules
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Match Calendar — Cursor Rules
+
+## Read order
+
+Before making a meaningful change, use these sources:
+
+1. `docs/PRD.md` — product truth
+2. `docs/IMPLEMENTATION_SPEC.md` — technical behavior
+3. `docs/DATA_MODEL.md` — schema/field truth
+4. `docs/DESIGN_SYSTEM.md` — visual truth
+5. `docs/UI_SPEC.md` — screen behavior
+6. `docs/BUILD_PLAN.md` — implementation sequence
+
+Do not invent a conflicting interpretation. If a real conflict exists, stop and identify it.
+
+## Stack
+
+Use:
+
+- Vite
+- React 19
+- TypeScript
+- React Router v7
+- PatternFly React v6
+- Firebase Auth / Firestore / Functions
+- `vite-plugin-pwa`
+- custom CSS tokens
+
+Do not add:
+
+- Next.js
+- Tailwind
+- Redux or another global-state library without need
+- a second backend/database
+- a component library that duplicates PatternFly
+
+## Product boundary
+
+Match Calendar is a personal referee/official schedule and record.
+
+Do not accidentally build:
+
+- assigner workflows
+- team confirmation
+- crew management
+- payment processing
+- chat/social features
+- MatchReadyTX administration
+
+## Implementation behavior
+
+- inspect existing patterns before creating new ones
+- prefer small components and feature-local code
+- do not refactor unrelated files
+- do not add speculative abstractions
+- do not pre-build future phases
+- preserve offline-friendly behavior
+- prefer client-side derived values over extra backend jobs
+- use Functions only for server authority/secrets/integrations
+
+## Data
+
+- follow `DATA_MODEL.md` names exactly
+- do not create alias fields
+- do not duplicate generated display title data
+- all user records are owner-scoped
+- never overwrite user-owned fields during MatchReadyTX import
+
+## UI
+
+- mobile-first
+- PatternFly first
+- reuse MatchReadyTX/Rabbit Hole monochrome DNA, not its admin density
+- no raw hex in feature CSS
+- use semantic `--rs-*` tokens
+- borders over decorative shadows
+- red only for danger/urgency/error
+- minimum ~48px touch targets
+- do not communicate status by color alone
+- hide empty optional detail sections
+
+## Cost
+
+Keep Firebase usage inexpensive:
+
+- scope queries to current user
+- avoid unnecessary realtime listeners
+- avoid Function calls for local derivations
+- limit/paginate large History queries
+- do not add paid external APIs without a documented requirement
+
+## Working style
+
+When asked to implement a phase:
+
+1. inspect the relevant files
+2. name the files you plan to change
+3. make the smallest coherent change
+4. run available checks
+5. report what changed and any unresolved decision
+
+Ask a question only when the answer is not already in project docs and choosing wrong would materially change product behavior or schema.
+
+
+## Notebook reconciliation guardrails
+- Do not interpret future receipt attachment support as permission to add Firebase Storage/upload UI now.
+- Do not add a flight API or paid aviation dependency; flight entry is manual until explicitly scheduled.
+- Do not build cross-user/company analytics. Personal insight-compatible timestamps/fields are allowed where documented.
+- Do not persist duplicate generated timeline rows for facts already stored on match/travel records.
+- Do not show a timeline/expansion for a plain local match unless meaningful itinerary content exists.
+- Preserve the distinction between unpaid and donated/free assignments.
+- Preserve original expense amounts when reimbursement occurs; reimbursement is separate state.
+
+
+## Handwritten UX concepts
+When implementing Agenda, Quick Add, Full Details, Calendar drill-down, timeline, After Match, expenses, or travel UI, read `docs/UX_CONCEPTS_FROM_SKETCHES.md`. Treat its drawings as interaction/hierarchy references, not pixel-perfect visual specs. Do not implement items explicitly marked backlog or non-goal.

@@ -1,0 +1,112 @@
+.rs-calendar-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-md);
+}
+
+@media (min-width: 48rem) {
+  .rs-calendar-page__body {
+    display: grid;
+    grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--rs-space-lg);
+  }
+}
+
+.rs-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-calendar__header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--rs-space-sm);
+}
+
+.rs-calendar__title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rs-calendar__title {
+  margin: 0;
+  font: var(--rs-font-title);
+}
+
+.rs-calendar__today {
+  border: 0;
+  background: transparent;
+  color: var(--rs-color-primary);
+  font: var(--rs-font-nav);
+  cursor: pointer;
+}
+
+.rs-calendar__nav {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-md);
+  background: var(--rs-color-surface);
+  color: var(--rs-color-ink);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.rs-calendar__weekdays,
+.rs-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.rs-calendar__weekday {
+  text-align: center;
+  font: var(--rs-font-nav);
+  color: var(--rs-color-muted);
+}
+
+.rs-calendar__day {
+  position: relative;
+  min-height: 2.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--rs-radius-md);
+  background: transparent;
+  color: var(--rs-color-ink);
+  cursor: pointer;
+}
+
+.rs-calendar__day--outside {
+  color: var(--rs-color-muted);
+  opacity: 0.6;
+}
+
+.rs-calendar__day--selected {
+  border-color: var(--rs-color-primary);
+  background: color-mix(in srgb, var(--rs-color-primary) 12%, transparent);
+}
+
+.rs-calendar__day--today .rs-calendar__day-num {
+  font-weight: 700;
+}
+
+.rs-calendar__day-num {
+  display: block;
+  padding-top: 0.35rem;
+  font: var(--rs-font-body);
+}
+
+.rs-calendar__marker {
+  position: absolute;
+  bottom: 0.35rem;
+  left: 50%;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--rs-color-primary);
+  transform: translateX(-50%);
+}

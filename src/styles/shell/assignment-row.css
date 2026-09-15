@@ -1,0 +1,274 @@
+.rs-assignment-wrap {
+  list-style: none;
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+  overflow: hidden;
+}
+
+.rs-assignment {
+  display: flex;
+  flex-direction: column;
+  background: var(--rs-color-surface);
+}
+
+.rs-assignment--hero {
+  background: color-mix(in srgb, var(--rs-color-surface-muted) 55%, var(--rs-color-surface));
+}
+
+.rs-assignment--cancelled {
+  opacity: 0.82;
+}
+
+.rs-assignment--cancelled .rs-assignment__teams,
+.rs-assignment--cancelled .rs-assignment__title,
+.rs-assignment--cancelled .rs-assignment__date,
+.rs-assignment--cancelled .rs-assignment__venue {
+  color: color-mix(in srgb, var(--rs-color-ink) 68%, var(--rs-color-muted));
+}
+
+.rs-assignment__row {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.rs-assignment__timeline-tab {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  margin: 0;
+  padding: 6px 2px;
+  border: 0;
+  border-left: 1px solid var(--rs-color-border);
+  background: var(--rs-color-surface-muted);
+  color: var(--rs-color-muted);
+  cursor: pointer;
+}
+
+.rs-assignment__timeline-tab:hover,
+.rs-assignment__timeline-tab:focus-visible {
+  background: color-mix(in srgb, var(--rs-color-primary) 8%, var(--rs-color-surface-muted));
+  color: var(--rs-color-ink);
+  outline: none;
+}
+
+.rs-assignment--timeline-open .rs-assignment__timeline-tab {
+  background: color-mix(in srgb, var(--rs-color-primary) 10%, var(--rs-color-surface-muted));
+  color: var(--rs-color-ink);
+}
+
+.rs-assignment__timeline-tab-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font: var(--rs-font-nav);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rs-assignment__main {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 8px 12px;
+  min-width: 0;
+  padding: 10px 12px 10px 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.rs-assignment--hero .rs-assignment__main {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.rs-assignment__main:hover,
+.rs-assignment__main:focus-visible {
+  text-decoration: none;
+  color: inherit;
+  background: var(--rs-color-surface-muted);
+  outline: none;
+}
+
+.rs-assignment__date {
+  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  min-width: 2.75rem;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.rs-assignment__month {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rs-color-muted);
+}
+
+.rs-assignment__day {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--rs-color-ink);
+  letter-spacing: -0.02em;
+}
+
+.rs-assignment--hero .rs-assignment__day {
+  font-size: 1.5rem;
+}
+
+.rs-assignment__weekday {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--rs-color-muted);
+}
+
+.rs-assignment__time {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--rs-color-charcoal);
+}
+
+.rs-assignment__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rs-assignment__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 2px;
+}
+
+.rs-assignment__chip {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.rs-assignment__chip--pay {
+  font-weight: 700;
+}
+
+.rs-assignment__teams {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.rs-assignment__team {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--rs-color-ink);
+}
+
+.rs-assignment__ha {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--rs-color-muted);
+}
+
+.rs-assignment__team-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rs-assignment__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--rs-color-ink);
+  overflow-wrap: anywhere;
+}
+
+.rs-assignment__event-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--rs-color-charcoal);
+  overflow-wrap: anywhere;
+}
+
+.rs-assignment__venue {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--rs-color-muted);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.rs-assignment__travel {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+  min-width: 0;
+}
+
+.rs-assignment__travel-link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--rs-color-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.rs-assignment__travel-link:hover,
+.rs-assignment__travel-link:focus-visible {
+  color: var(--rs-color-primary-muted);
+  outline: none;
+}
+
+.rs-assignment__timeline-panel {
+  padding: 8px 12px 10px;
+  border-top: 1px solid var(--rs-color-border);
+  background: var(--rs-color-surface-muted);
+}
+
+.rs-assignment__timeline-panel .rs-timeline {
+  gap: 6px;
+}
+
+.rs-assignment__timeline-panel .rs-timeline__item {
+  grid-template-columns: 3.75rem 1fr;
+}
+
+.rs-assignment__after-match {
+  padding: 8px 12px 10px;
+  border-top: 1px solid var(--rs-color-border);
+  background: var(--rs-color-surface);
+}

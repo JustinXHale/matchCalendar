@@ -1,0 +1,24 @@
+rules_version = '2';
+
+// Deploy rules from the MatchReadyTX project (shared Firebase backend).
+// Calendar paths are documented in docs/DATA_MODEL.md.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /users/{uid} {
+      match /matchCalendar/{docId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+      match /matches/{matchId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+      match /tournaments/{tournamentId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+/**
+ * Shell chrome aligned with PatternFly high contrast mode.
+ */
+
+.pf-v6-theme-high-contrast .rs-assignment-wrap,
+.pf-v6-theme-high-contrast .rs-tournament-agenda-group,
+.pf-v6-theme-high-contrast .rs-detail-card {
+  border-width: var(--pf-t--global--border--width--regular);
+  border-style: solid;
+  border-color: var(--pf-t--global--border--color--default);
+  box-shadow: none;
+}
+
+.pf-v6-theme-high-contrast .rs-theme-toggle,
+.pf-v6-theme-high-contrast .rs-masthead-profile,
+.pf-v6-theme-high-contrast .rs-add-menu {
+  border-width: var(--pf-t--global--border--width--regular);
+  border-style: solid;
+  border-color: var(--pf-t--global--border--color--default);
+  box-shadow: none;
+}
+
+.pf-v6-theme-high-contrast .rs-bottom-nav .rs-add-event__btn {
+  border-width: var(--pf-t--global--border--width--strong);
+  border-style: solid;
+  border-color: var(--pf-t--global--border--color--default);
+  box-shadow: none;
+}
+
+.pf-v6-theme-high-contrast .rs-theme-toggle:hover,
+.pf-v6-theme-high-contrast .rs-theme-toggle:focus-visible,
+.pf-v6-theme-high-contrast .rs-masthead-profile:hover,
+.pf-v6-theme-high-contrast .rs-masthead-profile:focus-visible,
+.pf-v6-theme-high-contrast .rs-bottom-nav .rs-add-event__btn:hover,
+.pf-v6-theme-high-contrast .rs-bottom-nav .rs-add-event__btn:focus-visible,
+.pf-v6-theme-high-contrast .rs-bottom-nav .rs-add-event__btn[aria-expanded='true'] {
+  border-width: var(
+    --pf-t--global--border--width--action--plain--hover,
+    var(--pf-t--global--border--width--regular)
+  );
+}

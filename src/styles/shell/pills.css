@@ -1,0 +1,30 @@
+.rs-pill {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: var(--rs-radius-chip);
+  font: var(--rs-font-chip);
+  background: var(--rs-color-surface-muted);
+  color: var(--rs-color-charcoal);
+  border: 1px solid var(--rs-color-border);
+  max-width: 100%;
+}
+
+.rs-pill--ink {
+  background: var(--rs-color-primary);
+  color: var(--rs-color-on-primary);
+  border-color: var(--rs-color-primary);
+}
+
+.rs-pill--quiet {
+  background: transparent;
+  color: var(--rs-color-ended);
+  border-color: var(--rs-color-border);
+}
+
+.rs-pill--urgent {
+  background: var(--rs-color-urgent);
+  color: var(--rs-color-on-urgent);
+  border-color: var(--rs-color-urgent);
+}

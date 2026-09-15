@@ -1,0 +1,55 @@
+.rs-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-timeline__item {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: var(--rs-space-sm);
+  align-items: start;
+}
+
+.rs-timeline__time {
+  font: var(--rs-font-nav);
+  color: var(--rs-color-muted);
+}
+
+.rs-timeline__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-left: var(--rs-space-sm);
+  border-left: 2px solid var(--rs-color-border);
+}
+
+.rs-timeline__body strong {
+  color: var(--rs-color-ink);
+}
+
+.rs-timeline__body span {
+  color: var(--rs-color-muted);
+  font: var(--rs-font-body);
+}
+
+.rs-timeline__edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+  margin-top: var(--rs-space-xs);
+}
+
+.rs-timeline__edit-actions {
+  display: flex;
+  gap: var(--rs-space-sm);
+  flex-wrap: wrap;
+}
+
+.rs-expense-row__actions {
+  display: flex;
+  gap: var(--rs-space-sm);
+}

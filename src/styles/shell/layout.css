@@ -1,0 +1,236 @@
+.rs-profile-avatar,
+.rs-profile-avatar--sm {
+  display: block;
+  border-radius: var(--rs-radius-pill);
+  object-fit: cover;
+  border: 1px solid var(--rs-color-border);
+  background: var(--rs-color-surface-muted);
+  color: var(--rs-color-ink);
+  font-weight: 600;
+  text-align: center;
+}
+
+.rs-profile-avatar {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--rs-space-sm);
+  font-size: 1.25rem;
+  line-height: 64px;
+}
+
+.rs-profile-avatar--sm {
+  width: 100%;
+  height: 100%;
+  font-size: 0.75rem;
+  line-height: 2rem;
+}
+
+.rs-profile-avatar--initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.rs-offline-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: var(--rs-space-md);
+  padding: var(--rs-space-sm) var(--rs-space-md);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface-muted);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.rs-offline-banner strong {
+  font-weight: 700;
+}
+
+.rs-offline-banner--online {
+  border-color: var(--rs-color-ok);
+}
+
+.rs-page-header {
+  margin: 0 0 var(--rs-space-md);
+}
+
+.rs-page-header .pf-v6-c-title {
+  font: var(--rs-font-title) !important;
+  margin: 0 !important;
+}
+
+.rs-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-md);
+  padding: var(--rs-space-lg) 0;
+}
+
+.rs-empty-state__title {
+  margin: 0;
+  font: var(--rs-font-title);
+  color: var(--rs-color-ink);
+}
+
+.rs-empty-state__text {
+  margin: 0;
+  font: var(--rs-font-body);
+  color: var(--rs-color-muted);
+}
+
+.rs-section-label {
+  margin: 0 0 var(--rs-space-sm);
+  font: var(--rs-font-nav);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rs-color-muted);
+}
+
+.rs-page-lede {
+  margin: 0;
+  font: var(--rs-font-body);
+  color: var(--rs-color-muted);
+}
+
+.rs-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+  padding: var(--rs-space-lg);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+  font: var(--rs-font-body);
+}
+
+.rs-detail-card p {
+  margin: 0;
+}
+
+.rs-detail-card__primary {
+  font-weight: 700;
+  color: var(--rs-color-ink);
+}
+
+.rs-detail-card__teams {
+  color: var(--rs-color-muted);
+}
+
+.rs-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-detail-actions {
+  display: flex;
+  gap: var(--rs-space-sm);
+  flex-wrap: wrap;
+}
+
+.rs-detail-card__status {
+  font-weight: 700;
+}
+
+.rs-detail-card__status--cancelled {
+  color: var(--rs-color-urgent);
+}
+
+.rs-detail-card__total {
+  margin-top: var(--rs-space-sm);
+  font-weight: 700;
+}
+
+.rs-detail-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.rs-detail-meta {
+  margin: 0;
+  color: var(--rs-color-muted);
+  font: var(--rs-font-body);
+}
+
+.rs-hero-actions {
+  display: flex;
+  gap: var(--rs-space-sm);
+  margin-top: var(--rs-space-sm);
+}
+
+.rs-summary-card {
+  padding: var(--rs-space-md);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+}
+
+.rs-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--rs-space-md);
+}
+
+.rs-summary-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rs-summary-label {
+  font: var(--rs-font-nav);
+  color: var(--rs-color-muted);
+}
+
+.rs-filter-row {
+  display: flex;
+  gap: var(--rs-space-sm);
+  flex-wrap: wrap;
+}
+
+.rs-filter-chip {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--rs-color-border);
+  border-radius: 999px;
+  background: var(--rs-color-surface);
+  color: var(--rs-color-ink);
+  font: var(--rs-font-nav);
+  cursor: pointer;
+}
+
+.rs-filter-chip--active {
+  border-color: var(--rs-color-primary);
+  background: color-mix(in srgb, var(--rs-color-primary) 12%, transparent);
+}
+
+.rs-tournament-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-tournament-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--rs-space-md);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+  color: inherit;
+  text-decoration: none;
+}
+
+
+.rs-detail-list--expenses {
+  padding-left: 0;
+  list-style: none;
+  text-align: left;
+}
