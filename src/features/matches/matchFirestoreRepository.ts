@@ -1,6 +1,8 @@
 import {
   collection,
+  deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   setDoc,
   type Unsubscribe,
@@ -31,6 +33,18 @@ export function subscribeMatches(
     },
     (error) => onError?.(error),
   );
+}
+
+export async function listMatches(uid: string): Promise<Match[]> {
+  const snapshot = await getDocs(matchesCollection(uid));
+  return snapshot.docs.map((document) =>
+    matchFromFirestore(document.id, document.data() as Record<string, unknown>),
+  );
+}
+
+export async function deleteMatch(uid: string, matchId: string): Promise<void> {
+  const ref = doc(requireDb(), 'users', uid, 'matches', matchId);
+  await deleteDoc(ref);
 }
 
 export async function upsertMatch(uid: string, match: Match): Promise<void> {

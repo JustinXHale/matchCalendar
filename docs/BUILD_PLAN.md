@@ -256,7 +256,7 @@ No custom sync engine unless Firebase's standard behavior fails a documented req
 
 ### Dependency
 
-Requires an authenticated MatchReadyTX API endpoint/contract.
+MatchReadyTX callable `syncMatchReadyAssignments` (deploy from MatchReadyTX repo).
 
 ### Build
 

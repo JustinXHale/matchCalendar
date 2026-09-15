@@ -30,6 +30,14 @@ export function calendarSettingsFromFirestore(
       typeof data.migratedFromLocalAt === 'string'
         ? data.migratedFromLocalAt
         : undefined,
+    matchReadyLastSyncedAt:
+      typeof data.matchReadyLastSyncedAt === 'string'
+        ? data.matchReadyLastSyncedAt
+        : undefined,
+    matchReadySyncEnabled:
+      typeof data.matchReadySyncEnabled === 'boolean'
+        ? data.matchReadySyncEnabled
+        : DEFAULT_CALENDAR_SETTINGS.matchReadySyncEnabled,
   };
 }
 

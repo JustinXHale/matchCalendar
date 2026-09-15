@@ -8,6 +8,7 @@ import { useDemoMode } from '@/demo/DemoModeContext';
 import { accountDeletionErrorMessage } from '@/services/auth';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
+import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import {
   clearLocalAppData,
@@ -24,7 +25,9 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
-  const { replaceAllMatches, matches } = useMatchesContext();
+  const { replaceAllMatches } = useMatchesContext();
+  const { matches, matchReadySyncing, matchReadyLastSyncedAt, syncMatchReady } =
+    useMatches();
   const { isDemoMode, disableDemoMode } = useDemoMode();
   const [deleteModal, setDeleteModal] = useState<DeleteModalKind>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
@@ -177,6 +180,34 @@ export function ProfilePage() {
           </FormGroup>
         </div>
       </div>
+
+      {profile.isLive && (
+        <section className="rs-form-section">
+          <h2 className="rs-form-section-title">MatchReadyTX</h2>
+          <p className="rs-form-hint">
+            Import confirmed assignments from MatchReadyTX into your personal
+            calendar. Notes, pay status, travel, and expenses you add here are
+            never overwritten.
+          </p>
+          {matchReadyLastSyncedAt && (
+            <p className="rs-detail-meta">
+              Last synced{' '}
+              {new Date(matchReadyLastSyncedAt).toLocaleString(undefined, {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              })}
+            </p>
+          )}
+          <Button
+            variant="secondary"
+            isBlock
+            isDisabled={matchReadySyncing}
+            onClick={() => void syncMatchReady(true)}
+          >
+            {matchReadySyncing ? 'Syncing MatchReady…' : 'Sync MatchReady now'}
+          </Button>
+        </section>
+      )}
 
       {profile.isLive && (
         <section className="rs-form-section">

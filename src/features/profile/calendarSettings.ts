@@ -7,10 +7,13 @@ export type CalendarSettings = {
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
   migratedFromLocalAt?: string;
+  matchReadyLastSyncedAt?: string;
+  matchReadySyncEnabled?: boolean;
 };
 
 export const DEFAULT_CALENDAR_SETTINGS: CalendarSettings = {
   defaultPositionPreset: 'referee',
   pitchArrivalMinutesBeforeKickoff: 60,
   airportArrivalMinutesBeforeFlight: 120,
+  matchReadySyncEnabled: true,
 };

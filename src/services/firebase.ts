@@ -5,6 +5,7 @@ import {
   persistentLocalCache,
   type Firestore,
 } from 'firebase/firestore';
+import { getFunctions, type Functions } from 'firebase/functions';
 
 function resolveAuthDomain(): string | undefined {
   const fromEnv = (
@@ -48,6 +49,7 @@ export const isFirebaseConfigured = Boolean(
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
+let functions: Functions | null = null;
 
 if (isFirebaseConfigured) {
   app = initializeApp(config);
@@ -55,6 +57,7 @@ if (isFirebaseConfigured) {
   db = initializeFirestore(app, {
     localCache: persistentLocalCache(),
   });
+  functions = getFunctions(app);
 }
 
 export function requireDb(): Firestore {
@@ -64,4 +67,11 @@ export function requireDb(): Firestore {
   return db;
 }
 
-export { app, auth, db };
+export function requireFunctions(): Functions {
+  if (!functions) {
+    throw new Error('Firebase Functions is not configured.');
+  }
+  return functions;
+}
+
+export { app, auth, db, functions };

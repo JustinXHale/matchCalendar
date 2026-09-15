@@ -409,7 +409,45 @@ source: {
 
 No write-back to MatchReadyTX.
 
-The API contract itself is intentionally deferred until MatchReadyTX exposes an endpoint.
+### Callable contract (v1)
+
+Implemented in the **MatchReadyTX** repo as `syncMatchReadyAssignments` (Firebase Callable).
+
+**Request:** `{ force?: boolean }` — optional; server rate limit still applies.
+
+**Response:**
+
+```ts
+{
+  syncedAt: string; // ISO
+  assignments: Array<{
+    externalId: string; // "{orgId}:{matchId}"
+    orgId: string;
+    matchId: string;
+    kickoffAt: string;
+    timezone?: string;
+    home?: string;
+    away?: string;
+    title?: string;
+    location: string;
+    position: string;
+    positionPreset: PositionPreset;
+    matchType: MatchTypePreset;
+    competition?: string;
+    expectedPay?: number;
+    payCurrency?: string;
+    status: 'upcoming' | 'completed' | 'cancelled';
+    matchReadyStatus: string;
+    matchReadyUrl?: string;
+  }>;
+}
+```
+
+**Server behavior:** authenticated user only; discovers org memberships; returns **confirmed** crew/CMO assignments (including past/completed). Does not write Calendar Firestore docs.
+
+**Client behavior (Match Calendar):** merge by `source.type === 'matchreadytx'` + `source.externalId`; upsert source-owned fields only; auto-sync on sign-in (15-minute client throttle) plus manual refresh on Profile.
+
+**Deploy order:** deploy MatchReadyTX function first (`firebase deploy --only functions:syncMatchReadyAssignments`), then ship Calendar client.
 
 ---
 

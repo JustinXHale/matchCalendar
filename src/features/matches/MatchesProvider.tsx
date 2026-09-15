@@ -7,12 +7,15 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
 
 import type { Match } from '@/domain/match';
 import { upsertMatch, subscribeMatches } from '@/features/matches/matchFirestoreRepository';
+import { runMatchReadySync } from '@/features/matches/matchReadySync';
+import { getCalendarSettings } from '@/features/profile/calendarSettingsRepository';
 import {
   loadMatches,
   persistMatches,
@@ -30,17 +33,24 @@ type MatchesContextValue = {
   updateMatch: (matchId: string, patch: Partial<Match>) => Match | undefined;
   replaceAllMatches: (matches: Match[]) => void;
   dataReady: boolean;
+  matchReadySyncing: boolean;
+  matchReadyLastSyncedAt?: string;
+  syncMatchReady: (force?: boolean) => Promise<void>;
 };
 
 const MatchesContext = createContext<MatchesContextValue | null>(null);
 
 export function MatchesProvider({ children }: { children: ReactNode }) {
-  const { pushError } = useAppToast();
+  const { pushError, pushInfo } = useAppToast();
   const { isDemoMode } = useDemoMode();
   const { isLive, uid } = useLiveData();
   const [realMatches, setRealMatches] = useState<Match[]>(() => loadMatches());
   const [demoMatches, setDemoMatches] = useState<Match[]>(createDemoMatches);
   const [dataReady, setDataReady] = useState(!isLive);
+  const [matchReadySyncing, setMatchReadySyncing] = useState(false);
+  const [matchReadyLastSyncedAt, setMatchReadyLastSyncedAt] = useState<string>();
+  const [matchesSubscribed, setMatchesSubscribed] = useState(false);
+  const autoSyncStartedRef = useRef(false);
   const matches = isDemoMode ? demoMatches : realMatches;
   const setMatches = isDemoMode ? setDemoMatches : setRealMatches;
 
@@ -68,6 +78,7 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       (nextMatches) => {
         setRealMatches(nextMatches);
         setDataReady(true);
+        setMatchesSubscribed(true);
       },
       (error) => pushError(firestoreErrorMessage(error)),
     );
@@ -77,6 +88,68 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       unsubscribe();
     };
   }, [isLive, pushError, uid]);
+
+  const syncMatchReady = useCallback(
+    async (force = false) => {
+      if (!isLive || !uid || isDemoMode) return;
+      setMatchReadySyncing(true);
+      try {
+        const outcome = await runMatchReadySync(uid, { force });
+        if (!outcome) return;
+        setMatchReadyLastSyncedAt(new Date().toISOString());
+        const changed = outcome.created + outcome.updated + outcome.removed;
+        if (changed > 0) {
+          const parts: string[] = [];
+          const upserted = outcome.created + outcome.updated;
+          if (upserted > 0) {
+            parts.push(
+              `${upserted} updated`,
+            );
+          }
+          if (outcome.removed > 0) {
+            parts.push(`${outcome.removed} removed`);
+          }
+          pushInfo(`MatchReady sync: ${parts.join(', ')}.`);
+        }
+      } catch (error) {
+        console.error('MatchReady sync failed', error);
+        pushError(firestoreErrorMessage(error));
+      } finally {
+        setMatchReadySyncing(false);
+      }
+    },
+    [isDemoMode, isLive, pushError, pushInfo, uid],
+  );
+
+  useEffect(() => {
+    if (!isLive || !uid) {
+      setMatchesSubscribed(false);
+      autoSyncStartedRef.current = false;
+      return;
+    }
+
+    void getCalendarSettings(uid)
+      .then((settings) => {
+        if (settings.matchReadyLastSyncedAt) {
+          setMatchReadyLastSyncedAt(settings.matchReadyLastSyncedAt);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load MatchReady sync settings', error);
+      });
+  }, [isLive, uid]);
+
+  useEffect(() => {
+    if (!isLive || !uid || isDemoMode || !matchesSubscribed) {
+      if (!isLive || !uid || isDemoMode) {
+        autoSyncStartedRef.current = false;
+      }
+      return;
+    }
+    if (autoSyncStartedRef.current) return;
+    autoSyncStartedRef.current = true;
+    void syncMatchReady(false);
+  }, [isDemoMode, isLive, matchesSubscribed, syncMatchReady, uid]);
 
   const persistLocal = useCallback(
     (next: Match[]) => {
@@ -164,8 +237,20 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       updateMatch,
       replaceAllMatches,
       dataReady,
+      matchReadySyncing,
+      matchReadyLastSyncedAt,
+      syncMatchReady,
     }),
-    [matches, createMatch, updateMatch, replaceAllMatches, dataReady],
+    [
+      matches,
+      createMatch,
+      updateMatch,
+      replaceAllMatches,
+      dataReady,
+      matchReadySyncing,
+      matchReadyLastSyncedAt,
+      syncMatchReady,
+    ],
   );
 
   return (

@@ -1,11 +1,20 @@
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
 
 export function useUserMatches() {
-  const { matches } = useMatchesContext();
+  const {
+    matches,
+    dataReady,
+    matchReadySyncing,
+    matchReadyLastSyncedAt,
+    syncMatchReady,
+  } = useMatchesContext();
 
   return {
     matches,
-    isLoading: false,
+    isLoading: !dataReady,
     error: null,
+    matchReadySyncing,
+    matchReadyLastSyncedAt,
+    syncMatchReady,
   };
 }
