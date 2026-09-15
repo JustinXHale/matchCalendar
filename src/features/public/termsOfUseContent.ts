@@ -97,7 +97,7 @@ export const TERMS_OF_USE_SECTIONS: PolicySection[] = [
   {
     title: 'Contact',
     paragraphs: [
-      'Questions about these Terms: justinxhale@gmail.com',
+      'Questions about these Terms: rabbitholeapps26@gmail.com',
     ],
   },
 ];

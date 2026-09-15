@@ -182,7 +182,7 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
   {
     title: 'Contact Us',
     paragraphs: [
-      'If You have questions about this Privacy Policy, contact Us by email at justinxhale@gmail.com.',
+      'If You have questions about this Privacy Policy, contact Us by email at rabbitholeapps26@gmail.com.',
       'A copy of this policy is also published at https://rabbitholeapps.com/apps/match-calendar/privacy/.',
     ],
   },
