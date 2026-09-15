@@ -50,6 +50,16 @@
   padding-right: 2.25rem;
 }
 
+/* Hide the browser datalist picker so only our chevron shows. */
+.rs-native-input--with-indicator::-webkit-calendar-picker-indicator,
+.rs-native-input--with-indicator::-webkit-list-button {
+  display: none;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
 .rs-native-input__indicator {
   position: absolute;
   top: 50%;
