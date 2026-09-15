@@ -426,7 +426,7 @@ No email/password flow in MVP unless explicitly added later.
 
 Calendar does **not** create or patch MatchReadyTX `users/{uid}` profile fields. Identity (name, email, photo) comes from Firebase Auth. Calendar-only preferences are stored at `users/{uid}/matchCalendar/settings`.
 
-Unauthenticated users see `/login` when Firebase is configured. **Try demo** on the login screen enters the app without auth (no Firestore writes). Signed-in or demo users can also use **View demo** / **Exit demo** in the masthead at any time. Demo mode shows a status banner and in-memory sample matches/tournaments; it does not write to Firestore. Demo controls are intentionally available in production (not hidden by environment). Profile does not host demo toggles or “load sample data” actions — masthead and login only. Without Firebase env vars, the app keeps local-only `localStorage` behavior for development.
+Unauthenticated users see `/login` when Firebase is configured. Public legal routes `/privacy` and `/terms` are reachable without auth (login footer links; canonical copies on `rabbitholeapps.com/apps/match-calendar/`). **Try demo** on the login screen enters the app without auth (no Firestore writes). Signed-in or demo users can also use **View demo** / **Exit demo** in the masthead at any time. Demo mode shows a status banner and in-memory sample matches/tournaments; it does not write to Firestore. Demo controls are intentionally available in production (not hidden by environment). Profile does not host demo toggles or “load sample data” actions — masthead and login only. Without Firebase env vars, the app keeps local-only `localStorage` behavior for development.
 
 ---
 

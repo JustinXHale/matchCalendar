@@ -13,6 +13,8 @@ import { AboutPage } from '@/pages/AboutPage';
 import { SchedulePage } from '@/pages/SchedulePage';
 import { FullMatchPage } from '@/pages/FullMatchPage';
 import { InsightsPage } from '@/pages/InsightsPage';
+import { PrivacyPage } from '@/features/public/PrivacyPage';
+import { TermsPage } from '@/features/public/TermsPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { MoneyPage } from '@/pages/MoneyPage';
 import { MatchDetailPage } from '@/pages/MatchDetailPage';
@@ -30,6 +32,8 @@ function AppRoutes() {
     <>
       <Routes location={state?.background ?? location}>
         <Route path={routes.login} element={<LoginPage />} />
+        <Route path={routes.privacy} element={<PrivacyPage />} />
+        <Route path={routes.terms} element={<TermsPage />} />
         <Route
           element={
             <RequireAuth>

@@ -1,5 +1,7 @@
 export const routes = {
   login: '/login',
+  privacy: '/privacy',
+  terms: '/terms',
   schedule: '/schedule',
   agenda: '/agenda',
   calendar: '/calendar',

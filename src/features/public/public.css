@@ -1,0 +1,94 @@
+.rs-public-footer {
+  margin-top: var(--rs-space-md);
+  padding-top: var(--rs-space-md);
+  border-top: 1px solid var(--rs-color-border);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--rs-color-muted);
+}
+
+.rs-public-footer a {
+  color: var(--rs-color-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rs-public-footer__sep {
+  margin-inline: 0.35rem;
+}
+
+.rs-public-policy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-lg);
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-block: var(--rs-space-md) var(--rs-space-lg);
+  font: var(--rs-font-body);
+  color: var(--rs-color-ink);
+  text-align: left;
+}
+
+.rs-public-policy > h1 {
+  margin: 0;
+  font: var(--rs-font-title);
+}
+
+.rs-public-policy__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-xs);
+}
+
+.rs-public-policy__updated {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--rs-color-muted);
+}
+
+.rs-public-policy section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-public-policy h2 {
+  margin: 0;
+  font: var(--rs-font-title);
+  font-size: 1.125rem;
+}
+
+.rs-public-policy section + section {
+  padding-top: var(--rs-space-xs);
+  border-top: 1px solid var(--rs-color-border);
+}
+
+.rs-public-policy h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.rs-public-policy p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.rs-public-policy ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rs-public-policy a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rs-public-policy__back {
+  align-self: flex-start;
+}

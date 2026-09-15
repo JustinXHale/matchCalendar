@@ -14,8 +14,10 @@ import {
   signInWithGoogle,
 } from '@/services/auth';
 import { isFirebaseConfigured } from '@/services/firebase';
+import { PublicFooter } from '@/features/public/PublicFooter';
 import { PwaInstallCard } from '@/ui/PwaInstallCard';
 import { ThemeToggle } from '@/ui/ThemeToggle';
+import '@/features/public/public.css';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -112,6 +114,8 @@ export function LoginPage() {
       </section>
 
       <PwaInstallCard className="rs-signin__pwa" />
+
+      <PublicFooter className="rs-signin__footer" />
 
       <div className="rs-signin__build-row">
         <ThemeToggle />
