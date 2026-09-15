@@ -7,7 +7,6 @@ import { useMatchesContext } from '@/features/matches/MatchesProvider';
 import {
   getTravelCostEntries,
   markTravelReimbursed,
-  shouldSuggestGasExpense,
   suggestExpensesFromTravel,
   type TravelCostSource,
 } from '@/features/matches/travelFinance';
@@ -60,8 +59,6 @@ export function AfterMatchSheet({ match, onClose }: Props) {
     [liveMatch, expenses],
   );
 
-  const suggestGas = shouldSuggestGasExpense(liveMatch, expenses);
-
   const goToPostStatusFlow = () => {
     setStep('expenses');
   };
@@ -103,18 +100,6 @@ export function AfterMatchSheet({ match, onClose }: Props) {
     setExpenses((current) => [...current, ...travelSuggestions]);
   };
 
-  const addGasExpense = () => {
-    setEditingExpense({
-      id: crypto.randomUUID(),
-      category: 'gas',
-      amount: 0,
-      note: 'Fuel for rental car',
-      reimbursementStatus: 'not_expected',
-      createdAt: new Date(),
-    });
-    setShowExpenseSheet(true);
-  };
-
   const saveExpensesAndClose = () => {
     updateMatch(match.id, {
       expenses: expenses.length > 0 ? expenses : undefined,
@@ -143,6 +128,17 @@ export function AfterMatchSheet({ match, onClose }: Props) {
           setShowExpenseSheet(false);
           setEditingExpense(null);
         }}
+        onDelete={
+          editingExpense
+            ? () => {
+                setExpenses((current) =>
+                  current.filter((item) => item.id !== editingExpense.id),
+                );
+                setShowExpenseSheet(false);
+                setEditingExpense(null);
+              }
+            : undefined
+        }
       />
     );
   }
@@ -242,7 +238,7 @@ export function AfterMatchSheet({ match, onClose }: Props) {
                   onChange={(_event, value) => setPaidAmount(value)}
                 />
               </FormGroup>
-              <FormGroup label="Payment method" fieldId="after-payment-method">
+              <FormGroup label="Method" fieldId="after-payment-method">
                 <select
                   id="after-payment-method"
                   className="rs-select"
@@ -339,12 +335,6 @@ export function AfterMatchSheet({ match, onClose }: Props) {
                     travelSuggestions.reduce((sum, item) => sum + item.amount, 0),
                   )}
                   )
-                </Button>
-              )}
-
-              {suggestGas && (
-                <Button variant="secondary" isBlock onClick={addGasExpense}>
-                  Add gas expense (rental car)
                 </Button>
               )}
 

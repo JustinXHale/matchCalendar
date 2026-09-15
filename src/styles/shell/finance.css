@@ -110,6 +110,13 @@
   color: var(--rs-color-muted);
 }
 
+.rs-settlement-note__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
 .rs-settlement-table {
   display: flex;
   flex-direction: column;

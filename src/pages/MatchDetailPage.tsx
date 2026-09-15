@@ -221,7 +221,7 @@ export function MatchDetailPage() {
               ))}
             {match.flight.selfPaid && match.flight.amountPaid != null && (
               <p>
-                Paid: ${match.flight.amountPaid}
+                Paid: {formatCurrency(match.flight.amountPaid, match.payCurrency)}
                 {match.flight.reimbursementStatus === 'reimbursed'
                   ? ' · reimbursed'
                   : ''}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { faCircleHalfStroke, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { persistTheme, type ThemeMode } from '@/app/theme';
 
 type Props = {
@@ -29,7 +29,10 @@ export function ThemeToggle({ className }: Props) {
         theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
       }
     >
-      <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} aria-hidden />
+      <FontAwesomeIcon
+        icon={theme === 'dark' ? faCircleHalfStroke : faMoon}
+        aria-hidden
+      />
     </button>
   );
 }

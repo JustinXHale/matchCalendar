@@ -29,7 +29,6 @@ import {
   markTravelNotExpected,
   markTravelPending,
   markTravelReimbursed,
-  shouldSuggestGasExpense,
   travelCostAlreadyInExpenses,
   type TravelCostSource,
 } from '@/features/matches/travelFinance';
@@ -194,7 +193,6 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
     [liveMatch],
   );
   const expenses = liveMatch.expenses ?? [];
-  const suggestGas = shouldSuggestGasExpense(liveMatch, expenses);
   const previewAmount = Number(draft.feeAmount);
   const previewMatch: Match = {
     ...liveMatch,
@@ -352,6 +350,17 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
             setShowExpenseSheet(false);
             setEditingExpense(null);
           }}
+          onDelete={
+            editingExpense
+              ? () => {
+                  saveExpenseList(
+                    expenses.filter((item) => item.id !== editingExpense.id),
+                  );
+                  setShowExpenseSheet(false);
+                  setEditingExpense(null);
+                }
+              : undefined
+          }
         />
       </div>
     );
@@ -521,7 +530,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                   }));
                 }}
               />
-                <FormGroup label="Payment method" fieldId={`settlement-method-${match.id}`}>
+                <FormGroup label="Method" fieldId={`settlement-method-${match.id}`}>
                   <select
                     id={`settlement-method-${match.id}`}
                     className="rs-select"
@@ -606,26 +615,6 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
             </button>
           ))}
           <div className="rs-settlement-actions">
-            {suggestGas && (
-              <Button
-                variant="secondary"
-                isBlock
-                onClick={() => {
-                  setEditingExpense({
-                    id: crypto.randomUUID(),
-                    category: 'gas',
-                    amount: 0,
-                    note: 'Fuel for rental car',
-                    reimbursementStatus: 'not_expected',
-                    createdAt: new Date(),
-                  });
-                  setShowExpenseSheet(true);
-                }}
-              >
-                Add gas expense
-              </Button>
-            )}
-
             <Button
               variant="secondary"
               isBlock
@@ -647,8 +636,11 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
 
           {openLabels.length > 0 && (
             <p className="rs-settlement-note">
-              Still open: {openLabels.join(' · ')}. ✓ settled · ✗ waiting · person
-              self expense.
+              Still open: {openLabels.join(' · ')}. ✓ settled · ✗ waiting ·{' '}
+              <span className="rs-settlement-note__legend">
+                <FontAwesomeIcon icon={faUser} aria-hidden /> = self expense
+              </span>
+              .
             </p>
           )}
         </div>

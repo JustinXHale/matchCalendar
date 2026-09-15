@@ -31,9 +31,18 @@ export function formatMatchTime(match: Match): string {
 }
 
 export function formatCurrency(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat(undefined, {
+  const normalized = currency.trim().toUpperCase() || 'USD';
+  const value = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  }).format(amount);
+
+  if (normalized === 'USD') {
+    return `$${value}`;
+  }
+
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
+    currency: normalized,
     maximumFractionDigits: 0,
   }).format(amount);
 }

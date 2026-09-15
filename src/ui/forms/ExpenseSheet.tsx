@@ -13,9 +13,10 @@ type Props = {
   expense: Expense | null;
   onClose: () => void;
   onSave: (expense: Expense) => void;
+  onDelete?: () => void;
 };
 
-export function ExpenseSheet({ expense, onClose, onSave }: Props) {
+export function ExpenseSheet({ expense, onClose, onSave, onDelete }: Props) {
   const [category, setCategory] = useState<ExpenseCategory>(
     expense?.category ?? 'gas',
   );
@@ -196,6 +197,11 @@ export function ExpenseSheet({ expense, onClose, onSave }: Props) {
         </div>
 
         <footer className="rs-modal__footer rs-form-actions">
+          {expense && onDelete ? (
+            <Button variant="danger" isBlock onClick={onDelete}>
+              Remove expense
+            </Button>
+          ) : null}
           <Button variant="primary" isBlock onClick={save} isDisabled={(!iPaid && !isMileage) || !validAmount}>
             Save expense
           </Button>

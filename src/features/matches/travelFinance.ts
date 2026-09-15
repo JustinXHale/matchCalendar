@@ -119,17 +119,6 @@ export function hasPendingTravelReimbursement(match: Match): boolean {
   );
 }
 
-export function hasSelfPaidGroundTravel(match: Match): boolean {
-  return Boolean(
-    match.groundTravel?.selfPaid && match.groundTravel.amountPaid != null,
-  );
-}
-
-export function shouldSuggestGasExpense(match: Match, expenses: Expense[]): boolean {
-  if (!hasSelfPaidGroundTravel(match)) return false;
-  return !expenses.some((expense) => expense.category === 'gas');
-}
-
 export function sumTravelExpenseAmount(match: Match): number {
   return getTravelCostEntries(match).reduce(
     (total, entry) => total + entry.amount,

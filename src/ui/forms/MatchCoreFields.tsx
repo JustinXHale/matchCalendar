@@ -403,7 +403,7 @@ export function MatchCoreFields({
           ) : null}
 
           {values.payStatus === 'paid' ? (
-            <FormGroup label="Payment method" fieldId="match-payment-method">
+            <FormGroup label="Method" fieldId="match-payment-method">
               <select
                 id="match-payment-method"
                 className="rs-select"

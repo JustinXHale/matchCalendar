@@ -22,6 +22,7 @@ import { PageHeader } from '@/ui/PageHeader';
 import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
 import { useAppToast } from '@/ui/AppToastProvider';
+import { openDirections } from '@/utils/maps';
 
 export function TournamentDetailPage() {
   const { tournamentId } = useParams();
@@ -87,6 +88,14 @@ export function TournamentDetailPage() {
         <span className="rs-pill">Tournament</span>
       </p>
       <div className="rs-detail-actions">
+        {tournament.location && (
+          <Button
+            variant="secondary"
+            onClick={() => openDirections(tournament.location!)}
+          >
+            Directions
+          </Button>
+        )}
         <Button
           variant="secondary"
           onClick={() =>
@@ -161,7 +170,7 @@ export function TournamentDetailPage() {
 
       {(tournament.flight || tournament.lodging || tournament.groundTravel) && (
         <section className="rs-detail-section">
-          <h2 className="rs-section-label">Shared travel</h2>
+          <h2 className="rs-section-label">Travel</h2>
           <div className="rs-detail-card">
             {tournament.flight?.segments?.map((segment, index) => (
               <p key={segment.id}>
@@ -181,7 +190,7 @@ export function TournamentDetailPage() {
 
       {(tournament.customItinerary?.length ?? 0) > 0 && (
         <section className="rs-detail-section">
-          <h2 className="rs-section-label">Shared itinerary</h2>
+          <h2 className="rs-section-label">Itinerary</h2>
           <div className="rs-detail-card">
             {tournament.customItinerary?.map((item) => (
               <p key={item.id}>
@@ -195,7 +204,7 @@ export function TournamentDetailPage() {
 
       {(tournament.expenses?.length ?? 0) > 0 && (
         <section className="rs-detail-section">
-          <h2 className="rs-section-label">Shared expenses</h2>
+          <h2 className="rs-section-label">Expenses</h2>
           <div className="rs-detail-card">
             {tournament.expenses?.map((expense) => (
               <p key={expense.id}>
