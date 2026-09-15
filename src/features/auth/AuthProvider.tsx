@@ -10,6 +10,7 @@ import {
 import type { User } from 'firebase/auth';
 import {
   completeRedirectSignIn,
+  isMissingRedirectStateError,
   signOutFirebase,
   subscribeAuth,
 } from '@/services/auth';
@@ -30,22 +31,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isFirebaseConfigured) return;
 
-    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
 
-    void (async () => {
-      try {
-        await completeRedirectSignIn();
-      } catch (err) {
-        console.warn('Redirect sign-in failed', err);
+    void completeRedirectSignIn().catch((err) => {
+      if (isMissingRedirectStateError(err)) {
+        console.warn('Stale redirect sign-in state on bootstrap', err);
+        return;
       }
+      console.error('Redirect sign-in failed', err);
+    });
 
-      unsubscribe = subscribeAuth((nextUser) => {
-        setUser(nextUser);
-        setAuthReady(true);
-      });
-    })();
+    const unsubscribe = subscribeAuth((nextUser) => {
+      if (cancelled) return;
+      setUser(nextUser);
+      setAuthReady(true);
+    });
 
-    return () => unsubscribe?.();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
 
   const signOut = useCallback(async () => {

@@ -6,15 +6,11 @@ import {
   onAuthStateChanged,
   reauthenticateWithPopup,
   signInWithPopup,
-  signInWithRedirect,
   signOut as firebaseSignOut,
   type AuthProvider,
   type User,
 } from 'firebase/auth';
-import {
-  isMissingRedirectStateError,
-  prefersAuthRedirect,
-} from '@/services/authPlatform';
+import { isMissingRedirectStateError } from '@/services/authPlatform';
 import { auth, isFirebaseConfigured } from '@/services/firebase';
 
 export { isMissingRedirectStateError, prefersAuthRedirect } from '@/services/authPlatform';
@@ -49,23 +45,20 @@ function isPopupBlockedError(err: unknown): boolean {
 const POPUP_BLOCKED_HELP =
   'Sign-in pop-up was blocked. Allow pop-ups for this site, or open it in Safari or Chrome (not an in-app browser), then try again.';
 
+/**
+ * Popup-only sign-in. Redirect auth loses sessionStorage on many mobile and
+ * privacy browsers ("missing initial state").
+ */
 async function signInWithProvider(
   provider: AuthProvider,
 ): Promise<User | null> {
   const a = requireAuth();
-
-  if (prefersAuthRedirect()) {
-    await signInWithRedirect(a, provider);
-    return null;
-  }
-
   try {
     const result = await signInWithPopup(a, provider);
     return result.user;
   } catch (err) {
     if (isPopupBlockedError(err)) {
-      await signInWithRedirect(a, provider);
-      return null;
+      throw new Error(POPUP_BLOCKED_HELP);
     }
     throw err;
   }
