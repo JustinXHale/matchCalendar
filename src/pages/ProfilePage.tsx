@@ -1,5 +1,5 @@
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/app/routes';
 import { POSITION_OPTIONS } from '@/domain/matchConstants';
@@ -20,6 +20,56 @@ import { PageHeader } from '@/ui/PageHeader';
 import { ProfileAvatar } from '@/ui/ProfileAvatar';
 
 type DeleteModalKind = 'calendar-data' | 'account' | null;
+
+function MinutesBeforeInput({
+  id,
+  minutes,
+  onCommit,
+}: {
+  id: string;
+  minutes: number;
+  onCommit: (minutes: number) => void;
+}) {
+  const [draft, setDraft] = useState(() => String(minutes));
+
+  useEffect(() => {
+    setDraft(String(minutes));
+  }, [minutes]);
+
+  const commit = () => {
+    const trimmed = draft.trim();
+    if (!trimmed) {
+      setDraft(String(minutes));
+      return;
+    }
+
+    const parsed = Number(trimmed);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      setDraft(String(minutes));
+      return;
+    }
+
+    onCommit(parsed);
+    setDraft(String(parsed));
+  };
+
+  return (
+    <TextInput
+      id={id}
+      type="number"
+      inputMode="numeric"
+      min={0}
+      value={draft}
+      onChange={(_event, value) => setDraft(value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
+}
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -150,15 +200,11 @@ export function ProfilePage() {
             label="Arrive at pitch (min before kickoff)"
             fieldId="profile-arrival"
           >
-            <TextInput
+            <MinutesBeforeInput
               id="profile-arrival"
-              type="number"
-              inputMode="numeric"
-              value={String(profile.pitchArrivalMinutesBeforeKickoff)}
-              onChange={(_event, value) =>
-                updateProfile({
-                  pitchArrivalMinutesBeforeKickoff: Number(value) || 60,
-                })
+              minutes={profile.pitchArrivalMinutesBeforeKickoff}
+              onCommit={(pitchArrivalMinutesBeforeKickoff) =>
+                updateProfile({ pitchArrivalMinutesBeforeKickoff })
               }
             />
           </FormGroup>
@@ -166,15 +212,11 @@ export function ProfilePage() {
             label="Arrive at airport (min before flight)"
             fieldId="profile-airport-arrival"
           >
-            <TextInput
+            <MinutesBeforeInput
               id="profile-airport-arrival"
-              type="number"
-              inputMode="numeric"
-              value={String(profile.airportArrivalMinutesBeforeFlight)}
-              onChange={(_event, value) =>
-                updateProfile({
-                  airportArrivalMinutesBeforeFlight: Number(value) || 120,
-                })
+              minutes={profile.airportArrivalMinutesBeforeFlight}
+              onCommit={(airportArrivalMinutesBeforeFlight) =>
+                updateProfile({ airportArrivalMinutesBeforeFlight })
               }
             />
           </FormGroup>
