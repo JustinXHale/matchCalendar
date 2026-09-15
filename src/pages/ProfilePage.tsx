@@ -16,6 +16,7 @@ import {
   deleteUserProfileAndAccount,
 } from '@/services/accountDeletion';
 import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
+import { ExpandableFormCard } from '@/ui/forms/ExpandableFormCard';
 import { PageHeader } from '@/ui/PageHeader';
 import { ProfileAvatar } from '@/ui/ProfileAvatar';
 
@@ -265,58 +266,61 @@ export function ProfilePage() {
         </section>
       )}
 
-      {profile.isLive && (
-        <section className="rs-form-section">
-          <h2 className="rs-form-section-title">Your data</h2>
-          <p className="rs-form-hint">
-            Permanently delete your Match Calendar matches, tournaments, and
-            preferences from Firestore. Your sign-in and MatchReadyTX profile stay
-            intact.
-          </p>
-          <Button
-            variant="danger"
-            isBlock
-            onClick={() => {
-              setDeleteError(null);
-              setDeleteModal('calendar-data');
-            }}
-          >
-            Delete my Match Calendar data
-          </Button>
-        </section>
-      )}
-
-      {profile.isLive && (
-        <section className="rs-form-section">
-          <h2 className="rs-form-section-title">Delete account</h2>
-          <p className="rs-form-hint">
-            Permanently delete your shared profile document, all Match Calendar
-            data, and your Firebase sign-in for this project. MatchReadyTX org
-            membership and assignment history may still exist until removed there.
-          </p>
-          <Button
-            variant="danger"
-            isBlock
-            onClick={() => {
-              setDeleteError(null);
-              setDeleteModal('account');
-            }}
-          >
-            Delete my profile &amp; account
-          </Button>
-        </section>
-      )}
-
-      {!profile.isLive && (
-        <section className="rs-form-section">
-          <h2 className="rs-form-section-title">Data</h2>
-          <p className="rs-form-hint">
-            {matches.length} match{matches.length === 1 ? '' : 'es'} stored locally.
-          </p>
-          <Button variant="danger" isBlock onClick={clearData}>
-            Clear all local data
-          </Button>
-        </section>
+      {profile.isLive ? (
+        <ExpandableFormCard
+          title="Deletion"
+          summary="Remove Calendar data or account"
+        >
+          <div className="rs-form-stack">
+            <div className="rs-form-stack rs-form-stack--compact">
+              <p className="rs-form-hint">
+                Remove your matches, tournaments, and preferences. Your sign-in
+                and MatchReadyTX profile stay intact.
+              </p>
+              <Button
+                variant="danger"
+                isBlock
+                onClick={() => {
+                  setDeleteError(null);
+                  setDeleteModal('calendar-data');
+                }}
+              >
+                Delete my Match Calendar data
+              </Button>
+            </div>
+            <div className="rs-form-stack rs-form-stack--compact">
+              <p className="rs-form-hint">
+                Also removes your shared profile document and Firebase sign-in
+                for this project. MatchReadyTX org data may still exist until
+                removed there.
+              </p>
+              <Button
+                variant="danger"
+                isBlock
+                onClick={() => {
+                  setDeleteError(null);
+                  setDeleteModal('account');
+                }}
+              >
+                Delete my profile &amp; account
+              </Button>
+            </div>
+          </div>
+        </ExpandableFormCard>
+      ) : (
+        <ExpandableFormCard
+          title="Local data"
+          summary={`${matches.length} match${matches.length === 1 ? '' : 'es'} on this device`}
+        >
+          <div className="rs-form-stack rs-form-stack--compact">
+            <p className="rs-form-hint">
+              Clear matches and preferences stored in this browser only.
+            </p>
+            <Button variant="danger" isBlock onClick={clearData}>
+              Clear all local data
+            </Button>
+          </div>
+        </ExpandableFormCard>
       )}
 
       <DangerConfirmModal
