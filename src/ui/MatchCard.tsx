@@ -111,11 +111,16 @@ export function MatchCard({
             </div>
 
             <div className="rs-assignment__content">
-              <div className="rs-assignment__chips" aria-label="Role and pay">
+              <div className="rs-assignment__chips" aria-label="Role, pay, and source">
                 <span className="rs-pill rs-assignment__chip">{match.position}</span>
                 {pay ? (
                   <span className="rs-pill rs-assignment__chip rs-assignment__chip--pay">
                     {pay}
+                  </span>
+                ) : null}
+                {match.source.type === 'matchreadytx' ? (
+                  <span className="rs-pill rs-pill--source rs-assignment__chip">
+                    MR Import
                   </span>
                 ) : null}
                 {match.payStatus === 'unpaid' && match.status !== 'cancelled' ? (

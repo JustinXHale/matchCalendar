@@ -23,6 +23,13 @@
   border-color: var(--rs-color-border);
 }
 
+.rs-pill--source {
+  background: var(--rs-color-surface-muted);
+  color: var(--rs-color-charcoal);
+  border-color: var(--rs-color-border);
+  font-weight: 600;
+}
+
 .rs-pill--urgent {
   background: var(--rs-color-urgent);
   color: var(--rs-color-on-urgent);
