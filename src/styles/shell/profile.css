@@ -1,0 +1,84 @@
+.rs-profile-tabs {
+  display: inline-flex;
+  flex-shrink: 0;
+  max-width: 100%;
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-sm);
+  overflow: hidden;
+  background: var(--rs-color-surface);
+}
+
+.rs-profile-tabs__option {
+  min-height: var(--rs-tap-min);
+  padding: 0 0.7rem;
+  border: 0;
+  background: transparent;
+  color: var(--rs-color-muted);
+  font: var(--rs-font-nav);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rs-profile-tabs__option:not(:last-child) {
+  border-right: 1px solid var(--rs-color-border);
+}
+
+.rs-profile-tabs__option--active {
+  background: color-mix(in srgb, var(--rs-color-primary) 12%, transparent);
+  color: var(--rs-color-primary);
+}
+
+.rs-profile-tabs__option:focus-visible {
+  outline: 2px solid var(--rs-color-focus);
+  outline-offset: -2px;
+}
+
+.rs-profile-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-md);
+  min-width: 0;
+}
+
+.rs-profile-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rs-space-md);
+}
+
+.rs-profile-panel-header .rs-page-lede {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.rs-member-table th:nth-child(2),
+.rs-member-table td:nth-child(2) {
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 8rem;
+}
+
+@media (max-width: 480px) {
+  .rs-page-header--with-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rs-profile-tabs {
+    width: 100%;
+  }
+
+  .rs-profile-tabs__option {
+    flex: 1;
+    padding-inline: 0.35rem;
+  }
+
+  .rs-profile-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

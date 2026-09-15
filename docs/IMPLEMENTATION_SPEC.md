@@ -449,6 +449,37 @@ Implemented in the **MatchReadyTX** repo as `syncMatchReadyAssignments` (Firebas
 
 **Deploy order:** deploy MatchReadyTX function first (`firebase deploy --only functions:syncMatchReadyAssignments`), then ship Calendar client.
 
+### Callable contract — platform operator insights
+
+Implemented in the **MatchReadyTX** repo as `getMatchCalendarPlatformInsights` (Firebase Callable).
+
+**Request:** `{}` — no fields.
+
+**Response:**
+
+```ts
+{
+  generatedAt: string; // ISO
+  memberCount: number;
+  members: Array<{
+    uid: string;
+    displayName: string;
+    email: string | null;
+    authCreatedAt: string | null;
+    calendarSeenAt: string | null;
+    matchCount: number;
+    tournamentCount: number;
+  }>;
+  insights: InsightsSummary; // same shape as client getInsightsSummary()
+}
+```
+
+**Server behavior:** authenticated caller only; caller uid/email must appear in function env `MATCH_CALENDAR_PLATFORM_ADMIN_UIDS` or `MATCH_CALENDAR_PLATFORM_ADMIN_EMAILS` (comma-separated). Lists Firebase Auth users with Match Calendar activity (`matchCalendar/settings`, matches, or tournaments), aggregates insights across those users.
+
+**Client behavior:** Profile shows **Profile | Members | Insights** tabs only when `VITE_PLATFORM_ADMIN_UIDS` or `VITE_PLATFORM_ADMIN_EMAILS` matches the signed-in user. Members tab lists signups; Insights tab shows platform rollup using the same cards as personal Insights.
+
+**Deploy order:** deploy function (`firebase deploy --only functions:getMatchCalendarPlatformInsights`), set function env + Calendar `VITE_PLATFORM_ADMIN_*`, then ship Calendar client.
+
 ---
 
 ## 15. Auth

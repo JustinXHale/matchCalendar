@@ -1,88 +1,108 @@
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { routes } from '@/app/routes';
-import { POSITION_OPTIONS } from '@/domain/matchConstants';
-import type { PositionPreset } from '@/domain/match';
 import { useDemoMode } from '@/demo/DemoModeContext';
 import { accountDeletionErrorMessage } from '@/services/auth';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
-import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
+import { isPlatformAdmin } from '@/features/platform/platformAdmin';
 import {
   clearLocalAppData,
   deleteMatchCalendarData,
   deleteUserProfileAndAccount,
 } from '@/services/accountDeletion';
+import {
+  fetchPlatformInsights,
+  platformInsightsErrorMessage,
+} from '@/services/platformInsights';
+import type { PlatformInsightsResult } from '@/services/platformInsightsTypes';
 import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
-import { ExpandableFormCard } from '@/ui/forms/ExpandableFormCard';
 import { PageHeader } from '@/ui/PageHeader';
-import { ProfileAvatar } from '@/ui/ProfileAvatar';
+import {
+  ProfileSectionTabs,
+  type ProfileSectionTab,
+} from '@/ui/ProfileSectionTabs';
+import { ProfileMembersPanel } from '@/pages/profile/ProfileMembersPanel';
+import { ProfilePlatformInsightsPanel } from '@/pages/profile/ProfilePlatformInsightsPanel';
+import { ProfileSettingsPanel } from '@/pages/profile/ProfileSettingsPanel';
 
 type DeleteModalKind = 'calendar-data' | 'account' | null;
 
-function MinutesBeforeInput({
-  id,
-  minutes,
-  onCommit,
-}: {
-  id: string;
-  minutes: number;
-  onCommit: (minutes: number) => void;
-}) {
-  const [draft, setDraft] = useState(() => String(minutes));
+const PROFILE_PANEL_ID = 'profile-section-panel';
 
-  useEffect(() => {
-    setDraft(String(minutes));
-  }, [minutes]);
-
-  const commit = () => {
-    const trimmed = draft.trim();
-    if (!trimmed) {
-      setDraft(String(minutes));
-      return;
-    }
-
-    const parsed = Number(trimmed);
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      setDraft(String(minutes));
-      return;
-    }
-
-    onCommit(parsed);
-    setDraft(String(parsed));
-  };
-
-  return (
-    <TextInput
-      id={id}
-      type="number"
-      inputMode="numeric"
-      min={0}
-      value={draft}
-      onChange={(_event, value) => setDraft(value)}
-      onBlur={commit}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') {
-          event.currentTarget.blur();
-        }
-      }}
-    />
-  );
+function resolveTab(
+  raw: string | null,
+  showAdminTabs: boolean,
+): ProfileSectionTab {
+  if (!showAdminTabs) return 'profile';
+  if (raw === 'members' || raw === 'insights') return raw;
+  return 'profile';
 }
 
 export function ProfilePage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, signOut } = useAuth();
-  const { profile, updateProfile } = useProfile();
+  const { profile } = useProfile();
   const { replaceAllMatches } = useMatchesContext();
-  const { matches, matchReadySyncing, matchReadyLastSyncedAt, syncMatchReady } =
-    useMatches();
-  const { isDemoMode, disableDemoMode } = useDemoMode();
+  const { disableDemoMode } = useDemoMode();
   const [deleteModal, setDeleteModal] = useState<DeleteModalKind>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [platformData, setPlatformData] = useState<PlatformInsightsResult | null>(
+    null,
+  );
+  const [platformLoading, setPlatformLoading] = useState(false);
+  const [platformError, setPlatformError] = useState<string | null>(null);
+
+  const showAdminTabs = isPlatformAdmin(
+    user?.uid,
+    user?.email ?? profile.email,
+  );
+  const tab = resolveTab(searchParams.get('tab'), showAdminTabs);
+
+  const tabOptions = useMemo(
+    () =>
+      showAdminTabs
+        ? [
+            { key: 'profile' as const, label: 'Profile' },
+            { key: 'members' as const, label: 'Members' },
+            { key: 'insights' as const, label: 'Insights' },
+          ]
+        : [{ key: 'profile' as const, label: 'Profile' }],
+    [showAdminTabs],
+  );
+
+  const setTab = (nextTab: ProfileSectionTab) => {
+    if (nextTab === 'profile') {
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    setSearchParams({ tab: nextTab }, { replace: true });
+  };
+
+  const loadPlatformData = useCallback(async () => {
+    if (!showAdminTabs || !profile.isLive) return;
+
+    setPlatformLoading(true);
+    setPlatformError(null);
+
+    try {
+      const result = await fetchPlatformInsights();
+      setPlatformData(result);
+    } catch (err) {
+      setPlatformError(platformInsightsErrorMessage(err));
+    } finally {
+      setPlatformLoading(false);
+    }
+  }, [profile.isLive, showAdminTabs]);
+
+  useEffect(() => {
+    if (tab === 'profile' || !showAdminTabs || !profile.isLive) return;
+    if (platformData || platformLoading) return;
+    void loadPlatformData();
+  }, [tab, showAdminTabs, profile.isLive, platformData, platformLoading, loadPlatformData]);
 
   const clearData = () => {
     clearLocalAppData();
@@ -142,186 +162,59 @@ export function ProfilePage() {
 
   return (
     <div className="rs-stack">
-      <PageHeader title="Profile" />
-      <div className="rs-detail-card">
-        {profile.isLive ? (
-          <p className="rs-form-hint">
-            Signed in — your schedule syncs to your account.
-          </p>
-        ) : (
-          <p className="rs-form-hint">
-            {isDemoMode
-              ? 'Demo preview — sample data only.'
-              : 'Local mode — your data stays in this browser until you sign in.'}
-          </p>
+      <PageHeader
+        title="Profile"
+        actions={
+          tabOptions.length > 1 ? (
+            <ProfileSectionTabs
+              tab={tab}
+              options={tabOptions}
+              onChange={setTab}
+              panelId={PROFILE_PANEL_ID}
+            />
+          ) : undefined
+        }
+      />
+
+      <div
+        id={PROFILE_PANEL_ID}
+        role="tabpanel"
+        tabIndex={-1}
+        className="rs-profile-panel"
+      >
+        {tab === 'profile' && (
+          <ProfileSettingsPanel
+            onDeleteCalendarData={() => {
+              setDeleteError(null);
+              setDeleteModal('calendar-data');
+            }}
+            onDeleteAccount={() => {
+              setDeleteError(null);
+              setDeleteModal('account');
+            }}
+            onSignOut={() => void handleSignOut()}
+            onClearLocalData={clearData}
+          />
         )}
 
-        <ProfileAvatar
-          displayName={profile.displayName}
-          photoUrl={profile.photoUrl}
-          size="md"
-        />
-
-        {profile.isLive ? (
-          <>
-            <p className="rs-detail-card__primary">{profile.displayName}</p>
-            {profile.email && <p className="rs-detail-meta">{profile.email}</p>}
-          </>
-        ) : (
-          <FormGroup label="Display name" fieldId="profile-name">
-            <TextInput
-              id="profile-name"
-              value={profile.displayName}
-              onChange={(_event, value) => updateProfile({ displayName: value })}
-            />
-          </FormGroup>
+        {tab === 'members' && showAdminTabs && (
+          <ProfileMembersPanel
+            data={platformData}
+            loading={platformLoading}
+            error={platformError}
+            onRefresh={loadPlatformData}
+          />
         )}
 
-        <FormGroup label="Default position" fieldId="profile-position">
-          <select
-            id="profile-position"
-            className="rs-select"
-            value={profile.defaultPositionPreset}
-            onChange={(event) =>
-              updateProfile({
-                defaultPositionPreset: event.target.value as PositionPreset,
-              })
-            }
-          >
-            {POSITION_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </FormGroup>
-
-        <div className="rs-form-row">
-          <FormGroup
-            label="Arrive at pitch (min before kickoff)"
-            fieldId="profile-arrival"
-          >
-            <MinutesBeforeInput
-              id="profile-arrival"
-              minutes={profile.pitchArrivalMinutesBeforeKickoff}
-              onCommit={(pitchArrivalMinutesBeforeKickoff) =>
-                updateProfile({ pitchArrivalMinutesBeforeKickoff })
-              }
-            />
-          </FormGroup>
-          <FormGroup
-            label="Arrive at airport (min before flight)"
-            fieldId="profile-airport-arrival"
-          >
-            <MinutesBeforeInput
-              id="profile-airport-arrival"
-              minutes={profile.airportArrivalMinutesBeforeFlight}
-              onCommit={(airportArrivalMinutesBeforeFlight) =>
-                updateProfile({ airportArrivalMinutesBeforeFlight })
-              }
-            />
-          </FormGroup>
-        </div>
+        {tab === 'insights' && showAdminTabs && (
+          <ProfilePlatformInsightsPanel
+            data={platformData}
+            loading={platformLoading}
+            error={platformError}
+            onRefresh={loadPlatformData}
+          />
+        )}
       </div>
-
-      {profile.isLive && (
-        <section className="rs-form-section">
-          <h2 className="rs-form-section-title">MatchReadyTX</h2>
-          <p className="rs-form-hint">
-            Import confirmed assignments from MatchReadyTX into your personal
-            calendar. Notes, pay status, travel, and expenses you add here are
-            never overwritten.
-          </p>
-          {matchReadyLastSyncedAt && (
-            <p className="rs-detail-meta">
-              Last synced{' '}
-              {new Date(matchReadyLastSyncedAt).toLocaleString(undefined, {
-                dateStyle: 'medium',
-                timeStyle: 'short',
-              })}
-            </p>
-          )}
-          <Button
-            variant="secondary"
-            isBlock
-            isDisabled={matchReadySyncing}
-            onClick={() => void syncMatchReady(true)}
-          >
-            {matchReadySyncing ? 'Syncing MatchReady…' : 'Sync MatchReady now'}
-          </Button>
-        </section>
-      )}
-
-      {profile.isLive && (
-        <section className="rs-form-section">
-          <h2 className="rs-form-section-title">Account</h2>
-          <p className="rs-form-hint">
-            You sign in with the same Google or Apple account used for
-            MatchReadyTX. Match Calendar stores your personal schedule separately
-            under your user record.
-          </p>
-          <Button variant="secondary" isBlock onClick={() => void handleSignOut()}>
-            Sign out
-          </Button>
-        </section>
-      )}
-
-      {profile.isLive ? (
-        <ExpandableFormCard
-          title="Deletion"
-          summary="Remove Calendar data or account"
-        >
-          <div className="rs-form-stack">
-            <div className="rs-form-stack rs-form-stack--compact">
-              <p className="rs-form-hint">
-                Remove your matches, tournaments, and preferences. Your sign-in
-                and MatchReadyTX profile stay intact.
-              </p>
-              <Button
-                variant="danger"
-                isBlock
-                onClick={() => {
-                  setDeleteError(null);
-                  setDeleteModal('calendar-data');
-                }}
-              >
-                Delete my Match Calendar data
-              </Button>
-            </div>
-            <div className="rs-form-stack rs-form-stack--compact">
-              <p className="rs-form-hint">
-                Also removes your shared profile document and Firebase sign-in
-                for this project. MatchReadyTX org data may still exist until
-                removed there.
-              </p>
-              <Button
-                variant="danger"
-                isBlock
-                onClick={() => {
-                  setDeleteError(null);
-                  setDeleteModal('account');
-                }}
-              >
-                Delete my profile &amp; account
-              </Button>
-            </div>
-          </div>
-        </ExpandableFormCard>
-      ) : (
-        <ExpandableFormCard
-          title="Local data"
-          summary={`${matches.length} match${matches.length === 1 ? '' : 'es'} on this device`}
-        >
-          <div className="rs-form-stack rs-form-stack--compact">
-            <p className="rs-form-hint">
-              Clear matches and preferences stored in this browser only.
-            </p>
-            <Button variant="danger" isBlock onClick={clearData}>
-              Clear all local data
-            </Button>
-          </div>
-        </ExpandableFormCard>
-      )}
 
       <DangerConfirmModal
         isOpen={deleteModal === 'calendar-data'}

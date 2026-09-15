@@ -5,7 +5,12 @@ import { getCategoryRollup, getMatchFinanceTotals, getSettlementPaidTotal } from
 import { tournamentEvent } from '@/features/tournaments/tournamentEvent';
 
 export type CountRow = { label: string; count: number };
-export type OrganizationRow = { organization: string; income: number; expenses: number; net: number };
+export type OrganizationRow = {
+  organization: string;
+  income: number;
+  expenses: number;
+  net: number;
+};
 
 function counts(labels: string[]): CountRow[] {
   const result = new Map<string, number>();
@@ -75,3 +80,5 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
     organizations: [...organizations.values()].sort((a, b) => b.net - a.net || a.organization.localeCompare(b.organization)),
   };
 }
+
+export type InsightsSummary = ReturnType<typeof getInsightsSummary>;
