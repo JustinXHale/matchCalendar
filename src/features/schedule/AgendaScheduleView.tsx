@@ -4,6 +4,7 @@ import { openQuickMatch } from '@/app/navigation';
 import { groupAgendaMatches } from '@/features/matches/agendaGroups';
 import { getUpcomingMatches } from '@/features/matches/matchQueries';
 import { useMatches } from '@/features/matches/useMatches';
+import { PastMatchesExpandable } from '@/features/schedule/PastMatchesExpandable';
 import { splitAgendaNext } from '@/features/schedule/scheduleListItems';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
 import { MatchCard } from '@/ui/MatchCard';
@@ -21,6 +22,8 @@ export function AgendaScheduleView() {
 
   if (upcoming.length === 0) {
     return (
+      <>
+      <PastMatchesExpandable />
       <section className="rs-empty-state" aria-label="No matches yet">
         <h2 className="rs-empty-state__title">No matches yet</h2>
         <p className="rs-empty-state__text">
@@ -34,11 +37,13 @@ export function AgendaScheduleView() {
           Quick Match
         </Button>
       </section>
+      </>
     );
   }
 
   return (
     <>
+      <PastMatchesExpandable />
       {next && (
         <section aria-label="Next match">
           <h2 className="rs-section-label">Next match</h2>
