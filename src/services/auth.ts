@@ -1,8 +1,10 @@
 import {
   GoogleAuthProvider,
   OAuthProvider,
+  deleteUser,
   getRedirectResult,
   onAuthStateChanged,
+  reauthenticateWithPopup,
   signInWithPopup,
   signOut as firebaseSignOut,
   type AuthProvider,
@@ -85,6 +87,80 @@ export async function completeRedirectSignIn(): Promise<User | null> {
 export async function signOutFirebase(): Promise<void> {
   if (!auth) return;
   await firebaseSignOut(auth);
+}
+
+function isRequiresRecentLogin(err: unknown): boolean {
+  const code =
+    err && typeof err === 'object' && 'code' in err
+      ? String((err as { code: unknown }).code)
+      : '';
+  return code === 'auth/requires-recent-login';
+}
+
+async function reauthenticateCurrentUser(user: User): Promise<void> {
+  const providerId =
+    user.providerData.find(
+      (provider) =>
+        provider.providerId === 'google.com' ||
+        provider.providerId === 'apple.com',
+    )?.providerId ?? user.providerData[0]?.providerId;
+
+  if (providerId === 'google.com') {
+    await reauthenticateWithPopup(user, new GoogleAuthProvider());
+    return;
+  }
+
+  if (providerId === 'apple.com') {
+    const apple = new OAuthProvider('apple.com');
+    apple.addScope('email');
+    apple.addScope('name');
+    await reauthenticateWithPopup(user, apple);
+    return;
+  }
+
+  throw new Error(
+    'For your security, sign out, sign in again, then retry account deletion.',
+  );
+}
+
+export async function deleteFirebaseAuthUser(): Promise<void> {
+  const a = requireAuth();
+  const user = a.currentUser;
+  if (!user) {
+    throw new Error('Not signed in.');
+  }
+
+  try {
+    await deleteUser(user);
+  } catch (err) {
+    if (!isRequiresRecentLogin(err)) {
+      throw err;
+    }
+    await reauthenticateCurrentUser(user);
+    await deleteUser(user);
+  }
+}
+
+export function accountDeletionErrorMessage(err: unknown): string {
+  const code =
+    err && typeof err === 'object' && 'code' in err
+      ? String((err as { code: unknown }).code)
+      : '';
+  const message = err instanceof Error ? err.message : String(err);
+
+  if (code === 'permission-denied' || message.includes('permission-denied')) {
+    return 'Could not delete data. Firestore rules may need to be updated and redeployed.';
+  }
+  if (isPopupBlockedError(err)) {
+    return POPUP_BLOCKED_HELP;
+  }
+  if (code === 'auth/popup-closed-by-user') {
+    return 'Confirmation was cancelled. Your account was not deleted.';
+  }
+  if (isRequiresRecentLogin(err)) {
+    return 'Sign out, sign in again, then retry account deletion.';
+  }
+  return message || 'Account deletion failed.';
 }
 
 export function subscribeAuth(

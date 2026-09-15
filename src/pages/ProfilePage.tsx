@@ -1,29 +1,37 @@
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { routes } from '@/app/routes';
 import { POSITION_OPTIONS } from '@/domain/matchConstants';
 import type { PositionPreset } from '@/domain/match';
-import { createDemoMatches } from '@/demo/demoMatches';
 import { useDemoMode } from '@/demo/DemoModeContext';
+import { accountDeletionErrorMessage } from '@/services/auth';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
 import { useProfile } from '@/features/profile/ProfileProvider';
+import {
+  clearLocalAppData,
+  deleteMatchCalendarData,
+  deleteUserProfileAndAccount,
+} from '@/services/accountDeletion';
+import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { PageHeader } from '@/ui/PageHeader';
 import { ProfileAvatar } from '@/ui/ProfileAvatar';
 
+type DeleteModalKind = 'calendar-data' | 'account' | null;
+
 export function ProfilePage() {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
   const { replaceAllMatches, matches } = useMatchesContext();
-  const { isDemoMode, enableDemoMode, disableDemoMode } = useDemoMode();
-
-  const loadSampleData = () => {
-    replaceAllMatches(createDemoMatches());
-    disableDemoMode();
-  };
+  const { isDemoMode, disableDemoMode } = useDemoMode();
+  const [deleteModal, setDeleteModal] = useState<DeleteModalKind>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const clearData = () => {
+    clearLocalAppData();
     replaceAllMatches([]);
     disableDemoMode();
   };
@@ -32,6 +40,50 @@ export function ProfilePage() {
     disableDemoMode();
     await signOut();
     navigate(routes.login, { replace: true });
+  };
+
+  const closeDeleteModal = () => {
+    if (deleteBusy) return;
+    setDeleteModal(null);
+    setDeleteError(null);
+  };
+
+  const runDeleteCalendarData = async () => {
+    if (!user) return;
+
+    setDeleteBusy(true);
+    setDeleteError(null);
+
+    try {
+      await deleteMatchCalendarData(user.uid);
+      clearLocalAppData();
+      replaceAllMatches([]);
+      disableDemoMode();
+      setDeleteModal(null);
+      navigate(routes.schedule, { replace: true });
+    } catch (err) {
+      setDeleteError(accountDeletionErrorMessage(err));
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
+
+  const runDeleteAccount = async () => {
+    if (!user) return;
+
+    setDeleteBusy(true);
+    setDeleteError(null);
+
+    try {
+      await deleteUserProfileAndAccount(user.uid);
+      disableDemoMode();
+      setDeleteModal(null);
+      navigate(routes.login, { replace: true });
+    } catch (err) {
+      setDeleteError(accountDeletionErrorMessage(err));
+    } finally {
+      setDeleteBusy(false);
+    }
   };
 
   return (
@@ -89,48 +141,95 @@ export function ProfilePage() {
             ))}
           </select>
         </FormGroup>
-        <FormGroup
-          label="Arrive at pitch (minutes before kickoff)"
-          fieldId="profile-arrival"
-        >
-          <TextInput
-            id="profile-arrival"
-            type="number"
-            inputMode="numeric"
-            value={String(profile.pitchArrivalMinutesBeforeKickoff)}
-            onChange={(_event, value) =>
-              updateProfile({
-                pitchArrivalMinutesBeforeKickoff: Number(value) || 60,
-              })
-            }
-          />
-        </FormGroup>
-        <FormGroup
-          label="Arrive at airport (minutes before first flight)"
-          fieldId="profile-airport-arrival"
-        >
-          <TextInput
-            id="profile-airport-arrival"
-            type="number"
-            inputMode="numeric"
-            value={String(profile.airportArrivalMinutesBeforeFlight)}
-            onChange={(_event, value) =>
-              updateProfile({
-                airportArrivalMinutesBeforeFlight: Number(value) || 120,
-              })
-            }
-          />
-        </FormGroup>
-        <p className="rs-detail-meta">
-          <Link to={routes.about}>About Match Calendar</Link>
-        </p>
+
+        <div className="rs-form-row">
+          <FormGroup
+            label="Arrive at pitch (min before kickoff)"
+            fieldId="profile-arrival"
+          >
+            <TextInput
+              id="profile-arrival"
+              type="number"
+              inputMode="numeric"
+              value={String(profile.pitchArrivalMinutesBeforeKickoff)}
+              onChange={(_event, value) =>
+                updateProfile({
+                  pitchArrivalMinutesBeforeKickoff: Number(value) || 60,
+                })
+              }
+            />
+          </FormGroup>
+          <FormGroup
+            label="Arrive at airport (min before flight)"
+            fieldId="profile-airport-arrival"
+          >
+            <TextInput
+              id="profile-airport-arrival"
+              type="number"
+              inputMode="numeric"
+              value={String(profile.airportArrivalMinutesBeforeFlight)}
+              onChange={(_event, value) =>
+                updateProfile({
+                  airportArrivalMinutesBeforeFlight: Number(value) || 120,
+                })
+              }
+            />
+          </FormGroup>
+        </div>
       </div>
 
       {profile.isLive && (
         <section className="rs-form-section">
           <h2 className="rs-form-section-title">Account</h2>
+          <p className="rs-form-hint">
+            You sign in with the same Google or Apple account used for
+            MatchReadyTX. Match Calendar stores your personal schedule separately
+            under your user record.
+          </p>
           <Button variant="secondary" isBlock onClick={() => void handleSignOut()}>
             Sign out
+          </Button>
+        </section>
+      )}
+
+      {profile.isLive && (
+        <section className="rs-form-section">
+          <h2 className="rs-form-section-title">Your data</h2>
+          <p className="rs-form-hint">
+            Permanently delete your Match Calendar matches, tournaments, and
+            preferences from Firestore. Your sign-in and MatchReadyTX profile stay
+            intact.
+          </p>
+          <Button
+            variant="danger"
+            isBlock
+            onClick={() => {
+              setDeleteError(null);
+              setDeleteModal('calendar-data');
+            }}
+          >
+            Delete my Match Calendar data
+          </Button>
+        </section>
+      )}
+
+      {profile.isLive && (
+        <section className="rs-form-section">
+          <h2 className="rs-form-section-title">Delete account</h2>
+          <p className="rs-form-hint">
+            Permanently delete your shared profile document, all Match Calendar
+            data, and your Firebase sign-in for this project. MatchReadyTX org
+            membership and assignment history may still exist until removed there.
+          </p>
+          <Button
+            variant="danger"
+            isBlock
+            onClick={() => {
+              setDeleteError(null);
+              setDeleteModal('account');
+            }}
+          >
+            Delete my profile &amp; account
           </Button>
         </section>
       )}
@@ -141,32 +240,34 @@ export function ProfilePage() {
           <p className="rs-form-hint">
             {matches.length} match{matches.length === 1 ? '' : 'es'} stored locally.
           </p>
-          <div className="rs-form-actions">
-            <Button variant="secondary" isBlock onClick={loadSampleData}>
-              Load sample matches
-            </Button>
-            <Button variant="danger" isBlock onClick={clearData}>
-              Clear all matches
-            </Button>
-          </div>
+          <Button variant="danger" isBlock onClick={clearData}>
+            Clear all local data
+          </Button>
         </section>
       )}
 
-      <section className="rs-form-section">
-        <h2 className="rs-form-section-title">Preview</h2>
-        <p className="rs-form-hint">
-          Demo mode shows read-only sample data without changing your saved matches.
-        </p>
-        <Button
-          variant="secondary"
-          isBlock
-          onClick={() =>
-            isDemoMode ? disableDemoMode() : enableDemoMode()
-          }
-        >
-          {isDemoMode ? 'Exit demo preview' : 'Preview demo data'}
-        </Button>
-      </section>
+      <DangerConfirmModal
+        isOpen={deleteModal === 'calendar-data'}
+        title="Delete Match Calendar data?"
+        description="This removes every match, tournament, and Calendar preference stored for your account. It cannot be undone."
+        confirmLabel="Delete Calendar data"
+        isBusy={deleteBusy}
+        error={deleteError}
+        onClose={closeDeleteModal}
+        onConfirm={() => void runDeleteCalendarData()}
+      />
+
+      <DangerConfirmModal
+        isOpen={deleteModal === 'account'}
+        title="Delete profile and account?"
+        description="This removes your Match Calendar data, your users profile document in Firestore, and your Google or Apple sign-in for this Firebase project. MatchReadyTX league data is not removed automatically."
+        confirmLabel="Delete profile and account"
+        typedConfirmPhrase="DELETE"
+        isBusy={deleteBusy}
+        error={deleteError}
+        onClose={closeDeleteModal}
+        onConfirm={() => void runDeleteAccount()}
+      />
     </div>
   );
 }

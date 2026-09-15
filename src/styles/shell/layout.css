@@ -95,6 +95,19 @@
   color: var(--rs-color-muted);
 }
 
+.rs-about-page {
+  gap: var(--rs-space-md);
+}
+
+.rs-about-section__title {
+  margin: 0;
+  font: var(--rs-font-nav);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rs-color-muted);
+}
+
 .rs-detail-card {
   display: flex;
   flex-direction: column;

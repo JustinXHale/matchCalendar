@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalendarDays,
   faChartLine,
+  faCircleInfo,
   faDollarSign,
-  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { routes } from '@/app/routes';
 import { countNeedsClosureMatches } from '@/features/matches/matchQueries';
@@ -44,11 +44,12 @@ const items = [
     isActive: (pathname: string) => pathname.startsWith(routes.insights),
   },
   {
-    to: routes.profile,
-    label: 'Profile',
-    icon: <FontAwesomeIcon icon={faUser} className={navIconClass} aria-hidden />,
-    isActive: (pathname: string) =>
-      pathname.startsWith(routes.profile) || pathname.startsWith(routes.about),
+    to: routes.about,
+    label: 'About',
+    icon: (
+      <FontAwesomeIcon icon={faCircleInfo} className={navIconClass} aria-hidden />
+    ),
+    isActive: (pathname: string) => pathname.startsWith(routes.about),
   },
 ];
 
