@@ -638,7 +638,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
             <p className="rs-settlement-note">
               Still open: {openLabels.join(' · ')}. ✓ settled · ✗ waiting ·{' '}
               <span className="rs-settlement-note__legend">
-                <FontAwesomeIcon icon={faUser} aria-hidden /> = self expense
+                <FontAwesomeIcon icon={faUser} aria-hidden /> self expense
               </span>
               .
             </p>
