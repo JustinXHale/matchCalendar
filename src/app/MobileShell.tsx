@@ -15,6 +15,7 @@ import { ThemeToggle } from '@/ui/ThemeToggle';
 import { AppDataGate } from '@/ui/AppDataGate';
 import { OfflineBanner } from '@/ui/OfflineBanner';
 import { UpdatePrompt } from '@/pwa/UpdatePrompt';
+import { appBuildLabel } from '@/app/appBuild';
 
 export function MobileShell() {
   const { isDemoMode } = useDemoMode();
@@ -25,9 +26,12 @@ export function MobileShell() {
         <Masthead className="rs-masthead">
           <MastheadMain className="rs-masthead__main">
             <MastheadBrand className="rs-masthead__brand">
-              <span className="rs-brand-row">
-                <span className="rs-brand">Match Calendar</span>
-                <ThemeToggle />
+              <span className="rs-brand-block">
+                <span className="rs-brand-row">
+                  <span className="rs-brand">Match Calendar</span>
+                  <ThemeToggle />
+                </span>
+                <span className="rs-brand-build">{appBuildLabel()}</span>
               </span>
             </MastheadBrand>
           </MastheadMain>

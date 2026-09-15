@@ -28,6 +28,14 @@
   color: var(--rs-color-ink);
 }
 
+.rs-signin__build {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--rs-color-muted);
+  letter-spacing: 0.02em;
+}
+
 .rs-signin__lede {
   margin: 0;
   font: var(--rs-font-body);

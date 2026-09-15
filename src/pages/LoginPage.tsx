@@ -17,6 +17,7 @@ import { isFirebaseConfigured } from '@/services/firebase';
 import { PublicFooter } from '@/features/public/PublicFooter';
 import { PwaInstallCard } from '@/ui/PwaInstallCard';
 import { ThemeToggle } from '@/ui/ThemeToggle';
+import { appBuildLabel } from '@/app/appBuild';
 import '@/features/public/public.css';
 
 export function LoginPage() {
@@ -81,6 +82,7 @@ export function LoginPage() {
     <div className="rs-signin rs-page-pad">
       <header className="rs-signin__hero">
         <h1 className="rs-signin__title">Match Calendar</h1>
+        <p className="rs-signin__build">{appBuildLabel()}</p>
         <p className="rs-signin__lede">
           Personal referee schedule, travel, and pay records
         </p>

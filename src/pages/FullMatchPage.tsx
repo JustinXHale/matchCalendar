@@ -178,6 +178,8 @@ export function FullMatchPage() {
   const [extras, setExtras] = useState<FullMatchExtras>(initialExtras);
   const [errors, setErrors] = useState<MatchFormErrors>({});
   const [formError, setFormError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [leaveGuardEnabled, setLeaveGuardEnabled] = useState(true);
 
   const isTournamentForm =
     isTournamentEdit ||
@@ -201,7 +203,7 @@ export function FullMatchPage() {
     ],
   );
 
-  useUnsavedChangesGuard(isDirty);
+  useUnsavedChangesGuard(isDirty, leaveGuardEnabled && !isSaving);
 
   const onChange = (patch: Partial<MatchFormValues>) => {
     setValues((current) => ({ ...current, ...patch }));
@@ -259,7 +261,15 @@ export function FullMatchPage() {
     onChange(patch);
   };
 
+  const leaveAfterSave = (navigateTo: () => void) => {
+    setLeaveGuardEnabled(false);
+    setIsSaving(true);
+    navigateTo();
+  };
+
   const save = () => {
+    if (isSaving) return;
+
     if (isTournamentForm) {
       const formErrorMessage = validateTournamentForm(tournamentMeta);
       if (formErrorMessage) {
@@ -295,12 +305,16 @@ export function FullMatchPage() {
 
       if (editingTournament) {
         updateTournament(editingTournament.id, payload);
-        navigate(routes.tournamentDetail(editingTournament.id), { replace: true });
+        leaveAfterSave(() =>
+          navigate(routes.tournamentDetail(editingTournament.id), { replace: true }),
+        );
         return;
       }
 
       const tournament = createTournament(payload);
-      navigate(routes.tournamentDetail(tournament.id), { replace: true });
+      leaveAfterSave(() =>
+        navigate(routes.tournamentDetail(tournament.id), { replace: true }),
+      );
       return;
     }
 
@@ -363,18 +377,21 @@ export function FullMatchPage() {
 
     if (existing) {
       updateMatch(existing.id, payload);
-      navigate(routes.matchDetail(existing.id), { replace: true });
+      leaveAfterSave(() =>
+        navigate(routes.matchDetail(existing.id), { replace: true }),
+      );
       return;
     }
 
-    const match = createMatch(payload);
-    navigate(
-      isTournamentChild && childTournamentId
-        ? routes.tournamentDetail(childTournamentId)
-        : routes.schedule,
-      { replace: true },
+    createMatch(payload);
+    leaveAfterSave(() =>
+      navigate(
+        isTournamentChild && childTournamentId
+          ? routes.tournamentDetail(childTournamentId)
+          : routes.schedule,
+        { replace: true },
+      ),
     );
-    return match;
   };
 
   const inheritedExpectedPay =
@@ -596,14 +613,16 @@ export function FullMatchPage() {
       {formError && <p className="rs-form-error" role="alert">{formError}</p>}
 
       <div className="rs-form-actions rs-form-actions--sticky rs-form-actions--paired">
-        <Button variant="primary" isBlock onClick={save}>
-          {isTournamentEdit
-            ? 'Save Changes'
-            : isTournamentForm
-              ? 'Save Tournament'
-              : 'Save Match'}
+        <Button variant="primary" isBlock onClick={save} isDisabled={isSaving}>
+          {isSaving
+            ? 'Saving…'
+            : isTournamentEdit
+              ? 'Save Changes'
+              : isTournamentForm
+                ? 'Save Tournament'
+                : 'Save Match'}
         </Button>
-        <Button variant="secondary" isBlock onClick={goBack}>
+        <Button variant="secondary" isBlock onClick={goBack} isDisabled={isSaving}>
           Cancel
         </Button>
       </div>

@@ -30,6 +30,11 @@
   }
 }
 
+.rs-native-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
 .rs-native-input {
   width: 100%;
   min-height: 2.75rem;
@@ -39,6 +44,20 @@
   background: var(--rs-color-surface);
   color: var(--rs-color-ink);
   font: var(--rs-font-body);
+}
+
+.rs-native-input--with-indicator {
+  padding-right: 2.25rem;
+}
+
+.rs-native-input__indicator {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--rs-color-muted);
+  font-size: 0.75rem;
 }
 
 .rs-native-input:focus-visible {

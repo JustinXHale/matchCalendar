@@ -1,5 +1,7 @@
 import type { HTMLInputTypeAttribute } from 'react';
 import { FormGroup } from '@patternfly/react-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   id: string;
@@ -30,6 +32,7 @@ export function NativeInput({
 }: Props) {
   const inputClass = [
     'rs-native-input',
+    list ? 'rs-native-input--with-indicator' : '',
     validated === 'error' ? 'rs-native-input--error' : '',
   ]
     .filter(Boolean)
@@ -42,22 +45,31 @@ export function NativeInput({
   };
 
   const input = (
-    <input
-      list={list}
-      id={id}
-      type={type}
-      className={inputClass}
-      value={value}
-      inputMode={inputMode}
-      required={isRequired}
-      onChange={(event) => commitValue(event.target.value)}
-      onInput={(event) => commitValue(event.currentTarget.value)}
-      onBlur={(event) => {
-        if (PICKER_TYPES.has(type)) {
-          commitValue(event.target.value);
-        }
-      }}
-    />
+    <div className={list ? 'rs-native-input-wrap' : undefined}>
+      <input
+        list={list}
+        id={id}
+        type={type}
+        className={inputClass}
+        value={value}
+        inputMode={inputMode}
+        required={isRequired}
+        onChange={(event) => commitValue(event.target.value)}
+        onInput={(event) => commitValue(event.currentTarget.value)}
+        onBlur={(event) => {
+          if (PICKER_TYPES.has(type)) {
+            commitValue(event.target.value);
+          }
+        }}
+      />
+      {list ? (
+        <FontAwesomeIcon
+          icon={faChevronDown}
+          className="rs-native-input__indicator"
+          aria-hidden
+        />
+      ) : null}
+    </div>
   );
 
   if (!label) return input;
