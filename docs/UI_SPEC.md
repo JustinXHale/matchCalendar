@@ -18,21 +18,28 @@ Keep the masthead simple.
 Recommended:
 
 - Match Calendar wordmark / Rabbit Hole branding
-- page title where useful
+- theme toggle
+- **View demo** / **Exit demo** toggle (sample data preview; available in production)
+- profile avatar link to `/profile`
+- page title where useful on inner screens
 - contextual action only when needed
+
+When demo mode is active, show a short status banner below the masthead so sample data is never mistaken for live Firestore data.
 
 Do not crowd the header with filters, role switchers, org controls, or MatchReadyTX administration concepts.
 
 ### Bottom navigation
 
-Four destinations:
+Four destinations (center slot is the `+` Add action):
 
 | Tab | Purpose |
 |---|---|
-| Agenda | What is next |
-| Calendar | Browse by date |
-| History | Past work and money |
-| Profile | Preferences/account |
+| Schedule | Agenda + month calendar (toggle on one screen) |
+| Money | Pay status, settlement, and finance closure |
+| Insights | Personal stats derived from your matches |
+| About | Product overview; PWA install help when supported |
+
+Profile and account settings live at `/profile` via the masthead avatar, not the bottom nav.
 
 ### Add action
 
@@ -446,13 +453,19 @@ Tournament is secondary to standalone matches; do not reorganize the whole produ
 
 ## 11. Profile
 
+Reached from the masthead avatar (`/profile`), not bottom navigation.
+
 MVP:
 
 - name
 - email
 - preferred/default position (optional)
+- timing defaults (pitch arrival, airport arrival)
 - appearance preference if supported
 - sign out
+- delete Match Calendar data / delete account (with confirmation)
+
+Demo preview is entered from **Try demo** on login or **View demo** in the masthead — not from Profile.
 
 Account identity comes from Google or Apple sign-in.
 
@@ -485,7 +498,7 @@ Use a subtle state such as:
 
 ### Save failure
 
-Keep entered data on screen and provide retry.
+Keep entered data on screen and provide retry. Background Firestore/provider failures should surface as a dismissible toast (not a blocking page) when the user did not initiate an inline save action.
 
 ### No calendar items
 

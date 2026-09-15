@@ -3,6 +3,7 @@ import type { ScheduleView } from '@/features/schedule/scheduleView';
 type Props = {
   view: ScheduleView;
   onChange: (view: ScheduleView) => void;
+  panelId?: string;
 };
 
 const OPTIONS: { key: ScheduleView; label: string }[] = [
@@ -10,7 +11,7 @@ const OPTIONS: { key: ScheduleView; label: string }[] = [
   { key: 'agenda', label: 'Agenda' },
 ];
 
-export function ScheduleViewToggle({ view, onChange }: Props) {
+export function ScheduleViewToggle({ view, onChange, panelId }: Props) {
   return (
     <div
       className="rs-schedule-toggle"
@@ -23,6 +24,8 @@ export function ScheduleViewToggle({ view, onChange }: Props) {
           type="button"
           role="tab"
           aria-selected={view === option.key}
+          aria-controls={panelId}
+          tabIndex={view === option.key ? 0 : -1}
           className={[
             'rs-schedule-toggle__option',
             view === option.key ? 'rs-schedule-toggle__option--active' : '',

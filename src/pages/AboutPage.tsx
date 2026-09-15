@@ -1,4 +1,5 @@
 import { PageHeader } from '@/ui/PageHeader';
+import { PwaInstallCard } from '@/ui/PwaInstallCard';
 
 export function AboutPage() {
   return (
@@ -7,6 +8,8 @@ export function AboutPage() {
       <p className="rs-page-lede">
         Match Calendar is your personal schedule and record as a sports official.
       </p>
+
+      <PwaInstallCard />
 
       <section className="rs-detail-card rs-about-section" aria-labelledby="about-problem">
         <h2 id="about-problem" className="rs-about-section__title">The problem</h2>

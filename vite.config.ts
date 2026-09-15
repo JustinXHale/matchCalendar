@@ -10,14 +10,16 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['favicon.ico', 'icons/icon.svg'],
       manifest: {
+        id: '/',
         name: 'Match Calendar',
         short_name: 'MatchCal',
         description: 'Personal match schedule and record for sports officials',
-        theme_color: '#000000',
+        theme_color: '#F9FAFB',
         background_color: '#F9FAFB',
         display: 'standalone',
         orientation: 'portrait-primary',
         start_url: '/',
+        scope: '/',
         icons: [
           {
             src: 'icons/icon-192.png',
@@ -30,6 +32,12 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any',
+          },
+          {
+            src: 'icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
           {
             src: 'icons/icon.svg',

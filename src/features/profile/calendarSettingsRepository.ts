@@ -36,14 +36,19 @@ export function calendarSettingsFromFirestore(
 export function subscribeCalendarSettings(
   uid: string,
   onSettings: (settings: CalendarSettings) => void,
+  onError?: (error: Error) => void,
 ): Unsubscribe {
-  return onSnapshot(settingsRef(uid), (snapshot) => {
-    onSettings(
-      calendarSettingsFromFirestore(
-        snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : undefined,
-      ),
-    );
-  });
+  return onSnapshot(
+    settingsRef(uid),
+    (snapshot) => {
+      onSettings(
+        calendarSettingsFromFirestore(
+          snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : undefined,
+        ),
+      );
+    },
+    (error) => onError?.(error),
+  );
 }
 
 export async function getCalendarSettings(

@@ -19,6 +19,8 @@ import {
   updateMatchRecord,
 } from '@/features/matches/matchRepository';
 import { migrateLocalDataToFirestore } from '@/services/localDataMigration';
+import { firestoreErrorMessage } from '@/services/firestoreErrors';
+import { useAppToast } from '@/ui/AppToastProvider';
 
 type MatchesContextValue = {
   matches: Match[];
@@ -33,6 +35,7 @@ type MatchesContextValue = {
 const MatchesContext = createContext<MatchesContextValue | null>(null);
 
 export function MatchesProvider({ children }: { children: ReactNode }) {
+  const { pushError } = useAppToast();
   const { isDemoMode } = useDemoMode();
   const { isLive, uid } = useLiveData();
   const [realMatches, setRealMatches] = useState<Match[]>(() => loadMatches());
@@ -53,22 +56,27 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
     void migrateLocalDataToFirestore(uid)
       .catch((error) => {
         console.error('Local data migration failed', error);
+        pushError(firestoreErrorMessage(error));
       })
       .finally(() => {
         if (!active) return;
         setDataReady(true);
       });
 
-    const unsubscribe = subscribeMatches(uid, (nextMatches) => {
-      setRealMatches(nextMatches);
-      setDataReady(true);
-    });
+    const unsubscribe = subscribeMatches(
+      uid,
+      (nextMatches) => {
+        setRealMatches(nextMatches);
+        setDataReady(true);
+      },
+      (error) => pushError(firestoreErrorMessage(error)),
+    );
 
     return () => {
       active = false;
       unsubscribe();
     };
-  }, [isLive, uid]);
+  }, [isLive, pushError, uid]);
 
   const persistLocal = useCallback(
     (next: Match[]) => {
@@ -89,7 +97,9 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       };
 
       if (isLive && uid) {
-        void upsertMatch(uid, match);
+        void upsertMatch(uid, match).catch((error) => {
+          pushError(firestoreErrorMessage(error));
+        });
         return match;
       }
 
@@ -101,7 +111,7 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
 
       return match;
     },
-    [isLive, persistLocal, setMatches, uid],
+    [isLive, persistLocal, pushError, setMatches, uid],
   );
 
   const updateMatch = useCallback(
@@ -109,7 +119,9 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       if (isLive && uid) {
         const updated = updateMatchRecord(matches, matchId, patch);
         if (!updated) return undefined;
-        void upsertMatch(uid, updated);
+        void upsertMatch(uid, updated).catch((error) => {
+          pushError(firestoreErrorMessage(error));
+        });
         return updated;
       }
 
@@ -126,21 +138,23 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
 
       return updated;
     },
-    [isLive, matches, persistLocal, setMatches, uid],
+    [isLive, matches, persistLocal, pushError, setMatches, uid],
   );
 
   const replaceAllMatches = useCallback(
     (next: Match[]) => {
       if (isLive && uid) {
         for (const match of next) {
-          void upsertMatch(uid, match);
+          void upsertMatch(uid, match).catch((error) => {
+            pushError(firestoreErrorMessage(error));
+          });
         }
         return;
       }
       persistLocal(next);
       setMatches(next);
     },
-    [isLive, persistLocal, setMatches, uid],
+    [isLive, persistLocal, pushError, setMatches, uid],
   );
 
   const value = useMemo(

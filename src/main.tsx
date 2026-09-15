@@ -6,6 +6,7 @@ import '@/styles/theme-high-contrast.css';
 import '@/styles/shell/index.css';
 import { AppRouter } from '@/app/AppRouter';
 import { initTheme, watchSystemContrastPreferences } from '@/app/theme';
+import { AppToastProvider } from '@/ui/AppToastProvider';
 import { DemoModeProvider } from '@/demo/DemoModeContext';
 import { AuthProvider } from '@/features/auth/AuthProvider';
 import { MatchesProvider } from '@/features/matches/MatchesProvider';
@@ -18,16 +19,18 @@ watchSystemContrastPreferences();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <DemoModeProvider>
-        <ProfileProvider>
-          <MatchesProvider>
-            <TournamentsProvider>
-              <AppRouter />
-            </TournamentsProvider>
-          </MatchesProvider>
-        </ProfileProvider>
-      </DemoModeProvider>
-    </AuthProvider>
+    <AppToastProvider>
+      <AuthProvider>
+        <DemoModeProvider>
+          <ProfileProvider>
+            <MatchesProvider>
+              <TournamentsProvider>
+                <AppRouter />
+              </TournamentsProvider>
+            </MatchesProvider>
+          </ProfileProvider>
+        </DemoModeProvider>
+      </AuthProvider>
+    </AppToastProvider>
   </StrictMode>,
 );

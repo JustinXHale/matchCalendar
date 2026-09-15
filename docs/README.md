@@ -14,7 +14,11 @@
 
 Conflict precedence: PRD for product decisions; Data Model for exact schema; Design System for visual conventions.
 
-## Schedule (Agenda + Calendar)
+## Primary navigation
+
+Bottom nav: **Schedule** · **Money** · `+` · **Insights** · **About**. Profile is masthead-only (`/profile`).
+
+### Schedule (Agenda + Calendar)
 
 **Schedule** is a single bottom-nav destination with a **Cal | Agenda** header toggle:
 
@@ -22,6 +26,10 @@ Conflict precedence: PRD for product decisions; Data Model for exact schema; Des
 - **Cal** — month grid plus the selected day’s matches below it (browse by date).
 
 Legacy paths `/agenda` and `/calendar` redirect to `/schedule` (calendar view uses `?view=calendar`).
+
+### Demo mode
+
+**Try demo** on login or **View demo** in the masthead loads in-memory sample data (no Firestore writes). Intentionally available in production.
 
 ## 2026-09 notebook reconciliation
 

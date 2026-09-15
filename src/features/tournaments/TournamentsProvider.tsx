@@ -22,6 +22,8 @@ import {
   updateTournamentRecord,
 } from '@/features/tournaments/tournamentRepository';
 import { LOCAL_OWNER_UID } from '@/services/localStore';
+import { firestoreErrorMessage } from '@/services/firestoreErrors';
+import { useAppToast } from '@/ui/AppToastProvider';
 
 type TournamentsContextValue = {
   tournaments: Tournament[];
@@ -39,6 +41,7 @@ type TournamentsContextValue = {
 const TournamentsContext = createContext<TournamentsContextValue | null>(null);
 
 export function TournamentsProvider({ children }: { children: ReactNode }) {
+  const { pushError } = useAppToast();
   const { isDemoMode } = useDemoMode();
   const { isLive, uid } = useLiveData();
   const [realTournaments, setRealTournaments] = useState<Tournament[]>(() =>
@@ -57,13 +60,17 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const unsubscribe = subscribeTournaments(uid, (nextTournaments) => {
-      setRealTournaments(nextTournaments);
-      setDataReady(true);
-    });
+    const unsubscribe = subscribeTournaments(
+      uid,
+      (nextTournaments) => {
+        setRealTournaments(nextTournaments);
+        setDataReady(true);
+      },
+      (error) => pushError(firestoreErrorMessage(error)),
+    );
 
     return unsubscribe;
-  }, [isLive, uid]);
+  }, [isLive, pushError, uid]);
 
   const persistLocal = useCallback(
     (next: Tournament[]) => {
@@ -86,7 +93,9 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       };
 
       if (isLive && uid) {
-        void upsertTournament(uid, tournament);
+        void upsertTournament(uid, tournament).catch((error) => {
+          pushError(firestoreErrorMessage(error));
+        });
         return tournament;
       }
 
@@ -98,7 +107,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
 
       return tournament;
     },
-    [isLive, persistLocal, setTournaments, uid],
+    [isLive, persistLocal, pushError, setTournaments, uid],
   );
 
   const updateTournament = useCallback(
@@ -106,7 +115,9 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       if (isLive && uid) {
         const updated = updateTournamentRecord(tournaments, tournamentId, patch);
         if (!updated) return undefined;
-        void upsertTournament(uid, updated);
+        void upsertTournament(uid, updated).catch((error) => {
+          pushError(firestoreErrorMessage(error));
+        });
         return updated;
       }
 
@@ -123,7 +134,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
 
       return updated;
     },
-    [isLive, persistLocal, setTournaments, tournaments, uid],
+    [isLive, persistLocal, pushError, setTournaments, tournaments, uid],
   );
 
   const getTournamentById = useCallback(

@@ -63,7 +63,7 @@ export function UpdatePrompt() {
   if (!needRefresh) return null;
 
   return (
-    <div className="rs-update-toast" role="alert">
+    <div className="rs-update-toast rs-update-toast--floating" role="alert">
       <span className="rs-update-toast__text">A new version is available.</span>
       <button
         type="button"

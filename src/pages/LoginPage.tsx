@@ -14,6 +14,7 @@ import {
   signInWithGoogle,
 } from '@/services/auth';
 import { isFirebaseConfigured } from '@/services/firebase';
+import { PwaInstallCard } from '@/ui/PwaInstallCard';
 import { ThemeToggle } from '@/ui/ThemeToggle';
 
 export function LoginPage() {
@@ -109,6 +110,8 @@ export function LoginPage() {
           </p>
         )}
       </section>
+
+      <PwaInstallCard className="rs-signin__pwa" />
 
       <div className="rs-signin__build-row">
         <ThemeToggle />

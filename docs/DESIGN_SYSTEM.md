@@ -252,10 +252,12 @@ Quick Match should look intentionally lighter than Full Match.
 
 Persistent mobile bottom nav:
 
-- Agenda
-- Calendar
-- History
-- Profile
+- Schedule
+- Money
+- Insights
+- About
+
+Profile avatar in the masthead links to `/profile`. Demo toggle sits in the masthead beside the avatar.
 
 Use icon + label.
 

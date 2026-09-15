@@ -38,7 +38,15 @@ export function MobileShell() {
         </Masthead>
       }
     >
-      <PageSection className="rs-page-body" isFilled>
+      <a className="rs-skip-link" href="#main-content">
+        Skip to main content
+      </a>
+      <PageSection
+        id="main-content"
+        className="rs-page-body"
+        isFilled
+        component="main"
+      >
         {isDemoMode && (
           <div className="rs-demo-banner" role="status">
             <strong>Demo mode</strong>

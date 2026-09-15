@@ -29,6 +29,8 @@ import {
   saveProfile,
   type LocalProfile,
 } from '@/features/profile/localProfile';
+import { firestoreErrorMessage } from '@/services/firestoreErrors';
+import { useAppToast } from '@/ui/AppToastProvider';
 
 export type AppProfile = {
   displayName: string;
@@ -97,6 +99,7 @@ function settingsToAppProfile(
 }
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
+  const { pushError } = useAppToast();
   const { user } = useAuth();
   const { isLive, uid } = useLiveData();
   const [localProfile, setLocalProfile] = useState<LocalProfile>(() =>
@@ -109,8 +112,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isLive || !uid) return;
-    return subscribeCalendarSettings(uid, setCalendarSettings);
-  }, [isLive, uid]);
+    return subscribeCalendarSettings(
+      uid,
+      setCalendarSettings,
+      (error) => pushError(firestoreErrorMessage(error)),
+    );
+  }, [isLive, pushError, uid]);
 
   useEffect(() => {
     if (!isLive || !uid) {
@@ -147,7 +154,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           migratedFromLocalAt: calendarSettings.migratedFromLocalAt,
         };
         setCalendarSettings(nextSettings);
-        void saveCalendarSettings(uid, nextSettings);
+        void saveCalendarSettings(uid, nextSettings).catch((error) => {
+          pushError(firestoreErrorMessage(error));
+        });
         return;
       }
 
@@ -157,7 +166,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         return next;
       });
     },
-    [calendarSettings, isLive, uid],
+    [calendarSettings, isLive, pushError, uid],
   );
 
   const value = useMemo(

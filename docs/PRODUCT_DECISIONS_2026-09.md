@@ -4,6 +4,7 @@ This file records product decisions clarified from the handwritten Match Calenda
 
 ## Build / model decisions
 
+- Demo mode stays visible in the masthead (**View demo** / **Exit demo**) in all environments, including production. Login **Try demo** remains the no-auth entry; Profile does not duplicate demo controls.
 - Agenda/timeline content is generated from information already entered for the match, travel, lodging, and ground transportation. Do not require duplicate itinerary entry.
 - A plain local match does not need a timeline. Timeline expansion is conditional on meaningful surrounding itinerary content.
 - Match type uses rugby-first presets: XVs, 10s, 7s, Tournament, Other. Other exposes custom text.

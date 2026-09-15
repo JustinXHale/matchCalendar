@@ -75,10 +75,12 @@ A tournament route may exist in the shell before the full Tournament feature shi
 
 ### Bottom navigation
 
-1. Agenda
-2. Calendar
-3. History
-4. Profile
+1. Schedule (Agenda + Calendar toggle on one screen; `/agenda` and `/calendar` redirect here)
+2. Money (unpaid/settlement focus; `/history` may redirect here)
+3. Insights
+4. About
+
+Profile is reached from the masthead avatar (`/profile`), not the bottom nav.
 
 Use a persistent mobile bottom nav. A primary `+` Add action is available from the main authenticated experience.
 
@@ -424,7 +426,7 @@ No email/password flow in MVP unless explicitly added later.
 
 Calendar does **not** create or patch MatchReadyTX `users/{uid}` profile fields. Identity (name, email, photo) comes from Firebase Auth. Calendar-only preferences are stored at `users/{uid}/matchCalendar/settings`.
 
-Unauthenticated users see `/login` when Firebase is configured. **Try demo** enters the app without auth (no Firestore writes). Without Firebase env vars, the app keeps local-only `localStorage` behavior for development.
+Unauthenticated users see `/login` when Firebase is configured. **Try demo** on the login screen enters the app without auth (no Firestore writes). Signed-in or demo users can also use **View demo** / **Exit demo** in the masthead at any time. Demo mode shows a status banner and in-memory sample matches/tournaments; it does not write to Firestore. Demo controls are intentionally available in production (not hidden by environment). Profile does not host demo toggles or “load sample data” actions — masthead and login only. Without Firebase env vars, the app keeps local-only `localStorage` behavior for development.
 
 ---
 
@@ -459,6 +461,10 @@ Avoid building a custom sync engine unless Firebase behavior proves insufficient
 
 Do not promise that external imports work while offline.
 
+### User-visible errors
+
+Firestore subscription and background write failures should map to readable messages (`firestoreErrors`) and surface through a global toast stack (`AppToastProvider`) above the bottom nav. Inline form saves keep field data on screen and may show field-level or local error text; do not navigate away on failure.
+
 ---
 
 ## 18. Time and date handling
@@ -489,13 +495,14 @@ Do not add paid geocoding or Directions APIs unless needed later.
 
 Requirements:
 
-- installable manifest
+- installable manifest (`id`, `scope`, maskable icons, light `theme_color`)
 - app icons
 - service worker via `vite-plugin-pwa`
 - cached shell
 - responsive mobile-first layout
 - standalone display mode
 - graceful browser use when not installed
+- optional install prompt card on Login and About when `beforeinstallprompt` is available (iOS: manual Add to Home Screen copy)
 
 PWA push notifications are out of MVP.
 

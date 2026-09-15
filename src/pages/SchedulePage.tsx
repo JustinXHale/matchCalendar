@@ -31,14 +31,22 @@ export function SchedulePage() {
     >
       <PageHeader
         title="Schedule"
-        actions={<ScheduleViewToggle view={view} onChange={setView} />}
+        actions={
+          <ScheduleViewToggle
+            view={view}
+            onChange={setView}
+            panelId="schedule-panel"
+          />
+        }
       />
 
-      {view === 'calendar' ? (
-        <CalendarScheduleView />
-      ) : (
-        <AgendaScheduleView />
-      )}
+      <div id="schedule-panel" role="tabpanel" tabIndex={-1}>
+        {view === 'calendar' ? (
+          <CalendarScheduleView />
+        ) : (
+          <AgendaScheduleView />
+        )}
+      </div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ Match Calendar uses the **shared MatchReadyTX Firebase project** (second web app
 | Data storage | Firestore `users/{uid}/matches` + `tournaments` when signed in; `localStorage` fallback when Firebase is not configured |
 | Calendar prefs | `users/{uid}/matchCalendar/settings` — not root `users/{uid}` |
 | User identity | Firebase Auth; no MatchReady onboarding in Calendar |
-| Demo mode | Try demo on login — preview without auth or Firestore writes |
+| Demo mode | **Try demo** on `/login` or **View demo** in the masthead — preview without auth or Firestore writes; available in production (not env-gated) |
 | Deferred | MatchReadyTX import (Phase 10) |
 | Tournament rules | Parent defaults apply at child **create** time only; per-game pay override on child; parent edits do not cascade to existing children |
 | Tournament pay | `payScope`: `tournament` (default, lump fee on parent) or `per_match` (pay tracked per child) |
@@ -277,18 +277,21 @@ Requires an authenticated MatchReadyTX API endpoint/contract.
 
 ## Phase 11 — Polish / release
 
+**Status:** Largely complete on the Calendar repo (Sep 2026). Remaining ops: commit MatchReadyTX `firestore.rules` so CI does not overwrite Calendar paths; manual offline/PWA smoke on prod.
+
 ### Build
 
 - Firebase Hosting site `matchcalendar` → `matchcalendar.web.app`
 - `.firebaserc` + `npm run deploy:hosting` (local) or `.github/workflows/deploy.yml` (CI on `main`)
+- `.github/workflows/ci.yml` — typecheck, lint, test on push/PR; deploy workflow runs the same before build
 - GitHub Actions secrets for `VITE_FIREBASE_*` + `FIREBASE_TOKEN` (same pattern as MatchReadyTX)
 - Auth authorized domain: `matchcalendar.web.app`
 - loading states (`AppDataGate` while Firestore hydrates)
-- error states
-- install experience (PWA)
-- accessibility pass
+- user-visible error toasts for Firestore/provider failures (`AppToastProvider`)
+- install experience (PWA manifest + **Add to Home Screen** prompts on Login and About)
+- accessibility pass (skip link, main landmark, schedule view toggle semantics)
 - responsive pass
-- Firestore rules deployed from MatchReadyTX repo (not Calendar)
+- Firestore rules deployed from MatchReadyTX repo (not Calendar) — **must be committed in MatchReadyTX**
 - basic smoke tests
 
 ### Done when
@@ -299,6 +302,7 @@ Requires an authenticated MatchReadyTX API endpoint/contract.
 - app is installable
 - primary workflows work on mobile browser and installed PWA
 - Firestore rules are deployed and tested
+- demo preview remains available from login and masthead without hiding behind env flags
 
 ---
 
