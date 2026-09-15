@@ -51,3 +51,10 @@ export function updateMatchRecord(
 export function replaceMatches(matches: Match[]): void {
   persistMatches(matches);
 }
+
+export function removeMatchRecord(
+  matches: Match[],
+  matchId: string,
+): Match[] {
+  return matches.filter((match) => match.id !== matchId);
+}

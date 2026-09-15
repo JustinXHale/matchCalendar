@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { isManualMatch } from '@/domain/recordDelete';
 import { routes } from '@/app/routes';
 import { backState } from '@/nav/backNav';
 import { SCHEDULE_BACK, tournamentBack } from '@/nav/backDefaults';
@@ -17,13 +19,20 @@ import {
 import { MatchCard } from '@/ui/MatchCard';
 import { MatchTimeline } from '@/ui/MatchTimeline';
 import { PageHeader } from '@/ui/PageHeader';
+import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
+import { useMatchesContext } from '@/features/matches/MatchesProvider';
+import { useAppToast } from '@/ui/AppToastProvider';
 
 export function TournamentDetailPage() {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
   const { profile } = useProfile();
-  const { getTournamentById } = useTournamentsContext();
+  const { pushInfo } = useAppToast();
+  const { getTournamentById, deleteTournament } = useTournamentsContext();
+  const { deleteMatch } = useMatchesContext();
   const { matches } = useMatches();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const tournament = tournamentId ? getTournamentById(tournamentId) : undefined;
 
   if (!tournament) {
@@ -49,6 +58,26 @@ export function TournamentDetailPage() {
   const timelineItems = hasMeaningfulTimeline(timelineMatch)
     ? buildMatchTimeline(timelineMatch, profile)
     : [];
+  const deletableChildCount = childMatches.filter(isManualMatch).length;
+  const skippedMrChildren = childMatches.length - deletableChildCount;
+
+  const confirmDelete = async () => {
+    setDeleteBusy(true);
+    try {
+      for (const match of childMatches) {
+        if (!isManualMatch(match)) continue;
+        const ok = await deleteMatch(match.id);
+        if (!ok) return;
+      }
+      const ok = await deleteTournament(tournament.id);
+      if (!ok) return;
+      pushInfo('Tournament deleted.');
+      navigate(routes.schedule, { replace: true });
+    } finally {
+      setDeleteBusy(false);
+      setDeleteOpen(false);
+    }
+  };
 
   return (
     <div className="rs-stack">
@@ -68,7 +97,34 @@ export function TournamentDetailPage() {
         >
           Edit
         </Button>
+        <Button variant="danger" onClick={() => setDeleteOpen(true)}>
+          Delete
+        </Button>
       </div>
+
+      <DangerConfirmModal
+        title="Delete tournament?"
+        description={
+          deletableChildCount > 0
+            ? `This permanently removes the tournament and ${deletableChildCount} manual match${
+                deletableChildCount === 1 ? '' : 'es'
+              } in it.${
+                skippedMrChildren > 0
+                  ? ` ${skippedMrChildren} MatchReady import${
+                      skippedMrChildren === 1 ? '' : 's'
+                    } will stay on your schedule.`
+                  : ''
+              }`
+            : 'This permanently removes the tournament from your calendar.'
+        }
+        confirmLabel="Delete tournament"
+        isOpen={deleteOpen}
+        isBusy={deleteBusy}
+        onClose={() => {
+          if (!deleteBusy) setDeleteOpen(false);
+        }}
+        onConfirm={() => void confirmDelete()}
+      />
 
       <article className="rs-detail-card">
         <p className="rs-detail-card__primary">

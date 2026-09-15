@@ -1,6 +1,8 @@
 import { formatExpenseCategory } from '@/domain/expenseCategories';
+import { useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { isManualMatch } from '@/domain/recordDelete';
 import { resolveMatchTypeLabel } from '@/domain/matchConstants';
 import { formatPaymentMethodLabel } from '@/domain/paymentMethod';
 import { routes } from '@/app/routes';
@@ -31,15 +33,20 @@ import { applyTimelineTimeEdit } from '@/features/timeline/timelineEdits';
 import { MatchMoneyClosure } from '@/ui/MatchMoneyClosure';
 import { PageHeader } from '@/ui/PageHeader';
 import { MatchTimeline } from '@/ui/MatchTimeline';
+import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { getFlightSegments, hasFlightSegmentData } from '@/features/matches/flightUtils';
 import { openDirections } from '@/utils/maps';
+import { useAppToast } from '@/ui/AppToastProvider';
 
 export function MatchDetailPage() {
   const { matchId } = useParams();
   const navigate = useNavigate();
   const { profile } = useProfile();
+  const { pushInfo } = useAppToast();
   const { matches } = useMatches();
-  const { updateMatch } = useMatchesContext();
+  const { updateMatch, deleteMatch } = useMatchesContext();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const match = matchId ? getMatchById(matches, matchId) : undefined;
   if (!match) {
     return (
@@ -60,6 +67,20 @@ export function MatchDetailPage() {
     !match.tournamentId && hasMeaningfulTimeline(match)
       ? buildMatchTimeline(match, profile)
       : [];
+  const canDelete = isManualMatch(match);
+
+  const confirmDelete = async () => {
+    setDeleteBusy(true);
+    try {
+      const ok = await deleteMatch(match.id);
+      if (!ok) return;
+      pushInfo('Match deleted.');
+      navigate(routes.schedule, { replace: true });
+    } finally {
+      setDeleteBusy(false);
+      setDeleteOpen(false);
+    }
+  };
 
   return (
     <div className="rs-stack">
@@ -79,7 +100,24 @@ export function MatchDetailPage() {
         >
           Edit
         </Button>
+        {canDelete ? (
+          <Button variant="danger" onClick={() => setDeleteOpen(true)}>
+            Delete
+          </Button>
+        ) : null}
       </div>
+
+      <DangerConfirmModal
+        title="Delete match?"
+        description="This permanently removes the match from your calendar, including pay, travel, and expense records you entered here."
+        confirmLabel="Delete match"
+        isOpen={deleteOpen}
+        isBusy={deleteBusy}
+        onClose={() => {
+          if (!deleteBusy) setDeleteOpen(false);
+        }}
+        onConfirm={() => void confirmDelete()}
+      />
 
       <article className="rs-detail-card">
         <p className="rs-detail-card__primary">
@@ -305,6 +343,10 @@ export function MatchDetailPage() {
           <h2 className="rs-section-label">Source</h2>
           <div className="rs-detail-card">
             <p>Imported from MatchReadyTX</p>
+            <p className="rs-detail-meta">
+              To remove this from your calendar, release or update the assignment
+              in MatchReadyTX, then sync from Profile.
+            </p>
           </div>
         </section>
       )}

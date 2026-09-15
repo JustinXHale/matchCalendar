@@ -31,3 +31,10 @@ export function updateTournamentRecord(
     updatedAt: new Date(),
   };
 }
+
+export function removeTournamentRecord(
+  tournaments: Tournament[],
+  tournamentId: string,
+): Tournament[] {
+  return tournaments.filter((tournament) => tournament.id !== tournamentId);
+}

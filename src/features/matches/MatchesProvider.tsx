@@ -13,12 +13,18 @@ import {
 } from 'react';
 
 import type { Match } from '@/domain/match';
-import { upsertMatch, subscribeMatches } from '@/features/matches/matchFirestoreRepository';
+import {
+  deleteMatch as deleteMatchDoc,
+  subscribeMatches,
+  upsertMatch,
+} from '@/features/matches/matchFirestoreRepository';
+import { isManualMatch } from '@/domain/recordDelete';
 import { runMatchReadySync } from '@/features/matches/matchReadySync';
 import { getCalendarSettings } from '@/features/profile/calendarSettingsRepository';
 import {
   loadMatches,
   persistMatches,
+  removeMatchRecord,
   updateMatchRecord,
 } from '@/features/matches/matchRepository';
 import { migrateLocalDataToFirestore } from '@/services/localDataMigration';
@@ -31,6 +37,7 @@ type MatchesContextValue = {
     data: Omit<Match, 'id' | 'createdAt' | 'updatedAt'>,
   ) => Match;
   updateMatch: (matchId: string, patch: Partial<Match>) => Match | undefined;
+  deleteMatch: (matchId: string) => Promise<boolean>;
   replaceAllMatches: (matches: Match[]) => void;
   dataReady: boolean;
   matchReadySyncing: boolean;
@@ -214,6 +221,32 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
     [isLive, matches, persistLocal, pushError, setMatches, uid],
   );
 
+  const deleteMatch = useCallback(
+    async (matchId: string): Promise<boolean> => {
+      const target = matches.find((match) => match.id === matchId);
+      if (!target || !isManualMatch(target)) return false;
+
+      if (isLive && uid) {
+        try {
+          await deleteMatchDoc(uid, matchId);
+          return true;
+        } catch (error) {
+          console.error('Delete match failed', error);
+          pushError(firestoreErrorMessage(error));
+          return false;
+        }
+      }
+
+      setMatches((current) => {
+        const next = removeMatchRecord(current, matchId);
+        persistLocal(next);
+        return next;
+      });
+      return true;
+    },
+    [isLive, matches, persistLocal, pushError, setMatches, uid],
+  );
+
   const replaceAllMatches = useCallback(
     (next: Match[]) => {
       if (isLive && uid) {
@@ -235,6 +268,7 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       matches,
       createMatch,
       updateMatch,
+      deleteMatch,
       replaceAllMatches,
       dataReady,
       matchReadySyncing,
@@ -245,6 +279,7 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       matches,
       createMatch,
       updateMatch,
+      deleteMatch,
       replaceAllMatches,
       dataReady,
       matchReadySyncing,

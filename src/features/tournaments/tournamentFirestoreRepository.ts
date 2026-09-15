@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   setDoc,
@@ -34,6 +35,14 @@ export function subscribeTournaments(
     },
     (error) => onError?.(error),
   );
+}
+
+export async function deleteTournament(
+  uid: string,
+  tournamentId: string,
+): Promise<void> {
+  const ref = doc(requireDb(), 'users', uid, 'tournaments', tournamentId);
+  await deleteDoc(ref);
 }
 
 export async function upsertTournament(

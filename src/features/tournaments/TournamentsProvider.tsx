@@ -13,12 +13,14 @@ import { useDemoMode } from '@/demo/DemoModeContext';
 import { useLiveData } from '@/features/auth/useLiveData';
 import type { Tournament } from '@/domain/tournament';
 import {
-  upsertTournament,
+  deleteTournament as deleteTournamentDoc,
   subscribeTournaments,
+  upsertTournament,
 } from '@/features/tournaments/tournamentFirestoreRepository';
 import {
   loadTournaments,
   persistTournaments,
+  removeTournamentRecord,
   updateTournamentRecord,
 } from '@/features/tournaments/tournamentRepository';
 import { LOCAL_OWNER_UID } from '@/services/localStore';
@@ -35,6 +37,7 @@ type TournamentsContextValue = {
     patch: Partial<Tournament>,
   ) => Tournament | undefined;
   getTournamentById: (tournamentId: string) => Tournament | undefined;
+  deleteTournament: (tournamentId: string) => Promise<boolean>;
   dataReady: boolean;
 };
 
@@ -143,12 +146,40 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
     [tournaments],
   );
 
+  const deleteTournament = useCallback(
+    async (tournamentId: string): Promise<boolean> => {
+      if (!tournaments.some((tournament) => tournament.id === tournamentId)) {
+        return false;
+      }
+
+      if (isLive && uid) {
+        try {
+          await deleteTournamentDoc(uid, tournamentId);
+          return true;
+        } catch (error) {
+          console.error('Delete tournament failed', error);
+          pushError(firestoreErrorMessage(error));
+          return false;
+        }
+      }
+
+      setTournaments((current) => {
+        const next = removeTournamentRecord(current, tournamentId);
+        persistLocal(next);
+        return next;
+      });
+      return true;
+    },
+    [isLive, persistLocal, pushError, setTournaments, tournaments, uid],
+  );
+
   const value = useMemo(
     () => ({
       tournaments,
       createTournament,
       updateTournament,
       getTournamentById,
+      deleteTournament,
       dataReady,
     }),
     [
@@ -156,6 +187,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       createTournament,
       updateTournament,
       getTournamentById,
+      deleteTournament,
       dataReady,
     ],
   );
