@@ -10,6 +10,7 @@ import {
 } from '@/features/auth/SocialSignInButtons';
 import {
   authErrorMessage,
+  prefersAuthRedirect,
   signInWithApple,
   signInWithGoogle,
 } from '@/services/auth';
@@ -51,7 +52,7 @@ export function LoginPage() {
     try {
       disableDemoMode();
       const signedInUser = await signInWithGoogle();
-      if (!signedInUser) setBusyProvider(null);
+      if (!signedInUser && !prefersAuthRedirect()) setBusyProvider(null);
     } catch (err) {
       setAuthNote(authErrorMessage('Google', err));
       setBusyProvider(null);
@@ -70,7 +71,7 @@ export function LoginPage() {
     try {
       disableDemoMode();
       const signedInUser = await signInWithApple();
-      if (!signedInUser) setBusyProvider(null);
+      if (!signedInUser && !prefersAuthRedirect()) setBusyProvider(null);
     } catch (err) {
       setAuthNote(authErrorMessage('Apple', err));
       setBusyProvider(null);

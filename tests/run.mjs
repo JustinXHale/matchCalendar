@@ -7,7 +7,11 @@ import { pathToFileURL } from 'node:url';
 const directory = await mkdtemp(join(tmpdir(), 'match-calendar-tests-'));
 try {
   await build({
-    entryPoints: ['tests/finance.test.ts', 'tests/matchReadyMerge.test.ts'],
+    entryPoints: [
+      'tests/auth.test.ts',
+      'tests/finance.test.ts',
+      'tests/matchReadyMerge.test.ts',
+    ],
     bundle: true,
     platform: 'node',
     format: 'esm',
@@ -15,6 +19,7 @@ try {
     outdir: directory,
     outExtension: { '.js': '.mjs' },
   });
+  await import(pathToFileURL(join(directory, 'auth.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'finance.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'matchReadyMerge.test.mjs')).href);
 } finally {

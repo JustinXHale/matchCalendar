@@ -1,3 +1,9 @@
+.rs-page-pad {
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: var(--rs-page-pad);
+}
+
 .rs-profile-avatar,
 .rs-profile-avatar--sm {
   display: block;

@@ -30,12 +30,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isFirebaseConfigured) return;
 
-    void completeRedirectSignIn();
+    let unsubscribe: (() => void) | undefined;
 
-    return subscribeAuth((nextUser) => {
-      setUser(nextUser);
-      setAuthReady(true);
-    });
+    void (async () => {
+      try {
+        await completeRedirectSignIn();
+      } catch (err) {
+        console.warn('Redirect sign-in failed', err);
+      }
+
+      unsubscribe = subscribeAuth((nextUser) => {
+        setUser(nextUser);
+        setAuthReady(true);
+      });
+    })();
+
+    return () => unsubscribe?.();
   }, []);
 
   const signOut = useCallback(async () => {
