@@ -4,6 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { resolveMatchTypeLabel } from '@/domain/matchConstants';
 import { formatPaymentMethodLabel } from '@/domain/paymentMethod';
 import { routes } from '@/app/routes';
+import { backState } from '@/nav/backNav';
+import { SCHEDULE_BACK } from '@/nav/backDefaults';
+import { DetailBackButton } from '@/ui/DetailBackButton';
 import {
   formatCurrency,
   formatMatchDate,
@@ -41,6 +44,7 @@ export function MatchDetailPage() {
   if (!match) {
     return (
       <div className="rs-stack">
+        <DetailBackButton fallback={SCHEDULE_BACK} />
         <PageHeader title="Match Detail" />
         <div className="rs-placeholder-card">
           <p>Match not found.</p>
@@ -59,6 +63,7 @@ export function MatchDetailPage() {
 
   return (
     <div className="rs-stack">
+      <DetailBackButton fallback={SCHEDULE_BACK} />
       <PageHeader title={title} />
       <div className="rs-detail-actions">
         <Button variant="secondary" onClick={() => openDirections(match.location)}>
@@ -66,7 +71,11 @@ export function MatchDetailPage() {
         </Button>
         <Button
           variant="secondary"
-          onClick={() => navigate(routes.matchEdit(match.id))}
+          onClick={() =>
+            navigate(routes.matchEdit(match.id), {
+              state: backState({ to: routes.matchDetail(match.id), label: 'Match' }),
+            })
+          }
         >
           Edit
         </Button>
@@ -303,7 +312,15 @@ export function MatchDetailPage() {
       {match.tournamentId && (
         <p className="rs-detail-meta">
           Part of a{' '}
-          <Link to={routes.tournamentDetail(match.tournamentId)}>tournament</Link>
+          <Link
+            to={routes.tournamentDetail(match.tournamentId)}
+            state={backState({
+              to: routes.matchDetail(match.id),
+              label: 'Match',
+            })}
+          >
+            tournament
+          </Link>
         </p>
       )}
 

@@ -4,6 +4,9 @@ import { Button, FormGroup, TextInput } from '@patternfly/react-core';
 import type { MatchTypePreset } from '@/domain/match';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { routes } from '@/app/routes';
+import { useAppBack } from '@/nav/backNav';
+import { SCHEDULE_BACK, tournamentBack } from '@/nav/backDefaults';
+import { DetailBackButton } from '@/ui/DetailBackButton';
 import type {
   CustomField,
   CustomItineraryItem,
@@ -374,14 +377,6 @@ export function FullMatchPage() {
     return match;
   };
 
-  const cancelTarget = editingTournament
-    ? routes.tournamentDetail(editingTournament.id)
-    : existing
-      ? routes.matchDetail(existing.id)
-      : isTournamentChild && childTournamentId
-        ? routes.tournamentDetail(childTournamentId)
-        : routes.schedule;
-
   const inheritedExpectedPay =
     parent && !isTournamentLumpPay(parent)
       ? parent.matchDefaults?.expectedPay
@@ -464,9 +459,21 @@ export function FullMatchPage() {
     </>
   );
 
+  const backFallback = useMemo(() => {
+    if (editingTournament) return tournamentBack(editingTournament.id);
+    if (existing) {
+      return { to: routes.matchDetail(existing.id), label: 'Match' };
+    }
+    if (childTournamentId) return tournamentBack(childTournamentId);
+    return SCHEDULE_BACK;
+  }, [childTournamentId, editingTournament, existing]);
+
+  const { goBack } = useAppBack(backFallback);
+
   if (isTournamentEdit && !editingTournament) {
     return (
       <div className="rs-stack">
+        <DetailBackButton fallback={SCHEDULE_BACK} />
         <PageHeader title="Edit Tournament" />
         <div className="rs-placeholder-card">
           <p>Tournament not found.</p>
@@ -477,6 +484,7 @@ export function FullMatchPage() {
 
   return (
     <div className="rs-stack">
+      <DetailBackButton fallback={backFallback} />
       <PageHeader
         title={
           isTournamentEdit
@@ -595,7 +603,7 @@ export function FullMatchPage() {
               ? 'Save Tournament'
               : 'Save Match'}
         </Button>
-        <Button variant="secondary" isBlock onClick={() => navigate(cancelTarget)}>
+        <Button variant="secondary" isBlock onClick={goBack}>
           Cancel
         </Button>
       </div>

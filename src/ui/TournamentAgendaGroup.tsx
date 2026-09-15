@@ -10,6 +10,8 @@ import type { Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
 import { formatIsoDateCard } from '@/domain/matchDisplay';
 import { routes } from '@/app/routes';
+import { backState, type BackNav } from '@/nav/backNav';
+import { tournamentBack } from '@/nav/backDefaults';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import { tournamentTimelineMatch } from '@/features/tournaments/tournamentEvent';
 import {
@@ -27,6 +29,7 @@ type Props = {
   matches: Match[];
   defaultExpanded?: boolean;
   allowTimelineExpand?: boolean;
+  back?: BackNav;
 };
 
 export function TournamentAgendaGroup({
@@ -34,7 +37,9 @@ export function TournamentAgendaGroup({
   matches,
   defaultExpanded = false,
   allowTimelineExpand = false,
+  back,
 }: Props) {
+  const matchBackTarget = back ?? tournamentBack(tournament.id);
   const { profile } = useProfile();
   const [matchesExpanded, setMatchesExpanded] = useState(defaultExpanded);
   const [timelineOpen, setTimelineOpen] = useState(false);
@@ -72,6 +77,7 @@ export function TournamentAgendaGroup({
           <Link
             to={routes.tournamentDetail(tournament.id)}
             className="rs-assignment__main"
+            state={back ? backState(back) : undefined}
           >
             <div className="rs-assignment__date" aria-hidden>
               <span className="rs-assignment__month">{month}</span>
@@ -175,7 +181,12 @@ export function TournamentAgendaGroup({
       {matchesExpanded ? (
         <ul className="rs-list rs-tournament-agenda-group__matches">
           {matches.map((match) => (
-            <MatchCard key={match.id} match={match} embedded />
+            <MatchCard
+              key={match.id}
+              match={match}
+              embedded
+              back={matchBackTarget}
+            />
           ))}
         </ul>
       ) : null}

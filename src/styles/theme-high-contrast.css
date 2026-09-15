@@ -39,3 +39,14 @@
     var(--pf-t--global--border--width--regular)
   );
 }
+
+.pf-v6-theme-high-contrast .rs-detail__back {
+  border-bottom-width: var(--pf-t--global--border--width--regular);
+  border-bottom-style: solid;
+  border-bottom-color: var(--pf-t--global--border--color--default);
+}
+
+.pf-v6-theme-high-contrast .rs-detail__back:hover,
+.pf-v6-theme-high-contrast .rs-detail__back:focus-visible {
+  border-bottom-color: var(--pf-t--global--border--color--default);
+}

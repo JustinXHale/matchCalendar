@@ -1,6 +1,9 @@
 import { Button } from '@patternfly/react-core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { routes } from '@/app/routes';
+import { backState } from '@/nav/backNav';
+import { SCHEDULE_BACK, tournamentBack } from '@/nav/backDefaults';
+import { DetailBackButton } from '@/ui/DetailBackButton';
 import { formatCurrency } from '@/domain/matchDisplay';
 import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
@@ -26,6 +29,7 @@ export function TournamentDetailPage() {
   if (!tournament) {
     return (
       <div className="rs-stack">
+        <DetailBackButton fallback={SCHEDULE_BACK} />
         <PageHeader title="Tournament" />
         <div className="rs-placeholder-card">
           <p>Tournament not found.</p>
@@ -33,6 +37,8 @@ export function TournamentDetailPage() {
       </div>
     );
   }
+
+  const selfBack = tournamentBack(tournament.id);
 
   const childMatches = matches
     .filter((match) => match.tournamentId === tournament.id)
@@ -46,6 +52,7 @@ export function TournamentDetailPage() {
 
   return (
     <div className="rs-stack">
+      <DetailBackButton fallback={SCHEDULE_BACK} />
       <PageHeader title={tournament.title} />
       <p className="rs-tournament-detail-label">
         <span className="rs-pill">Tournament</span>
@@ -53,7 +60,11 @@ export function TournamentDetailPage() {
       <div className="rs-detail-actions">
         <Button
           variant="secondary"
-          onClick={() => navigate(routes.tournamentEdit(tournament.id))}
+          onClick={() =>
+            navigate(routes.tournamentEdit(tournament.id), {
+              state: backState(selfBack),
+            })
+          }
         >
           Edit
         </Button>
@@ -149,7 +160,7 @@ export function TournamentDetailPage() {
         ) : (
           <ul className="rs-list">
             {childMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.id} match={match} back={selfBack} />
             ))}
           </ul>
         )}
@@ -159,7 +170,10 @@ export function TournamentDetailPage() {
             isBlock
             onClick={() =>
               navigate(routes.fullMatch, {
-                state: { tournamentId: tournament.id },
+                state: {
+                  tournamentId: tournament.id,
+                  ...backState(selfBack),
+                },
               })
             }
           >
@@ -167,7 +181,9 @@ export function TournamentDetailPage() {
           </Button>
         </div>
         <p className="rs-detail-meta">
-          <Link to={routes.tournaments}>All tournaments</Link>
+          <Link to={routes.tournaments} state={backState(selfBack)}>
+            All tournaments
+          </Link>
         </p>
       </section>
     </div>

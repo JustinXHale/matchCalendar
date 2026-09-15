@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { closeQuickMatch } from '@/app/navigation';
 import { routes } from '@/app/routes';
+import { backFromLocation } from '@/nav/backDefaults';
+import { backState } from '@/nav/backNav';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import {
   buildMatchFromForm,
@@ -20,6 +22,7 @@ import { PresetSelectFields } from '@/ui/forms/PresetSelectFields';
 
 export function QuickMatchModal() {
   const navigate = useNavigate();
+  const location = useLocation();
   const panelRef = useRef<HTMLDivElement>(null);
   const { createMatch } = useMatchesContext();
   const { profile } = useProfile();
@@ -56,7 +59,10 @@ export function QuickMatchModal() {
   const goToFull = () => {
     navigate(routes.fullMatch, {
       replace: true,
-      state: { draft: values },
+      state: {
+        draft: values,
+        ...backState(backFromLocation(location)),
+      },
     });
   };
 

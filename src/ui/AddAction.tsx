@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { openQuickMatch } from '@/app/navigation';
 import { routes } from '@/app/routes';
+import { backFromLocation } from '@/nav/backDefaults';
+import { backState } from '@/nav/backNav';
 
 export function AddAction() {
   const navigate = useNavigate();
@@ -62,6 +64,7 @@ export function AddAction() {
           <Link
             to={routes.fullMatch}
             role="menuitem"
+            state={backState(backFromLocation(location))}
             onClick={() => setOpen(false)}
           >
             Full details

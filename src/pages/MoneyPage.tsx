@@ -1,5 +1,6 @@
 import { isPayLineOpen } from '@/features/matches/matchClosure';
 import { routes } from '@/app/routes';
+import { MONEY_BACK } from '@/nav/backDefaults';
 import { MatchCard } from '@/ui/MatchCard';
 import { MatchMoneyClosure } from '@/ui/MatchMoneyClosure';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
@@ -62,7 +63,12 @@ export function MoneyPage() {
       ) : <ul className="rs-list">{filtered.map((match) => (
         tournaments.some((item) => item.id === match.id) ? (
           <li key={match.id} className="rs-money-match-row">
-            <MatchCard match={match} embedded detailTo={routes.tournamentDetail(match.id)} />
+            <MatchCard
+              match={match}
+              embedded
+              detailTo={routes.tournamentDetail(match.id)}
+              back={MONEY_BACK}
+            />
             <MatchMoneyClosure match={match} onSavePatch={(patch) => {
               const tournament = tournaments.find((item) => item.id === match.id)!;
               const { expenses, flight, lodging, groundTravel, ...settlement } = patch;
@@ -75,7 +81,7 @@ export function MoneyPage() {
               });
             }} />
           </li>
-        ) : <MoneyMatchRow key={match.id} match={match} />
+        ) : <MoneyMatchRow key={match.id} match={match} back={MONEY_BACK} />
       ))}</ul>}
     </div>
   );

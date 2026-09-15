@@ -1,4 +1,5 @@
 import './insights.test';
+import './backNav.test';
 import assert from 'node:assert/strict';
 import { getMatchFinanceTotals, getSettlementPaidTotal } from '../src/features/matches/paySummary';
 import { needsSettlementAttention, updateExpenseAmount } from '../src/features/matches/matchClosure';

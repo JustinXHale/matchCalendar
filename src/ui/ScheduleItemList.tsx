@@ -1,5 +1,7 @@
 import type { Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
+import type { BackNav } from '@/nav/backNav';
+import { SCHEDULE_BACK } from '@/nav/backDefaults';
 import {
   buildScheduleListItems,
   type ScheduleListItem,
@@ -12,6 +14,7 @@ type Props = {
   getTournamentById: (tournamentId: string) => Tournament | undefined;
   allowTimelineExpand?: boolean;
   tournamentDefaultExpanded?: boolean;
+  back?: BackNav;
 };
 
 function renderItem(
@@ -19,6 +22,7 @@ function renderItem(
   getTournamentById: (tournamentId: string) => Tournament | undefined,
   allowTimelineExpand: boolean,
   tournamentDefaultExpanded: boolean,
+  back: BackNav,
 ) {
   if (item.type === 'match') {
     return (
@@ -26,6 +30,7 @@ function renderItem(
         key={item.match.id}
         match={item.match}
         allowTimelineExpand={allowTimelineExpand}
+        back={back}
       />
     );
   }
@@ -38,6 +43,7 @@ function renderItem(
         key={match.id}
         match={match}
         allowTimelineExpand={allowTimelineExpand}
+        back={back}
       />
     ));
   }
@@ -49,6 +55,7 @@ function renderItem(
       matches={item.matches}
       defaultExpanded={tournamentDefaultExpanded}
       allowTimelineExpand={allowTimelineExpand}
+      back={back}
     />
   );
 }
@@ -58,6 +65,7 @@ export function ScheduleItemList({
   getTournamentById,
   allowTimelineExpand = false,
   tournamentDefaultExpanded = false,
+  back = SCHEDULE_BACK,
 }: Props) {
   const items = buildScheduleListItems(matches);
 
@@ -69,6 +77,7 @@ export function ScheduleItemList({
           getTournamentById,
           allowTimelineExpand,
           tournamentDefaultExpanded,
+          back,
         ),
       )}
     </ul>

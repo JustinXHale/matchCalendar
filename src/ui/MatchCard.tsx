@@ -14,6 +14,7 @@ import {
 } from '@/domain/matchDisplay';
 import type { Match } from '@/domain/match';
 import { routes } from '@/app/routes';
+import { backState, type BackNav } from '@/nav/backNav';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import {
   buildMatchTimeline,
@@ -30,6 +31,7 @@ type Props = {
   allowTimelineExpand?: boolean;
   embedded?: boolean;
   detailTo?: string;
+  back?: BackNav;
 };
 
 function TeamLine({
@@ -53,6 +55,7 @@ export function MatchCard({
   allowTimelineExpand = false,
   embedded = false,
   detailTo,
+  back,
 }: Props) {
   const { profile } = useProfile();
   const [timelineOpen, setTimelineOpen] = useState(false);
@@ -95,7 +98,11 @@ export function MatchCard({
     <Wrapper className="rs-assignment-wrap">
       <div className={rowClass}>
         <div className="rs-assignment__row">
-          <Link className="rs-assignment__main" to={detailTo ?? routes.matchDetail(match.id)}>
+          <Link
+            className="rs-assignment__main"
+            to={detailTo ?? routes.matchDetail(match.id)}
+            state={back ? backState(back) : undefined}
+          >
             <div className="rs-assignment__date" aria-hidden>
               <span className="rs-assignment__month">{month}</span>
               <span className="rs-assignment__day">{day}</span>

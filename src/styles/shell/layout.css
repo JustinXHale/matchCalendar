@@ -108,6 +108,40 @@
   color: var(--rs-color-muted);
 }
 
+.rs-detail__back {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: -4px 0 4px;
+  padding: 8px 0;
+  min-height: 40px;
+  border: none;
+  border-bottom: 1px solid var(--rs-color-border);
+  border-radius: 0;
+  background: var(--rs-color-bg);
+  font: var(--rs-font-nav);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--rs-color-ink);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rs-detail__back:hover,
+.rs-detail__back:focus-visible {
+  color: var(--rs-color-ink);
+  background: var(--rs-color-surface-muted);
+  outline: none;
+}
+
 .rs-detail-card {
   display: flex;
   flex-direction: column;
