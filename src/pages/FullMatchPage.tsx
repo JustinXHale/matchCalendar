@@ -55,6 +55,7 @@ import {
   type TournamentFormState,
 } from '@/features/tournaments/tournamentFormUtils';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
+import { firestoreErrorMessage } from '@/services/firestoreErrors';
 import { ContactsEditor } from '@/ui/forms/ContactsEditor';
 import { CustomFieldsEditor } from '@/ui/forms/CustomFieldsEditor';
 import { CustomItineraryEditor } from '@/ui/forms/CustomItineraryEditor';
@@ -261,13 +262,7 @@ export function FullMatchPage() {
     onChange(patch);
   };
 
-  const leaveAfterSave = (navigateTo: () => void) => {
-    setLeaveGuardEnabled(false);
-    setIsSaving(true);
-    navigateTo();
-  };
-
-  const save = () => {
+  const save = async () => {
     if (isSaving) return;
 
     if (isTournamentForm) {
@@ -303,18 +298,26 @@ export function FullMatchPage() {
         customItinerary: extras.customItinerary,
       });
 
-      if (editingTournament) {
-        updateTournament(editingTournament.id, payload);
-        leaveAfterSave(() =>
-          navigate(routes.tournamentDetail(editingTournament.id), { replace: true }),
-        );
-        return;
-      }
+      setIsSaving(true);
+      setLeaveGuardEnabled(false);
 
-      const tournament = createTournament(payload);
-      leaveAfterSave(() =>
-        navigate(routes.tournamentDetail(tournament.id), { replace: true }),
-      );
+      try {
+        if (editingTournament) {
+          const updated = await updateTournament(editingTournament.id, payload);
+          if (!updated) {
+            throw new Error('Could not update tournament.');
+          }
+          navigate(routes.tournamentDetail(editingTournament.id), { replace: true });
+          return;
+        }
+
+        const tournament = await createTournament(payload);
+        navigate(routes.tournamentDetail(tournament.id), { replace: true });
+      } catch (error) {
+        setFormError(firestoreErrorMessage(error));
+        setIsSaving(false);
+        setLeaveGuardEnabled(true);
+      }
       return;
     }
 
@@ -349,6 +352,8 @@ export function FullMatchPage() {
     }
 
     setFormError('');
+    setIsSaving(true);
+    setLeaveGuardEnabled(false);
 
     const payload = isTournamentChild && parent
       ? buildTournamentChildMatchFromForm(values, parent, existing, {
@@ -375,23 +380,28 @@ export function FullMatchPage() {
           tournamentId: existing?.tournamentId,
         };
 
-    if (existing) {
-      updateMatch(existing.id, payload);
-      leaveAfterSave(() =>
-        navigate(routes.matchDetail(existing.id), { replace: true }),
-      );
-      return;
-    }
+    try {
+      if (existing) {
+        const updated = await updateMatch(existing.id, payload);
+        if (!updated) {
+          throw new Error('Could not update match.');
+        }
+        navigate(routes.matchDetail(existing.id), { replace: true });
+        return;
+      }
 
-    createMatch(payload);
-    leaveAfterSave(() =>
+      await createMatch(payload);
       navigate(
         isTournamentChild && childTournamentId
           ? routes.tournamentDetail(childTournamentId)
           : routes.schedule,
         { replace: true },
-      ),
-    );
+      );
+    } catch (error) {
+      setFormError(firestoreErrorMessage(error));
+      setIsSaving(false);
+      setLeaveGuardEnabled(true);
+    }
   };
 
   const inheritedExpectedPay =
@@ -613,7 +623,12 @@ export function FullMatchPage() {
       {formError && <p className="rs-form-error" role="alert">{formError}</p>}
 
       <div className="rs-form-actions rs-form-actions--sticky rs-form-actions--paired">
-        <Button variant="primary" isBlock onClick={save} isDisabled={isSaving}>
+        <Button
+          variant="primary"
+          isBlock
+          onClick={() => void save()}
+          isDisabled={isSaving || !isDirty}
+        >
           {isSaving
             ? 'Saving…'
             : isTournamentEdit

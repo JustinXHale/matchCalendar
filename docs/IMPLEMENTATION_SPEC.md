@@ -478,7 +478,16 @@ Implemented in the **MatchReadyTX** repo as `getMatchCalendarPlatformInsights` (
 
 **Client behavior:** Profile shows **Profile | Members | Insights** tabs only when `VITE_PLATFORM_ADMIN_UIDS` or `VITE_PLATFORM_ADMIN_EMAILS` matches the signed-in user. Members tab lists signups; Insights tab shows platform rollup using the same cards as personal Insights.
 
-**Deploy order:** deploy function (`firebase deploy --only functions:getMatchCalendarPlatformInsights`), set function env + Calendar `VITE_PLATFORM_ADMIN_*`, then ship Calendar client.
+**Deploy order:** from the **MatchReadyTX** repo (sibling to Match Calendar, not inside it):
+
+```bash
+cd ../MatchReadyTX
+# Edit functions/.env.matchreadytx — set MATCH_CALENDAR_PLATFORM_ADMIN_UIDS and/or EMAILS
+cd functions && npm run build && cd ..
+firebase deploy --only functions:getMatchCalendarPlatformInsights --project matchreadytx
+```
+
+Then set Calendar `VITE_PLATFORM_ADMIN_*` (`.env.local` + GitHub Actions secrets) and redeploy hosting.
 
 ---
 

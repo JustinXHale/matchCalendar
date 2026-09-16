@@ -31,11 +31,11 @@ type TournamentsContextValue = {
   tournaments: Tournament[];
   createTournament: (
     data: Omit<Tournament, 'id' | 'ownerUid' | 'createdAt' | 'updatedAt'>,
-  ) => Tournament;
+  ) => Promise<Tournament>;
   updateTournament: (
     tournamentId: string,
     patch: Partial<Tournament>,
-  ) => Tournament | undefined;
+  ) => Promise<Tournament | undefined>;
   getTournamentById: (tournamentId: string) => Tournament | undefined;
   deleteTournament: (tournamentId: string) => Promise<boolean>;
   dataReady: boolean;
@@ -83,7 +83,7 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
   );
 
   const createTournament = useCallback(
-    (
+    async (
       data: Omit<Tournament, 'id' | 'ownerUid' | 'createdAt' | 'updatedAt'>,
     ) => {
       const now = new Date();
@@ -96,9 +96,12 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       };
 
       if (isLive && uid) {
-        void upsertTournament(uid, tournament).catch((error) => {
+        try {
+          await upsertTournament(uid, tournament);
+        } catch (error) {
           pushError(firestoreErrorMessage(error));
-        });
+          throw error;
+        }
         return tournament;
       }
 
@@ -114,13 +117,16 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
   );
 
   const updateTournament = useCallback(
-    (tournamentId: string, patch: Partial<Tournament>) => {
+    async (tournamentId: string, patch: Partial<Tournament>) => {
       if (isLive && uid) {
         const updated = updateTournamentRecord(tournaments, tournamentId, patch);
         if (!updated) return undefined;
-        void upsertTournament(uid, updated).catch((error) => {
+        try {
+          await upsertTournament(uid, updated);
+        } catch (error) {
           pushError(firestoreErrorMessage(error));
-        });
+          throw error;
+        }
         return updated;
       }
 

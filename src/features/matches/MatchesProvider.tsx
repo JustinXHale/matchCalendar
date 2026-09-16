@@ -35,8 +35,11 @@ type MatchesContextValue = {
   matches: Match[];
   createMatch: (
     data: Omit<Match, 'id' | 'createdAt' | 'updatedAt'>,
-  ) => Match;
-  updateMatch: (matchId: string, patch: Partial<Match>) => Match | undefined;
+  ) => Promise<Match>;
+  updateMatch: (
+    matchId: string,
+    patch: Partial<Match>,
+  ) => Promise<Match | undefined>;
   deleteMatch: (matchId: string) => Promise<boolean>;
   replaceAllMatches: (matches: Match[]) => void;
   dataReady: boolean;
@@ -166,7 +169,7 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
   );
 
   const createMatch = useCallback(
-    (data: Omit<Match, 'id' | 'createdAt' | 'updatedAt'>) => {
+    async (data: Omit<Match, 'id' | 'createdAt' | 'updatedAt'>) => {
       const now = new Date();
       const match: Match = {
         ...data,
@@ -177,9 +180,12 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
       };
 
       if (isLive && uid) {
-        void upsertMatch(uid, match).catch((error) => {
+        try {
+          await upsertMatch(uid, match);
+        } catch (error) {
           pushError(firestoreErrorMessage(error));
-        });
+          throw error;
+        }
         return match;
       }
 
@@ -195,13 +201,16 @@ export function MatchesProvider({ children }: { children: ReactNode }) {
   );
 
   const updateMatch = useCallback(
-    (matchId: string, patch: Partial<Match>) => {
+    async (matchId: string, patch: Partial<Match>) => {
       if (isLive && uid) {
         const updated = updateMatchRecord(matches, matchId, patch);
         if (!updated) return undefined;
-        void upsertMatch(uid, updated).catch((error) => {
+        try {
+          await upsertMatch(uid, updated);
+        } catch (error) {
           pushError(firestoreErrorMessage(error));
-        });
+          throw error;
+        }
         return updated;
       }
 
