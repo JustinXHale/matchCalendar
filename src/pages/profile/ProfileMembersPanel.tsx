@@ -16,6 +16,15 @@ function formatWhen(value: string | null): string {
   });
 }
 
+function formatJoined(value: string | null): { date: string; time: string | null } {
+  if (!value) return { date: '—', time: null };
+  const joined = new Date(value);
+  return {
+    date: joined.toLocaleDateString(undefined, { dateStyle: 'medium' }),
+    time: joined.toLocaleTimeString(undefined, { timeStyle: 'short' }),
+  };
+}
+
 export function ProfileMembersPanel({ data, loading, error, onRefresh }: Props) {
   const members = data?.members ?? [];
 
@@ -41,37 +50,33 @@ export function ProfileMembersPanel({ data, loading, error, onRefresh }: Props) 
       {loading && !data ? (
         <p className="rs-form-hint">Loading members…</p>
       ) : members.length ? (
-        <div
-          className="rs-insight-table-scroll"
-          role="region"
-          aria-label="Match Calendar members"
-          tabIndex={0}
-        >
-          <table className="rs-insight-table rs-member-table">
-            <thead>
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Signed up</th>
-                <th scope="col">Calendar</th>
-                <th scope="col">Matches</th>
-                <th scope="col">Tournaments</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr key={member.uid}>
-                  <th scope="row">{member.displayName}</th>
-                  <td>{member.email ?? '—'}</td>
-                  <td>{formatWhen(member.authCreatedAt)}</td>
-                  <td>{formatWhen(member.calendarSeenAt)}</td>
-                  <td>{member.matchCount}</td>
-                  <td>{member.tournamentCount}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="rs-member-list" aria-label="Match Calendar members">
+          {members.map((member) => {
+            const joined = formatJoined(member.authCreatedAt);
+            return (
+              <li key={member.uid} className="rs-member-row">
+                <div className="rs-member-row__identity">
+                  <span className="rs-member-row__name">{member.displayName}</span>
+                  {member.email && (
+                    <span className="rs-member-row__email">{member.email}</span>
+                  )}
+                  <span className="rs-member-row__activity">
+                    {member.matchCount} match{member.matchCount === 1 ? '' : 'es'}
+                    {' · '}
+                    {member.tournamentCount} tournament
+                    {member.tournamentCount === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <div className="rs-member-row__joined">
+                  <span className="rs-member-row__date">{joined.date}</span>
+                  {joined.time && (
+                    <span className="rs-member-row__time">{joined.time}</span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       ) : (
         <p className="rs-form-hint">No members yet.</p>
       )}

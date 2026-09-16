@@ -54,12 +54,77 @@
   min-width: 0;
 }
 
-.rs-member-table th:nth-child(2),
-.rs-member-table td:nth-child(2) {
-  text-align: left;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  min-width: 8rem;
+.rs-member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+  overflow: hidden;
+}
+
+.rs-member-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem var(--rs-space-md);
+  border-bottom: 1px solid var(--rs-color-border);
+}
+
+.rs-member-row:last-child {
+  border-bottom: 0;
+}
+
+.rs-member-row__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.rs-member-row__name {
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.rs-member-row__email {
+  color: var(--rs-color-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.rs-member-row__activity {
+  margin-top: 0.35rem;
+  color: var(--rs-color-muted);
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.rs-member-row__joined {
+  flex: 0 0 auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rs-member-row__date {
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.rs-member-row__time {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--rs-color-muted);
+  font-size: 0.82rem;
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {
