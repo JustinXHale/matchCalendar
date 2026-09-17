@@ -5,6 +5,19 @@
   gap: var(--rs-space-md);
 }
 
+.rs-money-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rs-space-md);
+}
+
+.rs-money-toolbar .rs-filter-row {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .rs-finance-hero {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
