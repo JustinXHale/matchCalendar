@@ -2,6 +2,7 @@ import type { HTMLInputTypeAttribute } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { handleFormFieldEnterKey } from '@/ui/forms/formFieldNav';
 
 type Props = {
   id: string;
@@ -14,6 +15,8 @@ type Props = {
   error?: string;
   isRequired?: boolean;
   inputMode?: 'decimal' | 'numeric' | 'text';
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+  isLast?: boolean;
 };
 
 const PICKER_TYPES = new Set(['date', 'time', 'datetime-local']);
@@ -29,7 +32,12 @@ export function NativeInput({
   error,
   isRequired,
   inputMode,
+  enterKeyHint,
+  isLast = false,
 }: Props) {
+  const picker = PICKER_TYPES.has(type);
+  const resolvedEnterKeyHint =
+    enterKeyHint ?? (picker || isLast ? 'done' : 'next');
   const inputClass = [
     'rs-native-input',
     list ? 'rs-native-input--with-indicator' : '',
@@ -53,11 +61,17 @@ export function NativeInput({
         className={inputClass}
         value={value}
         inputMode={inputMode}
+        enterKeyHint={resolvedEnterKeyHint}
         required={isRequired}
         onChange={(event) => commitValue(event.target.value)}
         onInput={(event) => commitValue(event.currentTarget.value)}
+        onKeyDown={(event) => {
+          if (!picker) {
+            handleFormFieldEnterKey(event);
+          }
+        }}
         onBlur={(event) => {
-          if (PICKER_TYPES.has(type)) {
+          if (picker) {
             commitValue(event.target.value);
           }
         }}

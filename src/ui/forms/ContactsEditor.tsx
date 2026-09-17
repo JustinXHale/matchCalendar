@@ -1,4 +1,5 @@
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { MatchContact } from '@/domain/match';
 
 type Props = {
@@ -34,7 +35,7 @@ export function ContactsEditor({ contacts, onChange }: Props) {
       {contacts.map((contact) => (
         <div key={contact.id} className="rs-contact-card">
           <FormGroup label="Name" fieldId={`contact-name-${contact.id}`}>
-            <TextInput
+            <FormTextInput
               id={`contact-name-${contact.id}`}
               value={contact.name ?? ''}
               onChange={(_event, value) =>
@@ -44,7 +45,7 @@ export function ContactsEditor({ contacts, onChange }: Props) {
           </FormGroup>
           <div className="rs-form-row">
             <FormGroup label="Phone" fieldId={`contact-phone-${contact.id}`}>
-              <TextInput
+              <FormTextInput
                 id={`contact-phone-${contact.id}`}
                 value={contact.phone ?? ''}
                 onChange={(_event, value) =>
@@ -53,7 +54,7 @@ export function ContactsEditor({ contacts, onChange }: Props) {
               />
             </FormGroup>
             <FormGroup label="Email" fieldId={`contact-email-${contact.id}`}>
-              <TextInput
+              <FormTextInput
                 id={`contact-email-${contact.id}`}
                 type="email"
                 value={contact.email ?? ''}
@@ -64,7 +65,7 @@ export function ContactsEditor({ contacts, onChange }: Props) {
             </FormGroup>
           </div>
           <FormGroup label="Team / organization" fieldId={`contact-team-${contact.id}`}>
-            <TextInput
+            <FormTextInput
               id={`contact-team-${contact.id}`}
               value={contact.team ?? ''}
               onChange={(_event, value) =>

@@ -1,4 +1,5 @@
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { CustomField } from '@/domain/match';
 
 type Props = {
@@ -36,7 +37,7 @@ export function CustomFieldsEditor({ fields, onChange }: Props) {
       {fields.map((field) => (
         <div key={field.id} className="rs-custom-field-row">
           <FormGroup label="Label" fieldId={`cf-label-${field.id}`}>
-            <TextInput
+            <FormTextInput
               id={`cf-label-${field.id}`}
               value={field.label}
               onChange={(_event, value) =>
@@ -45,7 +46,7 @@ export function CustomFieldsEditor({ fields, onChange }: Props) {
             />
           </FormGroup>
           <FormGroup label="Value" fieldId={`cf-value-${field.id}`}>
-            <TextInput
+            <FormTextInput
               id={`cf-value-${field.id}`}
               value={field.value}
               onChange={(_event, value) =>

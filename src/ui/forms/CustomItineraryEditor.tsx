@@ -1,5 +1,6 @@
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { CustomItineraryItem } from '@/domain/match';
 
 type Props = {
@@ -35,7 +36,7 @@ export function CustomItineraryEditor({ items, onChange }: Props) {
       {items.map((item) => (
         <div key={item.id} className="rs-custom-field-row">
           <FormGroup label="Label" fieldId={`itinerary-label-${item.id}`}>
-            <TextInput
+            <FormTextInput
               id={`itinerary-label-${item.id}`}
               value={item.label}
               onChange={(_event, value) =>
@@ -49,7 +50,7 @@ export function CustomItineraryEditor({ items, onChange }: Props) {
             <span className="rs-form-error" role="alert">Choose a date and time to show this item on the timeline.</span>
           )}
           <FormGroup label="Notes" fieldId={`itinerary-note-${item.id}`}>
-            <TextInput
+            <FormTextInput
               id={`itinerary-note-${item.id}`}
               value={item.notes ?? ''}
               onChange={(_event, value) =>

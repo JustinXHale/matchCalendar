@@ -1,4 +1,5 @@
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { MatchTypePreset, PositionPreset } from '@/domain/match';
 import {
   CHILD_MATCH_TYPE_OPTIONS,
@@ -120,7 +121,7 @@ export function PresetSelectFields({
 
       {positionPreset === 'other' ? (
         <FormGroup label="Custom position" fieldId="match-custom-position">
-          <TextInput
+          <FormTextInput
             id="match-custom-position"
             value={customPosition}
             onChange={(_event, value) => onChange({ customPosition: value })}
@@ -130,7 +131,7 @@ export function PresetSelectFields({
 
       {matchType === 'other' ? (
         <FormGroup label="Custom match type" fieldId="match-custom-type">
-          <TextInput
+          <FormTextInput
             id="match-custom-type"
             value={customMatchType}
             onChange={(_event, value) => onChange({ customMatchType: value })}
@@ -140,7 +141,7 @@ export function PresetSelectFields({
 
       {showGameFormat && activeGameFormat === 'other' ? (
         <FormGroup label="Custom game format" fieldId="match-custom-game-format">
-          <TextInput
+          <FormTextInput
             id="match-custom-game-format"
             value={customGameFormat}
             onChange={(_event, value) =>

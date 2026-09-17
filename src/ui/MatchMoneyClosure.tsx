@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
 import type { Expense, Match, PaymentMethod, ReimbursementStatus } from '@/domain/match';
@@ -395,7 +396,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
           )}
 
           <FormGroup label="Who owes pay?" fieldId={`settlement-owed-${match.id}`}>
-            <TextInput
+            <FormTextInput
               id={`settlement-owed-${match.id}`}
               value={draft.payOwedBy}
               placeholder="Assigner, union, club…"
@@ -424,7 +425,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                     </span>
                   )}
                 </div>
-                <TextInput
+                <FormTextInput
                   className="rs-settlement-line__amount"
                   type="number"
                   inputMode="decimal"
@@ -481,7 +482,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                       <span className="rs-settlement-line__hint">{expense.note}</span>
                     )}
                   </div>
-                  <TextInput
+                  <FormTextInput
                     className="rs-settlement-line__amount"
                     type="number"
                     inputMode="decimal"
@@ -590,7 +591,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                         label="Service name"
                         fieldId={`settlement-service-custom-${match.id}`}
                       >
-                        <TextInput
+                        <FormTextInput
                           id={`settlement-service-custom-${match.id}`}
                           value={draft.paymentServiceCustom}
                           placeholder="Zelle, check, etc."

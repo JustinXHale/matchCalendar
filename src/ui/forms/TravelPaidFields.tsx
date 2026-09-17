@@ -1,4 +1,5 @@
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { TravelSelfPaidInfo } from '@/domain/match';
 import { REIMBURSEMENT_STATUS_LABELS } from '@/domain/reimbursement';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
@@ -105,7 +106,7 @@ export function TravelPaidFields({ idPrefix, values, onChange }: Props) {
                 label="Reimbursed amount"
                 fieldId={`${idPrefix}-reimbursed-amount`}
               >
-                <TextInput
+                <FormTextInput
                   id={`${idPrefix}-reimbursed-amount`}
                   type="number"
                   inputMode="decimal"

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
 import { EXPENSE_CATEGORY_LABELS } from '@/domain/expenseCategories';
 import { REIMBURSEMENT_STATUS_LABELS } from '@/domain/reimbursement';
@@ -103,7 +104,7 @@ export function ExpenseSheet({ expense, onClose, onSave, onDelete }: Props) {
             </select>
           </FormGroup>
           {isMileage && <FormGroup label="Total miles" fieldId="expense-miles">
-            <TextInput id="expense-miles" type="number" min={0} inputMode="decimal" value={amount}
+            <FormTextInput id="expense-miles" type="number" min={0} inputMode="decimal" value={amount}
               onChange={(_event, value) => setAmount(value)} />
           </FormGroup>}
           </div>
@@ -123,7 +124,7 @@ export function ExpenseSheet({ expense, onClose, onSave, onDelete }: Props) {
               <div className="rs-travel-paid__details">
                 <div className="rs-form-row">
                   <FormGroup label="Amount" fieldId="expense-amount">
-                    <TextInput
+                    <FormTextInput
                       id="expense-amount"
                       type="number"
                       inputMode="decimal"
@@ -167,7 +168,7 @@ export function ExpenseSheet({ expense, onClose, onSave, onDelete }: Props) {
                       label="Reimbursed amount"
                       fieldId="expense-reimbursed-amt"
                     >
-                      <TextInput
+                      <FormTextInput
                         id="expense-reimbursed-amt"
                         type="number"
                         inputMode="decimal"
@@ -187,7 +188,7 @@ export function ExpenseSheet({ expense, onClose, onSave, onDelete }: Props) {
             ) : null}
           </div>}
           <FormGroup label="Notes" fieldId="expense-note">
-            <TextInput
+            <FormTextInput
               id="expense-note"
               value={note}
               onChange={(_event, value) => setNote(value)}

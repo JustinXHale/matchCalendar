@@ -1,4 +1,5 @@
-import { FormGroup, TextInput } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { MatchTypePreset } from '@/domain/match';
 import type { MatchFormErrors, MatchFormValues } from '@/features/matches/matchValidation';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
@@ -66,7 +67,7 @@ export function MatchCoreFields({
         />
 
         <FormGroup label="Event title" fieldId="match-title">
-          <TextInput
+          <FormTextInput
             id="match-title"
             value={values.title}
             onChange={(_event, value) => onChange({ title: value })}
@@ -75,7 +76,7 @@ export function MatchCoreFields({
 
         <div className="rs-form-row">
           <FormGroup label="Home" fieldId="match-home">
-            <TextInput
+            <FormTextInput
               id="match-home"
               value={values.home}
               onChange={(_event, value) => onChange({ home: value })}
@@ -83,7 +84,7 @@ export function MatchCoreFields({
           </FormGroup>
 
           <FormGroup label="Away" fieldId="match-away">
-            <TextInput
+            <FormTextInput
               id="match-away"
               value={values.away}
               onChange={(_event, value) => onChange({ away: value })}
@@ -115,7 +116,7 @@ export function MatchCoreFields({
           </p>
         ) : (
           <FormGroup label="Expected pay" fieldId="match-expected-pay">
-            <TextInput
+            <FormTextInput
               id="match-expected-pay"
               type="number"
               inputMode="decimal"
@@ -160,7 +161,7 @@ export function MatchCoreFields({
       )}
 
       <FormGroup label="Event title" fieldId="match-title">
-        <TextInput
+        <FormTextInput
           id="match-title"
           value={values.title}
           onChange={(_event, value) => onChange({ title: value })}
@@ -170,7 +171,7 @@ export function MatchCoreFields({
       {!tournament && (
         <div className="rs-form-row">
           <FormGroup label="Home" fieldId="match-home">
-            <TextInput
+            <FormTextInput
               id="match-home"
               value={values.home}
               onChange={(_event, value) => onChange({ home: value })}
@@ -178,7 +179,7 @@ export function MatchCoreFields({
           </FormGroup>
 
           <FormGroup label="Away" fieldId="match-away">
-            <TextInput
+            <FormTextInput
               id="match-away"
               value={values.away}
               onChange={(_event, value) => onChange({ away: value })}
@@ -192,7 +193,7 @@ export function MatchCoreFields({
       ) : null}
 
       <FormGroup label="Location" isRequired fieldId="match-location">
-        <TextInput
+        <FormTextInput
           id="match-location"
           value={values.location}
           onChange={(_event, value) => onChange({ location: value })}
@@ -264,7 +265,7 @@ export function MatchCoreFields({
       {showPayFields ? (
         <>
           <FormGroup label="Competition" fieldId="match-competition">
-            <TextInput
+            <FormTextInput
               id="match-competition"
               value={values.competition}
               onChange={(_event, value) => onChange({ competition: value })}
@@ -287,7 +288,7 @@ export function MatchCoreFields({
                   }
                   fieldId="match-expected-pay"
                 >
-                  <TextInput
+                  <FormTextInput
                     id="match-expected-pay"
                     type="number"
                     inputMode="decimal"
@@ -326,7 +327,7 @@ export function MatchCoreFields({
           ) : (
             <div className="rs-form-row rs-form-row--3">
               <FormGroup label="Expected pay" fieldId="match-expected-pay">
-                <TextInput
+                <FormTextInput
                   id="match-expected-pay"
                   type="number"
                   inputMode="decimal"
@@ -358,7 +359,7 @@ export function MatchCoreFields({
               </FormGroup>
 
               <FormGroup label="Who owes pay?" fieldId="match-pay-owed-by">
-                <TextInput
+                <FormTextInput
                   id="match-pay-owed-by"
                   value={values.payOwedBy}
                   placeholder="Assigner, union, club…"
@@ -371,7 +372,7 @@ export function MatchCoreFields({
           {values.payStatus === 'paid' ? (
             <div className="rs-form-row">
               <FormGroup label="Paid amount" fieldId="match-paid-amount">
-                <TextInput
+                <FormTextInput
                   id="match-paid-amount"
                   type="number"
                   inputMode="decimal"
@@ -444,7 +445,7 @@ export function MatchCoreFields({
           {tournamentContainer ? (
             <div className="rs-form-row">
               <FormGroup label="Who owes pay?" fieldId="match-pay-owed-by">
-                <TextInput
+                <FormTextInput
                   id="match-pay-owed-by"
                   value={values.payOwedBy}
                   placeholder="Assigner, union, club…"
@@ -453,7 +454,7 @@ export function MatchCoreFields({
               </FormGroup>
 
               <FormGroup label="Uniform" fieldId="match-uniform">
-                <TextInput
+                <FormTextInput
                   id="match-uniform"
                   value={values.uniform}
                   onChange={(_event, value) => onChange({ uniform: value })}
@@ -462,7 +463,7 @@ export function MatchCoreFields({
             </div>
           ) : (
             <FormGroup label="Uniform" fieldId="match-uniform">
-              <TextInput
+              <FormTextInput
                 id="match-uniform"
                 value={values.uniform}
                 onChange={(_event, value) => onChange({ uniform: value })}
@@ -471,7 +472,7 @@ export function MatchCoreFields({
           )}
 
           <FormGroup label="Notes" fieldId="match-notes">
-            <TextInput
+            <FormTextInput
               id="match-notes"
               value={values.notes}
               onChange={(_event, value) => onChange({ notes: value })}
@@ -480,7 +481,7 @@ export function MatchCoreFields({
         </>
       ) : (
         <FormGroup label="Expected pay (optional)" fieldId="match-expected-pay">
-          <TextInput
+          <FormTextInput
             id="match-expected-pay"
             type="number"
             inputMode="decimal"

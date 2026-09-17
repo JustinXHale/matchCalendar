@@ -1,4 +1,5 @@
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type {
   FlightInfo,
   FlightSegment,
@@ -162,7 +163,7 @@ export function FlightFields({ flight, onChange }: FlightProps) {
       />
 
       <FormGroup label="Notes" fieldId="flight-notes">
-        <TextInput
+        <FormTextInput
           id="flight-notes"
           value={flight.notes ?? ''}
           onChange={(_event, value) => onChange({ notes: value })}
@@ -221,7 +222,7 @@ export function LodgingFields({ lodging, onChange }: LodgingProps) {
       />
 
       <FormGroup label="Notes" fieldId="lodging-notes">
-        <TextInput
+        <FormTextInput
           id="lodging-notes"
           value={lodging.notes ?? ''}
           onChange={(_event, value) => onChange({ notes: value })}
@@ -270,7 +271,7 @@ export function GroundTravelFields({ groundTravel, onChange }: GroundProps) {
       />
 
       <FormGroup label="Notes" fieldId="ground-notes">
-        <TextInput
+        <FormTextInput
           id="ground-notes"
           value={groundTravel.notes ?? ''}
           onChange={(_event, value) => onChange({ notes: value })}

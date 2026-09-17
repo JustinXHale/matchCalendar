@@ -1,4 +1,5 @@
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import { useEffect, useState } from 'react';
 import { POSITION_OPTIONS } from '@/domain/matchConstants';
 import type { PositionPreset } from '@/domain/match';
@@ -48,7 +49,7 @@ function MinutesBeforeInput({
   };
 
   return (
-    <TextInput
+    <FormTextInput
       id={id}
       type="number"
       inputMode="numeric"
@@ -104,7 +105,7 @@ export function ProfileSettingsPanel({
           </>
         ) : (
           <FormGroup label="Display name" fieldId="profile-name">
-            <TextInput
+            <FormTextInput
               id="profile-name"
               value={profile.displayName}
               onChange={(_event, value) => updateProfile({ displayName: value })}

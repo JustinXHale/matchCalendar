@@ -1,6 +1,7 @@
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
 import { useMemo, useState } from 'react';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { MatchTypePreset } from '@/domain/match';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { routes } from '@/app/routes';
@@ -589,21 +590,21 @@ export function FullMatchPage() {
               }
             />
             <FormGroup label="Uniform" fieldId="match-uniform">
-              <TextInput
+              <FormTextInput
                 id="match-uniform"
                 value={values.uniform}
                 onChange={(_event, value) => onChange({ uniform: value })}
               />
             </FormGroup>
             <FormGroup label="Parking" fieldId="match-parking">
-              <TextInput
+              <FormTextInput
                 id="match-parking"
                 value={values.parking}
                 onChange={(_event, value) => onChange({ parking: value })}
               />
             </FormGroup>
             <FormGroup label="Notes" fieldId="match-notes">
-              <TextInput
+              <FormTextInput
                 id="match-notes"
                 value={values.notes}
                 onChange={(_event, value) => onChange({ notes: value })}

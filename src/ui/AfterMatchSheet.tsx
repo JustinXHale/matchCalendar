@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { Expense, Match, PaymentMethod } from '@/domain/match';
 import { formatCurrency } from '@/domain/matchDisplay';
 import { formatExpenseCategory } from '@/domain/expenseCategories';
@@ -230,7 +231,7 @@ export function AfterMatchSheet({ match, onClose }: Props) {
           {step === 'payment' && (
             <>
               <FormGroup label="Amount received" fieldId="after-paid-amount">
-                <TextInput
+                <FormTextInput
                   id="after-paid-amount"
                   type="number"
                   inputMode="decimal"
@@ -269,7 +270,7 @@ export function AfterMatchSheet({ match, onClose }: Props) {
                 Mark paid
               </Button>
               <FormGroup label="Who owes pay?" fieldId="after-pay-owed-by">
-                <TextInput
+                <FormTextInput
                   id="after-pay-owed-by"
                   value={payOwedBy}
                   placeholder="Assigner, union, club…"

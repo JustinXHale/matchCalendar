@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { FormTextInput } from '@/ui/forms/FormTextInput';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { closeQuickMatch } from '@/app/navigation';
 import { routes } from '@/app/routes';
@@ -103,7 +104,7 @@ export function QuickMatchModal() {
           />
 
           <FormGroup label="Match title (optional)" fieldId="quick-title">
-            <TextInput
+            <FormTextInput
               id="quick-title"
               value={values.title}
               onChange={(_event, value) => onChange({ title: value })}
@@ -135,7 +136,7 @@ export function QuickMatchModal() {
 
           <div className="rs-form-row">
             <FormGroup label="Home" fieldId="quick-home">
-              <TextInput
+              <FormTextInput
                 id="quick-home"
                 value={values.home}
                 onChange={(_event, value) => onChange({ home: value })}
@@ -143,7 +144,7 @@ export function QuickMatchModal() {
             </FormGroup>
 
             <FormGroup label="Away" fieldId="quick-away">
-              <TextInput
+              <FormTextInput
                 id="quick-away"
                 value={values.away}
                 onChange={(_event, value) => onChange({ away: value })}
@@ -156,7 +157,7 @@ export function QuickMatchModal() {
           ) : null}
 
           <FormGroup label="Location" isRequired fieldId="quick-location">
-            <TextInput
+            <FormTextInput
               id="quick-location"
               value={values.location}
               onChange={(_event, value) => onChange({ location: value })}
@@ -171,7 +172,7 @@ export function QuickMatchModal() {
 
           <div className="rs-form-row">
             <FormGroup label="Pay (optional)" fieldId="quick-pay">
-              <TextInput
+              <FormTextInput
                 id="quick-pay"
                 type="number"
                 inputMode="decimal"
@@ -181,7 +182,7 @@ export function QuickMatchModal() {
             </FormGroup>
 
             <FormGroup label="Who owes pay?" fieldId="quick-pay-owed-by">
-              <TextInput
+              <FormTextInput
                 id="quick-pay-owed-by"
                 value={values.payOwedBy}
                 placeholder="Assigner, union, club…"
