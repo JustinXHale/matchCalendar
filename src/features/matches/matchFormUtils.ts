@@ -119,6 +119,19 @@ export function parseOptionalNumber(value: string): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+export function resolvePayStatusForExpectedPay(
+  payStatus: PayStatus,
+  expectedPay: string | number | undefined,
+): PayStatus {
+  const amount = typeof expectedPay === 'number'
+    ? (Number.isFinite(expectedPay) ? expectedPay : undefined)
+    : parseOptionalNumber(expectedPay ?? '');
+  if (amount != null && amount > 0 && payStatus === 'not_tracked') {
+    return 'unpaid';
+  }
+  return payStatus;
+}
+
 type BuildMatchOptions = {
   contacts?: MatchContact[];
   customFields?: CustomField[];
@@ -163,7 +176,10 @@ export function buildMatchFromForm(
     status: values.status,
     expectedPay: options?.expectedPay ?? parseOptionalNumber(values.expectedPay),
     payCurrency: existing?.payCurrency ?? 'USD',
-    payStatus: values.payStatus,
+    payStatus: resolvePayStatusForExpectedPay(
+      values.payStatus,
+      options?.expectedPay ?? values.expectedPay,
+    ),
     paidAmount: parseOptionalNumber(values.paidAmount),
     paidAt: values.payStatus === 'paid' ? paidAt : undefined,
     paymentMethod: values.paymentMethod || undefined,

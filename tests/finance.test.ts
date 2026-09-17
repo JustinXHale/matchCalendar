@@ -44,4 +44,25 @@ assert.equal(fromDateTimeInputValue('invalid'), undefined);
 const parent = tournamentEvent({ id: 'parent', ownerUid: 'local', title: 'Cup', startDate: '2026-09-13', endDate: '2026-09-15', createdAt: now, updatedAt: now, expenses: match.expenses, settlement: { payStatus: 'paid', paidAmount: 300 } });
 assert.equal(parent.paidAmount, 300);
 assert.equal(getMatchFinanceTotals(parent).combinedExpenseTotal, 30);
+
+const quickMatchWithPay = buildMatchFromForm({
+  ...createEmptyMatchForm(),
+  expectedPay: '175',
+  payStatus: 'not_tracked',
+});
+assert.equal(quickMatchWithPay.payStatus, 'unpaid');
+assert.equal(quickMatchWithPay.expectedPay, 175);
+
+const quickMatchWithoutPay = buildMatchFromForm(createEmptyMatchForm());
+assert.equal(quickMatchWithoutPay.payStatus, 'not_tracked');
+assert.equal(quickMatchWithoutPay.expectedPay, undefined);
+
+const explicitPaid = buildMatchFromForm({
+  ...createEmptyMatchForm(),
+  expectedPay: '175',
+  payStatus: 'paid',
+  paidAmount: '175',
+});
+assert.equal(explicitPaid.payStatus, 'paid');
+
 console.log('Finance, settlement, mileage, tournament, and date regression checks passed.');

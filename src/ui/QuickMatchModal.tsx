@@ -10,6 +10,7 @@ import { useProfile } from '@/features/profile/ProfileProvider';
 import {
   buildMatchFromForm,
   createEmptyMatchForm,
+  parseOptionalNumber,
 } from '@/features/matches/matchFormUtils';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
 import {
@@ -177,7 +178,13 @@ export function QuickMatchModal() {
                 type="number"
                 inputMode="decimal"
                 value={values.expectedPay}
-                onChange={(_event, value) => onChange({ expectedPay: value })}
+                onChange={(_event, value) => {
+                  const amount = parseOptionalNumber(value);
+                  onChange({
+                    expectedPay: value,
+                    payStatus: amount != null && amount > 0 ? 'unpaid' : 'not_tracked',
+                  });
+                }}
               />
             </FormGroup>
 
