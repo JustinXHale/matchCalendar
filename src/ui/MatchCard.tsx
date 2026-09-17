@@ -16,6 +16,7 @@ import type { Match } from '@/domain/match';
 import { routes } from '@/app/routes';
 import { backState, type BackNav } from '@/nav/backNav';
 import { useProfile } from '@/features/profile/ProfileProvider';
+import { flightExpandCardTitle } from '@/features/matches/flightDistance';
 import {
   buildMatchTimeline,
   hasFlightData,
@@ -78,6 +79,7 @@ export function MatchCard({
   const hasHotel = !isTournamentChild && hasLodgingData(match);
   const hasFlight = !isTournamentChild && hasFlightData(match);
   const hasCar = !isTournamentChild && hasGroundData(match);
+  const flightLabel = flightExpandCardTitle(match.flight);
 
   const rowClass = [
     'rs-assignment',
@@ -173,20 +175,6 @@ export function MatchCard({
                       Hotel
                     </button>
                   ) : null}
-                  {hasFlight ? (
-                    <button
-                      type="button"
-                      className="rs-assignment__travel-link"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (showTimeline) toggleTimeline();
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faPlane} aria-hidden />
-                      Flight
-                    </button>
-                  ) : null}
                   {hasCar ? (
                     <button
                       type="button"
@@ -199,6 +187,20 @@ export function MatchCard({
                     >
                       <FontAwesomeIcon icon={faCar} aria-hidden />
                       Car
+                    </button>
+                  ) : null}
+                  {hasFlight ? (
+                    <button
+                      type="button"
+                      className="rs-assignment__travel-link"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        if (showTimeline) toggleTimeline();
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPlane} aria-hidden />
+                      {flightLabel}
                     </button>
                   ) : null}
                 </div>

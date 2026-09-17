@@ -474,7 +474,7 @@ Implemented in the **MatchReadyTX** repo as `getMatchCalendarPlatformInsights` (
 }
 ```
 
-**Server behavior:** authenticated caller only; caller uid/email must appear in function env `MATCH_CALENDAR_PLATFORM_ADMIN_UIDS` or `MATCH_CALENDAR_PLATFORM_ADMIN_EMAILS` (comma-separated). Lists Firebase Auth users with Match Calendar activity (`matchCalendar/settings`, matches, or tournaments), aggregates insights across those users.
+**Server behavior:** authenticated caller only; caller uid/email must appear in function env `MATCH_CALENDAR_PLATFORM_ADMIN_UIDS` or `MATCH_CALENDAR_PLATFORM_ADMIN_EMAILS` (comma-separated). Lists Firebase Auth users with Match Calendar activity (`matchCalendar/settings`, matches, or tournaments), aggregates insights across those users. Travel rollups include `drivenTrips`, `flightSegments`, manual mileage expenses, and derived flight miles from segment airport codes (`matchCalendarFlightDistance.ts` + bundled `airportRegistry.json` — keep in sync with Match Calendar via `npm run build:airports` in Calendar, then copy to MatchReadyTX `functions/src/`).
 
 **Client behavior:** Profile shows **Profile | Members | Insights** tabs only when `VITE_PLATFORM_ADMIN_UIDS` or `VITE_PLATFORM_ADMIN_EMAILS` matches the signed-in user. Members tab lists signups; Insights tab shows platform rollup using the same cards as personal Insights.
 

@@ -1,6 +1,8 @@
 import type { Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
 import { resolveMatchTypeLabel, resolvePositionLabel } from '@/domain/matchConstants';
+import { getTotalFlightMiles } from '@/features/matches/flightDistance';
+import { countFlightSegments } from '@/features/matches/flightUtils';
 import { getCategoryRollup, getMatchFinanceTotals, getSettlementPaidTotal } from '@/features/matches/paySummary';
 import { tournamentEvent } from '@/features/tournaments/tournamentEvent';
 
@@ -11,6 +13,15 @@ export type OrganizationRow = {
   expenses: number;
   net: number;
 };
+
+function eventHasMilesDriven(event: Match): boolean {
+  return (event.expenses ?? []).some(
+    (expense) =>
+      expense.category === 'miles_driven' &&
+      Number.isFinite(expense.miles) &&
+      (expense.miles ?? 0) > 0,
+  );
+}
 
 function counts(labels: string[]): CountRow[] {
   const result = new Map<string, number>();
@@ -39,7 +50,9 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
     : match.position.trim() || 'Other'));
 
   let milesDriven = 0;
+  let drivenTrips = 0;
   let milesFlown = 0;
+  let flightSegments = 0;
   let paid = 0;
   let expenses = 0;
   const organizations = new Map<string, OrganizationRow>();
@@ -50,6 +63,9 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
       if (expense.category === 'miles_driven') milesDriven += miles;
       if (expense.category === 'miles_flown') milesFlown += miles;
     }
+    if (eventHasMilesDriven(event)) drivenTrips += 1;
+    milesFlown += getTotalFlightMiles(event.flight) ?? 0;
+    flightSegments += countFlightSegments(event.flight);
     const income = getSettlementPaidTotal(event);
     const costs = getMatchFinanceTotals(event).combinedExpenseTotal;
     paid += income;
@@ -69,7 +85,9 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
     eventCount: eventTypes.reduce((sum, row) => sum + row.count, 0),
     positions,
     milesDriven,
+    drivenTrips,
     milesFlown,
+    flightSegments,
     paid,
     expenses,
     net: paid - expenses,

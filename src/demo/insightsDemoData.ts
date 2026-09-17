@@ -1,10 +1,40 @@
-import type { Expense, Match } from '@/domain/match';
+import type { Expense, FlightInfo, Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
 import { POSITION_OPTIONS } from '@/domain/matchConstants';
+
+const SAMPLE_FLIGHT_ROUTES: [string, string][][] = [
+  [['DEN', 'IAH'], ['IAH', 'DEN']],
+  [['MCO', 'TPA'], ['TPA', 'MCO']],
+  [['LAX', 'SAN'], ['SAN', 'LAX']],
+  [['DFW', 'AUS'], ['AUS', 'DFW']],
+];
 
 /** Sample records for the Insights preview only; never written to storage. */
 export function createInsightsDemoData(): { matches: Match[]; tournaments: Tournament[] } {
   const createdAt = new Date(2026, 0, 1, 12);
+
+  const sampleFlight = (index: number): FlightInfo => {
+    const route = SAMPLE_FLIGHT_ROUTES[index % SAMPLE_FLIGHT_ROUTES.length];
+    const day = index % 6 + 1;
+
+    return {
+      segments: route.map(([departureAirport, arrivalAirport], leg) => ({
+        id: `sample-flight-${index}-${leg}`,
+        airline: 'Demo Air',
+        flightNumber: `DA ${1000 + index + leg}`,
+        departureAirport,
+        arrivalAirport,
+        departureAt: new Date(2026, Math.floor(index / 6), day + leg, 9 + leg),
+        arrivalAt: new Date(2026, Math.floor(index / 6), day + leg, 11 + leg),
+        confirmation: `DEMO-${index}`,
+      })),
+      selfPaid: true,
+      amountPaid: 350 + index * 4,
+      reimbursementStatus: 'reimbursed',
+      reimbursedAmount: 350 + index * 4,
+      reimbursedAt: createdAt,
+    };
+  };
   const organizations = ['NCR', 'Texas Rugby Union', 'USA Rugby', 'College Rugby Association', 'Regional Rugby Union', 'Metro Rugby'];
   const cost = (id: string, category: Expense['category'], amount: number, reimbursedAmount = 0): Expense => ({
     id, category, amount, createdAt,
@@ -36,6 +66,7 @@ export function createInsightsDemoData(): { matches: Match[]; tournaments: Tourn
       competition: organizations[index % organizations.length],
       expectedPay: fee, payStatus: index % 9 === 0 ? 'unpaid' : 'paid',
       paidAmount: index % 9 === 0 ? undefined : fee, payCurrency: 'USD',
+      ...(index % 3 === 0 ? { flight: sampleFlight(index) } : {}),
       expenses, source: { type: 'manual' },
     };
   });
@@ -45,6 +76,7 @@ export function createInsightsDemoData(): { matches: Match[]; tournaments: Tourn
     createdAt, updatedAt: createdAt, location: 'Sample tournament venue',
     matchDefaults: { competition: organizations[index], positionPreset: 'referee' },
     settlement: { status: 'completed', payStatus: 'paid', paidAmount: 500 + index * 100 },
+    flight: sampleFlight(100 + index),
     expenses: [cost(`sample-hotel-${index}`, 'lodging', 320, 320), cost(`sample-cup-parking-${index}`, 'parking', 95)],
   }));
   for (const [index, tournament] of tournaments.entries()) {

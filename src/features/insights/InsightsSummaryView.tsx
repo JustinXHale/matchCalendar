@@ -109,15 +109,30 @@ export function InsightsSummaryView({ summary, idPrefix = 'insights' }: Props) {
           <div>
             <FontAwesomeIcon icon={faCar} aria-hidden />
             <strong>{number.format(summary.milesDriven)} <small>mi</small></strong>
+            {summary.drivenTrips > 0 ? (
+              <span className="rs-insight-travel__meta">
+                {number.format(summary.drivenTrips)} trip
+                {summary.drivenTrips === 1 ? '' : 's'}
+              </span>
+            ) : null}
             <span>Miles driven</span>
           </div>
           <div>
             <FontAwesomeIcon icon={faPlane} aria-hidden />
             <strong>{number.format(summary.milesFlown)} <small>mi</small></strong>
+            {summary.flightSegments > 0 ? (
+              <span className="rs-insight-travel__meta">
+                {number.format(summary.flightSegments)} segment
+                {summary.flightSegments === 1 ? '' : 's'}
+              </span>
+            ) : null}
             <span>Miles flown</span>
           </div>
         </div>
-        <p className="rs-summary-label">Totals from recorded mileage.</p>
+        <p className="rs-summary-label">
+          Includes driven mileage entries and flight distance from airport codes
+          when available.
+        </p>
       </section>
 
       <section className="rs-insight-card" aria-labelledby={`${idPrefix}-finances`}>

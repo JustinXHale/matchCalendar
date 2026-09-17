@@ -21,6 +21,7 @@ import {
   validateExpenses,
   validateTravelSections,
 } from '@/features/forms/formValidation';
+import { flightExpandCardTitle } from '@/features/matches/flightDistance';
 import {
   compactFlight,
   emptyFlight,
@@ -413,7 +414,7 @@ export function FullMatchPage() {
   const travelSections = (
     <>
       <ExpandableFormCard
-        title="Flight"
+        title={flightExpandCardTitle(extras.flight)}
         summary={flightSectionSummary(extras.flight)}
       >
         <FlightFields

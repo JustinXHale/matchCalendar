@@ -37,6 +37,12 @@ export function hasFlightSegmentData(segment: FlightSegment): boolean {
   );
 }
 
+export function countFlightSegments(flight?: FlightInfo): number {
+  if (!flight) return 0;
+
+  return getFlightSegments(flight).filter(hasFlightSegmentData).length;
+}
+
 export function hasFlightData(flight?: FlightInfo): boolean {
   if (!flight) return false;
 

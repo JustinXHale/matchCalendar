@@ -10,6 +10,7 @@ try {
     entryPoints: [
       'tests/auth.test.ts',
       'tests/finance.test.ts',
+      'tests/flightDistance.test.ts',
       'tests/matchReadyMerge.test.ts',
     ],
     bundle: true,
@@ -21,6 +22,7 @@ try {
   });
   await import(pathToFileURL(join(directory, 'auth.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'finance.test.mjs')).href);
+  await import(pathToFileURL(join(directory, 'flightDistance.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'matchReadyMerge.test.mjs')).href);
 } finally {
   await rm(directory, { recursive: true, force: true });

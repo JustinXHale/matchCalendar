@@ -18,6 +18,7 @@ const match: Match = {
 const summary = getInsightsSummary([match], []);
 assert.equal(summary.eventCount, 1);
 assert.equal(summary.milesDriven, 120);
+assert.equal(summary.drivenTrips, 1);
 assert.equal(summary.milesFlown, 850);
 assert.deepEqual(summary.topExpenses.map((row) => [row.label, row.outOfPocket]), [['Parking', 80], ['Food', 20]]);
 assert.equal(summary.paid, 740);
@@ -49,6 +50,8 @@ assert.equal(getInsightsSummary([{ ...match, competition: '', payOwedBy: undefin
 const empty = getInsightsSummary([], []);
 assert.equal(empty.eventCount, 0);
 assert.equal(empty.net, 0);
+assert.equal(empty.flightSegments, 0);
+assert.equal(empty.drivenTrips, 0);
 assert.deepEqual(empty.topExpenses, []);
 console.log('Insights ranking, mileage, organization, and tournament aggregation checks passed.');
 
@@ -61,4 +64,6 @@ assert.equal(sampleSummary.positions.length, 5);
 assert.equal(sampleSummary.topExpenses.length, 5);
 assert.equal(sampleSummary.topExpenses[0].category, 'parking');
 assert.ok(sampleSummary.milesDriven > 0 && sampleSummary.milesFlown > 0);
+assert.ok(sampleSummary.flightSegments > 0);
+assert.ok(sampleSummary.drivenTrips > 0);
 assert.equal(new Set(sample.matches.map((match) => match.id)).size, sample.matches.length);

@@ -342,6 +342,7 @@
 .rs-insight-travel svg { font-size: 2rem; color: var(--rs-color-primary); margin-bottom: 0.5rem; }
 .rs-insight-travel strong { font-size: 1.8rem; font-variant-numeric: tabular-nums; }
 .rs-insight-travel small { font-size: 0.9rem; font-weight: 400; }
+.rs-insight-travel__meta { font-size: 0.8125rem; color: var(--rs-color-muted); }
 .rs-insight-finances { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--rs-space-lg); }
 .rs-insight-metrics { display: grid; gap: 0.75rem; margin: 1rem 0 0; }
 .rs-insight-metrics > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem; }

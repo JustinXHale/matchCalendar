@@ -29,6 +29,9 @@ npm-debug.log*
 # TypeScript
 *.tsbuildinfo
 
+# Build scripts cache
+scripts/.cache
+
 # Firebase
 .firebase
 firebase-debug.log
