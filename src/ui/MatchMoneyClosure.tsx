@@ -31,6 +31,7 @@ import {
   markTravelPending,
   markTravelReimbursed,
   travelCostAlreadyInExpenses,
+  updateTravelAmountPaid,
   type TravelCostSource,
 } from '@/features/matches/travelFinance';
 import { getMatchFinanceTotals, getSettlementPaidTotal } from '@/features/matches/paySummary';
@@ -452,9 +453,38 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                       {entry.label} reimbursement
                     </span>
                   </div>
-                  <span className="rs-settlement-line__amount-static">
-                    {formatCurrency(entry.amount)}
-                  </span>
+                  <FormTextInput
+                    className="rs-settlement-line__amount"
+                    type="number"
+                    inputMode="decimal"
+                    step="any"
+                    aria-label={`${entry.label} amount`}
+                    value={String(entry.amount)}
+                    onChange={(_event, value) => {
+                      const amount = Number(value);
+                      if (!Number.isFinite(amount)) return;
+                      const patch = updateTravelAmountPaid(
+                        liveMatch,
+                        entry.source,
+                        amount,
+                      );
+                      setLiveMatch((current) => mergePatch(current, patch));
+                    }}
+                    onBlur={() => {
+                      const travelEntry = getTravelCostEntries(liveMatch).find(
+                        (item) => item.source === entry.source,
+                      );
+                      if (!travelEntry) return;
+                      applyPatch({
+                        ...updateTravelAmountPaid(
+                          liveMatch,
+                          entry.source,
+                          travelEntry.amount,
+                        ),
+                        ...ensureCompleted(),
+                      });
+                    }}
+                  />
                   <SettlementToggles
                     choice={reimbursementToChoice(entry.reimbursementStatus)}
                     onChange={(choice) => applyTravelChoice(entry.source, choice)}

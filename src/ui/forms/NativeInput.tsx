@@ -15,6 +15,7 @@ type Props = {
   error?: string;
   isRequired?: boolean;
   inputMode?: 'decimal' | 'numeric' | 'text';
+  autoUppercase?: boolean;
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
   isLast?: boolean;
 };
@@ -32,6 +33,7 @@ export function NativeInput({
   error,
   isRequired,
   inputMode,
+  autoUppercase = false,
   enterKeyHint,
   isLast = false,
 }: Props) {
@@ -42,13 +44,15 @@ export function NativeInput({
     'rs-native-input',
     list ? 'rs-native-input--with-indicator' : '',
     validated === 'error' ? 'rs-native-input--error' : '',
+    autoUppercase ? 'rs-native-input--uppercase' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
   const commitValue = (nextValue: string) => {
-    if (nextValue !== value) {
-      onChange(nextValue);
+    const normalized = autoUppercase ? nextValue.toUpperCase() : nextValue;
+    if (normalized !== value) {
+      onChange(normalized);
     }
   };
 
@@ -61,6 +65,9 @@ export function NativeInput({
         className={inputClass}
         value={value}
         inputMode={inputMode}
+        autoCapitalize={autoUppercase ? 'characters' : undefined}
+        autoCorrect={autoUppercase ? 'off' : undefined}
+        spellCheck={autoUppercase ? false : undefined}
         enterKeyHint={resolvedEnterKeyHint}
         required={isRequired}
         onChange={(event) => commitValue(event.target.value)}

@@ -3,7 +3,6 @@ import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type { TravelSelfPaidInfo } from '@/domain/match';
 import { REIMBURSEMENT_STATUS_LABELS } from '@/domain/reimbursement';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
-import { NativeInput } from '@/ui/forms/NativeInput';
 
 type Props = {
   idPrefix: string;
@@ -55,19 +54,21 @@ export function TravelPaidFields({ idPrefix, values, onChange }: Props) {
       {selfPaid ? (
         <div className="rs-travel-paid__details">
           <div className="rs-form-row">
-            <NativeInput
-              id={`${idPrefix}-amount-paid`}
-              label="Amount"
-              type="number"
-              inputMode="decimal"
-              value={amountPaid != null ? String(amountPaid) : ''}
-              onChange={(value) => {
-                const trimmed = value.trim();
-                onChange({
-                  amountPaid: trimmed ? Number(trimmed) : undefined,
-                });
-              }}
-            />
+            <FormGroup label="Amount" fieldId={`${idPrefix}-amount-paid`}>
+              <FormTextInput
+                id={`${idPrefix}-amount-paid`}
+                type="number"
+                inputMode="decimal"
+                step="any"
+                value={amountPaid != null ? String(amountPaid) : ''}
+                onChange={(_event, value) => {
+                  const trimmed = value.trim();
+                  onChange({
+                    amountPaid: trimmed ? Number(trimmed) : undefined,
+                  });
+                }}
+              />
+            </FormGroup>
 
             <FormGroup
               label="Reimbursement"
@@ -110,6 +111,7 @@ export function TravelPaidFields({ idPrefix, values, onChange }: Props) {
                   id={`${idPrefix}-reimbursed-amount`}
                   type="number"
                   inputMode="decimal"
+                  step="any"
                   value={
                     reimbursedAmount != null ? String(reimbursedAmount) : ''
                   }

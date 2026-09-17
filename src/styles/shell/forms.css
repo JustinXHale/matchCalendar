@@ -75,6 +75,10 @@
   outline-offset: 1px;
 }
 
+.rs-native-input--uppercase {
+  text-transform: uppercase;
+}
+
 .rs-native-input--error {
   border-color: var(--rs-color-urgent);
 }

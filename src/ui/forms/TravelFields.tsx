@@ -67,12 +67,14 @@ function FlightSegmentFields({
         <NativeInput
           id={`${idPrefix}-number`}
           label="Flight #"
+          autoUppercase
           value={segment.flightNumber ?? ''}
           onChange={(value) => onChange({ flightNumber: value })}
         />
         <NativeInput
           id={`${idPrefix}-confirmation`}
           label="Confirmation"
+          autoUppercase
           value={segment.confirmation ?? ''}
           onChange={(value) => onChange({ confirmation: value })}
         />
@@ -85,6 +87,7 @@ function FlightSegmentFields({
         <NativeInput
           id={`${idPrefix}-departure-airport`}
           label="Departing airport"
+          autoUppercase
           value={segment.departureAirport ?? ''}
           onChange={(departureAirport) => onChange({ departureAirport })}
         />
@@ -99,6 +102,7 @@ function FlightSegmentFields({
         <NativeInput
           id={`${idPrefix}-arrival-airport`}
           label="Arriving airport"
+          autoUppercase
           value={segment.arrivalAirport ?? ''}
           onChange={(arrivalAirport) => onChange({ arrivalAirport })}
         />

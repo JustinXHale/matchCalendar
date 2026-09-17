@@ -140,6 +140,36 @@ export function sumTravelOutOfPocket(match: Match): number {
   );
 }
 
+export function updateTravelAmountPaid(
+  match: Match,
+  source: TravelCostSource,
+  amount: number,
+): Partial<Match> {
+  const updateInfo = (info: TravelSelfPaidInfo): TravelSelfPaidInfo => ({
+    ...info,
+    amountPaid: amount,
+    reimbursedAmount:
+      info.reimbursementStatus === 'reimbursed' &&
+      info.reimbursedAmount === info.amountPaid
+        ? amount
+        : info.reimbursedAmount,
+  });
+
+  if (source === 'flight' && match.flight?.selfPaid) {
+    return { flight: updateInfo(match.flight) };
+  }
+
+  if (source === 'lodging' && match.lodging?.selfPaid) {
+    return { lodging: updateInfo(match.lodging) };
+  }
+
+  if (source === 'groundTravel' && match.groundTravel?.selfPaid) {
+    return { groundTravel: updateInfo(match.groundTravel) };
+  }
+
+  return {};
+}
+
 export function setTravelReimbursementStatus(
   match: Match,
   source: TravelCostSource,
