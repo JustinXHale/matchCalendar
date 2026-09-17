@@ -95,6 +95,12 @@ function mergePatch(current: Match, patch: Partial<Match>): Match {
 
 type SettlementChoice = 'settled' | 'waiting' | 'self';
 
+const SETTLEMENT_TOGGLE_LABELS = {
+  settled: 'Reimbursed',
+  waiting: 'Waiting',
+  self: 'Self expense',
+} as const;
+
 function reimbursementToChoice(status: ReimbursementStatus): SettlementChoice {
   if (status === 'reimbursed') return 'settled';
   if (status === 'pending') return 'waiting';
@@ -450,7 +456,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                 <li key={entry.source} className="rs-settlement-line rs-settlement-grid">
                   <div className="rs-settlement-line__info">
                     <span className="rs-settlement-line__label">
-                      {entry.label} reimbursement
+                      {entry.label}
                     </span>
                   </div>
                   <FormTextInput
@@ -488,9 +494,9 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                   <SettlementToggles
                     choice={reimbursementToChoice(entry.reimbursementStatus)}
                     onChange={(choice) => applyTravelChoice(entry.source, choice)}
-                    settledLabel={`${entry.label} reimbursed`}
-                    waitingLabel={`${entry.label} awaiting reimbursement`}
-                    selfLabel={`${entry.label} self expense`}
+                    settledLabel={SETTLEMENT_TOGGLE_LABELS.settled}
+                    waitingLabel={SETTLEMENT_TOGGLE_LABELS.waiting}
+                    selfLabel={SETTLEMENT_TOGGLE_LABELS.self}
                   />
                 </li>
             ))}
@@ -538,9 +544,9 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
                   <SettlementToggles
                     choice={reimbursementToChoice(expense.reimbursementStatus)}
                     onChange={(choice) => applyExpenseChoice(expense.id, choice)}
-                    settledLabel="Reimbursed"
-                    waitingLabel="Awaiting reimbursement"
-                    selfLabel="Self expense"
+                    settledLabel={SETTLEMENT_TOGGLE_LABELS.settled}
+                    waitingLabel={SETTLEMENT_TOGGLE_LABELS.waiting}
+                    selfLabel={SETTLEMENT_TOGGLE_LABELS.self}
                   />
                 </li>
             ))}

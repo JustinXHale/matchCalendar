@@ -36,12 +36,12 @@ export function getOpenSettlementLabels(match: Match, now = new Date()): string[
   }
 
   for (const expense of getPendingExpenseReimbursements(match)) {
-    labels.push(`${formatExpenseCategory(expense.category)} awaiting reimbursement`);
+    labels.push(formatExpenseCategory(expense.category));
   }
 
   for (const entry of getTravelCostEntries(match)) {
     if (entry.reimbursementStatus === 'pending' && !travelCostAlreadyInExpenses(entry, match.expenses ?? [])) {
-      labels.push(`${entry.label} awaiting reimbursement`);
+      labels.push(entry.label);
     }
   }
 
