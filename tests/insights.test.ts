@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import type { Match, Expense } from '../src/domain/match';
 import type { Tournament } from '../src/domain/tournament';
 import { buildMatchFromForm, createEmptyMatchForm } from '../src/features/matches/matchFormUtils';
+import {
+  filterInsightsData,
+  formatInsightsRangeLabel,
+  isValidInsightsDateRange,
+} from '../src/features/insights/insightsRange';
 import { getInsightsSummary } from '../src/features/insights/insightsSummary';
 
 const now = new Date();
@@ -68,3 +73,42 @@ assert.ok(sampleSummary.flightSegments > 0);
 assert.ok(sampleSummary.flightMinutes > 0);
 assert.ok(sampleSummary.drivenTrips > 0);
 assert.equal(new Set(sample.matches.map((match) => match.id)).size, sample.matches.length);
+
+const springMatch: Match = {
+  ...match,
+  id: 'spring',
+  kickoffAt: new Date(2026, 2, 15, 14),
+};
+const summerMatch: Match = {
+  ...match,
+  id: 'summer',
+  kickoffAt: new Date(2026, 6, 10, 14),
+};
+const springTournament: Tournament = {
+  ...parent,
+  id: 'spring-cup',
+  startDate: '2026-03-14',
+  endDate: '2026-03-15',
+};
+const springChild = { ...child, id: 'spring-child', tournamentId: springTournament.id, kickoffAt: new Date(2026, 2, 14, 9) };
+
+assert.equal(isValidInsightsDateRange({ startDate: '2026-03-01', endDate: '2026-05-31' }), true);
+assert.equal(isValidInsightsDateRange({ startDate: '2026-06-01', endDate: '2026-05-31' }), false);
+assert.equal(formatInsightsRangeLabel({}), 'All time');
+assert.equal(
+  formatInsightsRangeLabel({ startDate: '2026-03-01', endDate: '2026-05-31' }).includes('2026'),
+  true,
+);
+
+const season = filterInsightsData(
+  [springMatch, summerMatch, springChild],
+  [springTournament],
+  { startDate: '2026-03-01', endDate: '2026-05-31' },
+);
+assert.deepEqual(season.matches.map((item) => item.id).sort(), ['spring', 'spring-child']);
+assert.deepEqual(season.tournaments.map((item) => item.id), ['spring-cup']);
+
+const springSummary = getInsightsSummary(season.matches, season.tournaments);
+assert.equal(springSummary.eventCount, 2);
+assert.ok(springSummary.paid > 0);
+assert.equal(springSummary.organizations.length, 1);

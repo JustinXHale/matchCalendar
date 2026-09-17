@@ -5,6 +5,16 @@
   gap: var(--rs-space-md);
 }
 
+.rs-insights-filter {
+  display: grid;
+  gap: var(--rs-space-sm);
+}
+
+.rs-insights-filter__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .rs-money-toolbar {
   display: flex;
   flex-wrap: wrap;
