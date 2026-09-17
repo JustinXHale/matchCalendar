@@ -2,6 +2,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCar, faPlane } from '@fortawesome/free-solid-svg-icons';
 import { formatCurrency } from '@/domain/matchDisplay';
 import type { CountRow, InsightsSummary } from '@/features/insights/insightsSummary';
+import {
+  drivingMinutesFromMiles,
+  formatTravelDuration,
+} from '@/features/matches/travelDuration';
 
 const COLORS = ['#2563eb', '#0d9488', '#d97706', '#9333ea', '#db2777', '#64748b'];
 const number = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
@@ -90,6 +94,8 @@ type Props = {
 };
 
 export function InsightsSummaryView({ summary, idPrefix = 'insights' }: Props) {
+  const drivenMinutes = drivingMinutesFromMiles(summary.milesDriven);
+
   return (
     <>
       <section className="rs-insight-card" aria-labelledby={`${idPrefix}-events`}>
@@ -109,10 +115,16 @@ export function InsightsSummaryView({ summary, idPrefix = 'insights' }: Props) {
           <div>
             <FontAwesomeIcon icon={faCar} aria-hidden />
             <strong>{number.format(summary.milesDriven)} <small>mi</small></strong>
-            {summary.drivenTrips > 0 ? (
+            {summary.drivenTrips > 0 || drivenMinutes > 0 ? (
               <span className="rs-insight-travel__meta">
-                {number.format(summary.drivenTrips)} trip
-                {summary.drivenTrips === 1 ? '' : 's'}
+                {[
+                  summary.drivenTrips > 0
+                    ? `${number.format(summary.drivenTrips)} trip${summary.drivenTrips === 1 ? '' : 's'}`
+                    : null,
+                  drivenMinutes > 0 ? formatTravelDuration(drivenMinutes) : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </span>
             ) : null}
             <span>Miles driven</span>
@@ -120,18 +132,26 @@ export function InsightsSummaryView({ summary, idPrefix = 'insights' }: Props) {
           <div>
             <FontAwesomeIcon icon={faPlane} aria-hidden />
             <strong>{number.format(summary.milesFlown)} <small>mi</small></strong>
-            {summary.flightSegments > 0 ? (
+            {summary.flightSegments > 0 || summary.flightMinutes > 0 ? (
               <span className="rs-insight-travel__meta">
-                {number.format(summary.flightSegments)} segment
-                {summary.flightSegments === 1 ? '' : 's'}
+                {[
+                  summary.flightSegments > 0
+                    ? `${number.format(summary.flightSegments)} segment${summary.flightSegments === 1 ? '' : 's'}`
+                    : null,
+                  summary.flightMinutes > 0
+                    ? formatTravelDuration(summary.flightMinutes)
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </span>
             ) : null}
             <span>Miles flown</span>
           </div>
         </div>
         <p className="rs-summary-label">
-          Includes driven mileage entries and flight distance from airport codes
-          when available.
+          Driven time uses a 65 mph average. Flight time uses departure and arrival
+          times on your segments; miles flown use airport codes when available.
         </p>
       </section>
 

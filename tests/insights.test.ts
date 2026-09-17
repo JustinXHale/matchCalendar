@@ -65,5 +65,6 @@ assert.equal(sampleSummary.topExpenses.length, 5);
 assert.equal(sampleSummary.topExpenses[0].category, 'parking');
 assert.ok(sampleSummary.milesDriven > 0 && sampleSummary.milesFlown > 0);
 assert.ok(sampleSummary.flightSegments > 0);
+assert.ok(sampleSummary.flightMinutes > 0);
 assert.ok(sampleSummary.drivenTrips > 0);
 assert.equal(new Set(sample.matches.map((match) => match.id)).size, sample.matches.length);

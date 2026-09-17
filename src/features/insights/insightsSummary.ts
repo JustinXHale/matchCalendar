@@ -3,6 +3,7 @@ import type { Tournament } from '@/domain/tournament';
 import { resolveMatchTypeLabel, resolvePositionLabel } from '@/domain/matchConstants';
 import { getTotalFlightMiles } from '@/features/matches/flightDistance';
 import { countFlightSegments } from '@/features/matches/flightUtils';
+import { getTotalFlightMinutes } from '@/features/matches/travelDuration';
 import { getCategoryRollup, getMatchFinanceTotals, getSettlementPaidTotal } from '@/features/matches/paySummary';
 import { tournamentEvent } from '@/features/tournaments/tournamentEvent';
 
@@ -53,6 +54,7 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
   let drivenTrips = 0;
   let milesFlown = 0;
   let flightSegments = 0;
+  let flightMinutes = 0;
   let paid = 0;
   let expenses = 0;
   const organizations = new Map<string, OrganizationRow>();
@@ -66,6 +68,7 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
     if (eventHasMilesDriven(event)) drivenTrips += 1;
     milesFlown += getTotalFlightMiles(event.flight) ?? 0;
     flightSegments += countFlightSegments(event.flight);
+    flightMinutes += getTotalFlightMinutes(event.flight) ?? 0;
     const income = getSettlementPaidTotal(event);
     const costs = getMatchFinanceTotals(event).combinedExpenseTotal;
     paid += income;
@@ -88,6 +91,7 @@ export function getInsightsSummary(matches: Match[], tournaments: Tournament[]) 
     drivenTrips,
     milesFlown,
     flightSegments,
+    flightMinutes,
     paid,
     expenses,
     net: paid - expenses,

@@ -11,6 +11,10 @@ import {
   getFlightSegments,
   hasFlightSegmentData,
 } from '@/features/matches/flightUtils';
+import {
+  formatTravelDuration,
+  getTotalFlightMinutes,
+} from '@/features/matches/travelDuration';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
 import { NativeInput } from '@/ui/forms/NativeInput';
 import { TravelPaidFields } from '@/ui/forms/TravelPaidFields';
@@ -119,6 +123,7 @@ function FlightSegmentFields({
 
 export function FlightFields({ flight, onChange }: FlightProps) {
   const segments = getFlightSegments(flight);
+  const totalFlightMinutes = getTotalFlightMinutes(flight);
 
   const updateSegments = (nextSegments: FlightSegment[]) => {
     onChange({ segments: nextSegments });
@@ -155,6 +160,12 @@ export function FlightFields({ flight, onChange }: FlightProps) {
           />
         ))}
       </div>
+
+      {totalFlightMinutes != null ? (
+        <p className="rs-flight-total-time">
+          Total air time: {formatTravelDuration(totalFlightMinutes)}
+        </p>
+      ) : null}
 
       <Button variant="secondary" onClick={addSegment}>
         Add segment

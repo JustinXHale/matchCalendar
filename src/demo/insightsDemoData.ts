@@ -2,12 +2,38 @@ import type { Expense, FlightInfo, Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
 import { POSITION_OPTIONS } from '@/domain/matchConstants';
 
-const SAMPLE_FLIGHT_ROUTES: [string, string][][] = [
-  [['DEN', 'IAH'], ['IAH', 'DEN']],
-  [['MCO', 'TPA'], ['TPA', 'MCO']],
-  [['LAX', 'SAN'], ['SAN', 'LAX']],
-  [['DFW', 'AUS'], ['AUS', 'DFW']],
+type SampleFlightRoute = {
+  legs: [string, string][];
+  legMinutes: number[];
+  departHour: number;
+};
+
+const SAMPLE_FLIGHT_ROUTES: SampleFlightRoute[] = [
+  {
+    legs: [['DEN', 'IAH'], ['IAH', 'DEN']],
+    legMinutes: [110, 125],
+    departHour: 7,
+  },
+  {
+    legs: [['MCO', 'TPA'], ['TPA', 'MCO']],
+    legMinutes: [50, 75],
+    departHour: 10,
+  },
+  {
+    legs: [['LAX', 'SAN'], ['SAN', 'LAX']],
+    legMinutes: [65, 70],
+    departHour: 8,
+  },
+  {
+    legs: [['DFW', 'AUS'], ['AUS', 'DFW']],
+    legMinutes: [55, 60],
+    departHour: 9,
+  },
 ];
+
+function addMinutes(date: Date, minutes: number): Date {
+  return new Date(date.getTime() + minutes * 60_000);
+}
 
 /** Sample records for the Insights preview only; never written to storage. */
 export function createInsightsDemoData(): { matches: Match[]; tournaments: Tournament[] } {
@@ -16,18 +42,24 @@ export function createInsightsDemoData(): { matches: Match[]; tournaments: Tourn
   const sampleFlight = (index: number): FlightInfo => {
     const route = SAMPLE_FLIGHT_ROUTES[index % SAMPLE_FLIGHT_ROUTES.length];
     const day = index % 6 + 1;
+    const month = Math.floor(index / 6);
 
     return {
-      segments: route.map(([departureAirport, arrivalAirport], leg) => ({
-        id: `sample-flight-${index}-${leg}`,
-        airline: 'Demo Air',
-        flightNumber: `DA ${1000 + index + leg}`,
-        departureAirport,
-        arrivalAirport,
-        departureAt: new Date(2026, Math.floor(index / 6), day + leg, 9 + leg),
-        arrivalAt: new Date(2026, Math.floor(index / 6), day + leg, 11 + leg),
-        confirmation: `DEMO-${index}`,
-      })),
+      segments: route.legs.map(([departureAirport, arrivalAirport], leg) => {
+        const departureAt = new Date(2026, month, day + leg, route.departHour + leg, 15);
+        const arrivalAt = addMinutes(departureAt, route.legMinutes[leg]);
+
+        return {
+          id: `sample-flight-${index}-${leg}`,
+          airline: 'Demo Air',
+          flightNumber: `DA ${1000 + index + leg}`,
+          departureAirport,
+          arrivalAirport,
+          departureAt,
+          arrivalAt,
+          confirmation: `DEMO-${index}`,
+        };
+      }),
       selfPaid: true,
       amountPaid: 350 + index * 4,
       reimbursementStatus: 'reimbursed',
@@ -52,10 +84,9 @@ export function createInsightsDemoData(): { matches: Match[]; tournaments: Tourn
       cost(`sample-rideshare-${index}`, 'rideshare', 22 + index % 9, 10),
       { ...cost(`sample-driven-${index}`, 'miles_driven', 0), miles: 80 + index * 7 },
     ];
-    if (index % 3 === 0) expenses.push(
-      cost(`sample-airfare-${index}`, 'airfare', 350 + index * 4, 350 + index * 4),
-      { ...cost(`sample-flown-${index}`, 'miles_flown', 0), miles: 900 + index * 23 },
-    );
+    if (index % 3 === 0) {
+      expenses.push(cost(`sample-airfare-${index}`, 'airfare', 350 + index * 4, 350 + index * 4));
+    }
     return {
       id: `insights-sample-${index}`, ownerUid: 'insights-sample',
       title: `Sample assignment ${index + 1}`, location: 'Sample venue',

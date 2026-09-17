@@ -31,7 +31,8 @@ This is a straight-line estimate, not ticket or route mileage.
 |---------|----------|
 | Agenda / schedule cards | Travel chip shows `Flight (1001 mi)` when computable |
 | Event setup Flight card | Title becomes `Flight (1001 mi)` when computable |
-| Insights | **Miles flown** includes derived flight distance; segment count shown above it. **Miles driven** shows trip count (one per event with driven mileage) above miles. |
+| Insights | **Miles flown** includes derived flight distance and manual `miles_flown` expense entries, with segment count and total air time from segment schedules. **Miles driven** shows trip count and estimated drive time (65 mph average). |
+| Event setup Flight form | **Total air time** below segments when departure and arrival times are set |
 
 ## Implementation
 
