@@ -59,12 +59,16 @@
 }
 
 .rs-page-header {
-  margin: 0 0 var(--rs-space-md);
+  margin: 0;
 }
 
 .rs-page-header .pf-v6-c-title {
   font: var(--rs-font-title) !important;
   margin: 0 !important;
+}
+
+.rs-stack > .rs-page-header + .rs-page-lede {
+  margin-top: calc(4px - var(--rs-space-md));
 }
 
 .rs-empty-state {

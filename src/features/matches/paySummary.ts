@@ -1,5 +1,6 @@
 import type { Expense, ExpenseCategory, Match } from '@/domain/match';
 import { formatExpenseCategory } from '@/domain/expenseCategories';
+import { needsSettlementAttention } from '@/features/matches/matchClosure';
 import {
   getTravelCostEntries,
   sumTravelExpenseAmount,
@@ -262,4 +263,59 @@ export function getPaySummary(matches: Match[]): PaySummary {
 export function getSettlementPaidTotal(match: Match): number {
   const fee = match.payStatus === 'paid' ? match.paidAmount ?? match.expectedPay ?? 0 : 0;
   return fee + getMatchFinanceTotals(match).reimbursedTotal;
+}
+
+export type MoneyGlanceSummary = {
+  unpaidFees: number;
+  awaitingReimbursement: number;
+  outOfPocket: number;
+  openSettlements: number;
+};
+
+function sumAwaitingReimbursement(match: Match): number {
+  const expenses = match.expenses ?? [];
+  let total = 0;
+
+  for (const expense of expenses) {
+    if (expense.reimbursementStatus === 'pending') {
+      total += expense.amount;
+    }
+  }
+
+  for (const entry of getTravelCostEntries(match)) {
+    if (
+      entry.reimbursementStatus === 'pending' &&
+      !travelCostAlreadyInExpenses(entry, expenses)
+    ) {
+      total += entry.amount;
+    }
+  }
+
+  return total;
+}
+
+/** Compact Money-page totals: fees owed, pending reimbursements, OOP, open events. */
+export function getMoneyGlanceSummary(matches: Match[], now = new Date()): MoneyGlanceSummary {
+  let unpaidFees = 0;
+  let awaitingReimbursement = 0;
+  let outOfPocket = 0;
+  let openSettlements = 0;
+
+  for (const match of matches) {
+    if (match.payStatus === 'unpaid' && match.expectedPay != null) {
+      unpaidFees += match.expectedPay;
+    }
+    awaitingReimbursement += sumAwaitingReimbursement(match);
+    outOfPocket += getMatchFinanceTotals(match).outOfPocketTotal;
+    if (needsSettlementAttention(match, now)) {
+      openSettlements += 1;
+    }
+  }
+
+  return {
+    unpaidFees,
+    awaitingReimbursement,
+    outOfPocket,
+    openSettlements,
+  };
 }

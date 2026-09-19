@@ -1,7 +1,7 @@
 import './insights.test';
 import './backNav.test';
 import assert from 'node:assert/strict';
-import { getMatchFinanceTotals, getSettlementPaidTotal } from '../src/features/matches/paySummary';
+import { getMatchFinanceTotals, getMoneyGlanceSummary, getSettlementPaidTotal } from '../src/features/matches/paySummary';
 import { needsSettlementAttention, updateExpenseAmount } from '../src/features/matches/matchClosure';
 import { fromDateTimeInputValue, toDateTimeInputValue } from '../src/ui/forms/formDateUtils';
 import { tournamentEvent } from '../src/features/tournaments/tournamentEvent';
@@ -64,5 +64,31 @@ const explicitPaid = buildMatchFromForm({
   paidAmount: '175',
 });
 assert.equal(explicitPaid.payStatus, 'paid');
+
+const unpaidPast: Match = {
+  ...match,
+  id: 'unpaid-past',
+  kickoffAt: new Date(2020, 0, 1),
+  payStatus: 'unpaid',
+  expectedPay: 150,
+  paidAmount: undefined,
+  flight: undefined,
+  expenses: [{ id: 'gas', category: 'gas', amount: 40, reimbursementStatus: 'pending', createdAt: now }],
+};
+const unpaidUpcoming: Match = {
+  ...match,
+  id: 'unpaid-upcoming',
+  kickoffAt: new Date(2099, 5, 1),
+  payStatus: 'unpaid',
+  expectedPay: 200,
+  paidAmount: undefined,
+  flight: { selfPaid: true, amountPaid: 300, reimbursementStatus: 'pending' },
+  expenses: [{ id: 'food2', category: 'food', amount: 25, reimbursementStatus: 'not_expected', createdAt: now }],
+};
+const glance = getMoneyGlanceSummary([unpaidPast, unpaidUpcoming, match]);
+assert.equal(glance.unpaidFees, 350);
+assert.equal(glance.awaitingReimbursement, 340);
+assert.equal(glance.outOfPocket, 445);
+assert.equal(glance.openSettlements, 2);
 
 console.log('Finance, settlement, mileage, tournament, and date regression checks passed.');

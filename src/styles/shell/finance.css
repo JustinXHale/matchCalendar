@@ -15,6 +15,45 @@
   justify-content: flex-end;
 }
 
+.rs-money-page .rs-money-glance,
+.rs-insights-page .rs-money-glance {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  flex-direction: unset;
+  gap: 0;
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-card);
+  background: var(--rs-color-surface);
+  text-align: center;
+}
+
+.rs-money-glance > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: var(--rs-space-md) var(--rs-space-sm);
+  min-width: 0;
+}
+
+.rs-money-glance > div:not(:last-child) {
+  border-right: 1px solid var(--rs-color-border);
+}
+
+.rs-money-glance strong {
+  font: var(--rs-font-title);
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--rs-color-ink);
+}
+
+.rs-money-glance span {
+  font: var(--rs-font-body);
+  font-size: 0.75rem;
+  line-height: 1.25;
+  color: var(--rs-color-muted);
+}
+
 .rs-money-toolbar {
   display: flex;
   flex-wrap: wrap;

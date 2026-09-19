@@ -11,7 +11,11 @@ import {
   type InsightsDateRange,
 } from '@/features/insights/insightsRange';
 import { getInsightsSummary } from '@/features/insights/insightsSummary';
+import { getMoneyGlanceSummary } from '@/features/matches/paySummary';
+import { tournamentEvent } from '@/features/tournaments/tournamentEvent';
+import { isTournamentLumpPay } from '@/features/tournaments/tournamentFormUtils';
 import { InsightsSummaryView } from '@/features/insights/InsightsSummaryView';
+import { MoneyGlanceCard } from '@/ui/MoneyGlanceCard';
 import { PageHeader } from '@/ui/PageHeader';
 
 export function InsightsPage() {
@@ -32,6 +36,14 @@ export function InsightsPage() {
     () => getInsightsSummary(filtered.matches, filtered.tournaments),
     [filtered],
   );
+  const glance = useMemo(
+    () =>
+      getMoneyGlanceSummary([
+        ...filtered.matches,
+        ...filtered.tournaments.filter(isTournamentLumpPay).map(tournamentEvent),
+      ]),
+    [filtered],
+  );
   const rangeLabel = formatInsightsRangeLabel(dateRange);
 
   return (
@@ -40,6 +52,7 @@ export function InsightsPage() {
       <p className="rs-page-lede">
         Your events, travel, and money at a glance · {rangeLabel}
       </p>
+      <MoneyGlanceCard summary={glance} />
       <InsightsDateFilter range={dateRange} onChange={setDateRange} />
       {summary.eventCount === 0 && isInsightsDateRangeActive(dateRange) && isValidInsightsDateRange(dateRange) ? (
         <div className="rs-placeholder-card">

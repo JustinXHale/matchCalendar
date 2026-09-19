@@ -1,4 +1,5 @@
 import { isPayLineOpen } from '@/features/matches/matchClosure';
+import { getMoneyGlanceSummary } from '@/features/matches/paySummary';
 import { routes } from '@/app/routes';
 import { MONEY_BACK } from '@/nav/backDefaults';
 import { MatchCard } from '@/ui/MatchCard';
@@ -8,6 +9,7 @@ import { tournamentEvent } from '@/features/tournaments/tournamentEvent';
 import { isTournamentLumpPay } from '@/features/tournaments/tournamentFormUtils';
 import { useMemo, useState } from 'react';
 import { useMatches } from '@/features/matches/useMatches';
+import { MoneyGlanceCard } from '@/ui/MoneyGlanceCard';
 import { MoneyMatchRow } from '@/ui/MoneyMatchRow';
 import { PageHeader } from '@/ui/PageHeader';
 
@@ -41,6 +43,7 @@ export function MoneyPage() {
   );
   const [filter, setFilter] = useState<MoneyFilter>('all');
   const [dateSort, setDateSort] = useState<MoneyDateSort>('oldest');
+  const glance = useMemo(() => getMoneyGlanceSummary(events), [events]);
   const filtered = useMemo(() => {
     const matchesFilter = events.filter((match) =>
       filter === 'all' ||
@@ -65,6 +68,8 @@ export function MoneyPage() {
         Record pay, reimbursements, and expenses for each match so your records are
         ready at tax time.
       </p>
+
+      <MoneyGlanceCard summary={glance} />
 
       <div className="rs-money-toolbar">
         <div className="rs-filter-row" role="tablist" aria-label="Money filters">
