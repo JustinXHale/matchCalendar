@@ -1,11 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Button } from '@patternfly/react-core';
 import type { FlightSegment } from '@/domain/match';
-import {
-  flightLookupToSegmentPatch,
-  type FlightLookupMovement,
-  type FlightLookupOption,
-} from '@/features/matches/flightImport';
+import { flightLookupToSegmentPatch } from '@/features/matches/flightImport';
 import {
   flightImportErrorMessage,
   searchFlightData,
@@ -18,53 +14,57 @@ type Props = {
   segment: FlightSegment;
   onImport: (patch: Partial<FlightSegment>) => void;
   onCancel: () => void;
+  onAddSegment: () => void;
 };
 
-function formatMovementTime(movement: FlightLookupMovement): string {
-  if (!movement.scheduledUtc) return 'Time unavailable';
-  const date = new Date(movement.scheduledUtc);
-  if (Number.isNaN(date.getTime())) return 'Time unavailable';
-
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    ...(movement.timeZone ? { timeZone: movement.timeZone } : {}),
-  }).format(date);
-}
-
-function routeLabel(flight: FlightLookupOption): string {
-  const departure = flight.departure.airportCode || flight.departure.airportName;
-  const arrival = flight.arrival.airportCode || flight.arrival.airportName;
-  return `${departure || 'Unknown'} → ${arrival || 'Unknown'}`;
-}
-
-export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
+export function FlightImportPanel({
+  segment,
+  onImport,
+  onCancel,
+  onAddSegment,
+}: Props) {
   const [flightNumber, setFlightNumber] = useState(segment.flightNumber ?? '');
   const [departureDate, setDepartureDate] = useState(
     segment.flightLookupDepartureDate ?? toDateInputValue(segment.departureAt),
   );
-  const [results, setResults] = useState<FlightLookupOption[] | null>(null);
+  const [departureAirport, setDepartureAirport] = useState(
+    segment.departureAirport ?? '',
+  );
   const [error, setError] = useState<string>();
   const [searching, setSearching] = useState(false);
 
   const search = async (event: FormEvent) => {
     event.preventDefault();
     const normalizedNumber = flightNumber.replace(/\s+/g, '').toUpperCase();
-    if (!normalizedNumber || !departureDate) {
-      setError('Enter a flight number and departure date.');
+    const normalizedAirport = departureAirport.trim().toUpperCase();
+    if (!normalizedNumber || !departureDate || !normalizedAirport) {
+      setError(
+        'Enter the flight number, departure date, and departing airport.',
+      );
       return;
     }
 
     setSearching(true);
     setError(undefined);
-    setResults(null);
     try {
-      const flights = await searchFlightData(normalizedNumber, departureDate);
-      setResults(flights);
+      const flights = await searchFlightData(
+        normalizedNumber,
+        departureDate,
+        normalizedAirport,
+      );
       if (flights.length === 0) {
-        setError('No matching flight was found. Check the number and departure date.');
+        setError('No matching flight was found. Check all three fields.');
+      } else if (flights.length > 1) {
+        setError(
+          'More than one flight matched. Check the flight and airport codes.',
+        );
+      } else {
+        onImport(
+          flightLookupToSegmentPatch(flights[0], {
+            flightNumber: normalizedNumber,
+            departureDate,
+          }),
+        );
       }
     } catch (lookupError) {
       setError(flightImportErrorMessage(lookupError));
@@ -76,13 +76,14 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
   return (
     <form className="rs-flight-import" onSubmit={(event) => void search(event)}>
       <p className="rs-form-hint">
-        Search using the airline code and flight number shown on your itinerary.
+        Enter the codes shown on your itinerary. A unique match imports immediately.
       </p>
-      <div className="rs-form-row">
+      <div className="rs-form-row rs-form-row--3">
         <NativeInput
           id={`flight-import-number-${segment.id}`}
           label="Flight number"
           value={flightNumber}
+          placeholder="e.g. DL1073"
           autoUppercase
           isRequired
           onChange={setFlightNumber}
@@ -95,42 +96,44 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
           isRequired
           onChange={setDepartureDate}
         />
+        <NativeInput
+          id={`flight-import-airport-${segment.id}`}
+          label="Departing airport"
+          value={departureAirport}
+          placeholder="e.g. SAT"
+          autoUppercase
+          isRequired
+          onChange={setDepartureAirport}
+        />
       </div>
+      <Button
+        type="button"
+        variant="secondary"
+        className="rs-flight-import__add-segment"
+        onClick={onAddSegment}
+        isDisabled={searching}
+      >
+        Add segment
+      </Button>
       {error ? <span className="rs-form-error" role="alert">{error}</span> : null}
       <div className="rs-flight-import__actions">
-        <Button type="button" variant="link" onClick={onCancel} isDisabled={searching}>
+        <Button
+          type="button"
+          variant="link"
+          onClick={onCancel}
+          isDisabled={searching}
+        >
           Cancel
         </Button>
-        <Button variant="primary" type="submit" isLoading={searching} isDisabled={searching}>
-          Find flight
+        <Button
+          variant="primary"
+          type="submit"
+          isLoading={searching}
+          isDisabled={searching}
+        >
+          Import flight
         </Button>
       </div>
-
-      {results && results.length > 0 ? (
-        <div className="rs-flight-import__results" aria-label="Matching flights">
-          <p className="rs-flight-import__results-label">
-            Select the flight that matches your itinerary.
-          </p>
-          {results.map((flight) => (
-            <button
-              key={flight.id}
-              type="button"
-              className="rs-flight-import__result"
-              onClick={() => onImport(flightLookupToSegmentPatch(flight, {
-                flightNumber: flightNumber.replace(/\s+/g, '').toUpperCase(),
-                departureDate,
-              }))}
-            >
-              <strong>{flight.number} · {routeLabel(flight)}</strong>
-              <span>
-                {[flight.airline, formatMovementTime(flight.departure), flight.status]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </span>
-            </button>
-          ))}
-        </div>
-      ) : null}
       <FlightDataAttribution />
     </form>
   );

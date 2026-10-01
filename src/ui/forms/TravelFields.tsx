@@ -44,6 +44,8 @@ function FlightSegmentFields({
   index,
   canRemove,
   canImport,
+  onAddSegment,
+  onClear,
   onChange,
   onRemove,
 }: {
@@ -51,6 +53,8 @@ function FlightSegmentFields({
   index: number;
   canRemove: boolean;
   canImport: boolean;
+  onAddSegment: () => void;
+  onClear: () => void;
   onChange: (patch: Partial<FlightSegment>) => void;
   onRemove: () => void;
 }) {
@@ -62,6 +66,16 @@ function FlightSegmentFields({
       <div className="rs-flight-segment__header">
         <span className="rs-flight-segment__title">Segment {index + 1}</span>
         <div className="rs-flight-segment__actions">
+          {!importing ? (
+            <Button variant="link" isInline onClick={onClear}>
+              Clear segment
+            </Button>
+          ) : null}
+          {!importing && canImport ? (
+            <span className="rs-flight-segment__action-separator" aria-hidden>
+              |
+            </span>
+          ) : null}
           {canImport ? (
             <Button variant="link" isInline onClick={() => setImporting((value) => !value)}>
               {importing ? 'Cancel import' : 'Import flight'}
@@ -79,6 +93,7 @@ function FlightSegmentFields({
         <FlightImportPanel
           segment={segment}
           onCancel={() => setImporting(false)}
+          onAddSegment={onAddSegment}
           onImport={(patch) => {
             onChange(patch);
             setImporting(false);
@@ -180,8 +195,25 @@ export function FlightFields({ flight, onChange }: FlightProps) {
     );
   };
 
+  const clearSegment = (segmentId: string) => {
+    updateSegments(
+      segments.map((segment) =>
+        segment.id === segmentId ? { id: segment.id } : segment,
+      ),
+    );
+  };
+
   const addSegment = () => {
-    updateSegments([...segments, emptyFlightSegment()]);
+    const previousSegment = segments[segments.length - 1];
+    updateSegments([
+      ...segments,
+      {
+        ...emptyFlightSegment(),
+        ...(previousSegment?.arrivalAirport
+          ? { departureAirport: previousSegment.arrivalAirport }
+          : {}),
+      },
+    ]);
   };
 
   const removeSegment = (segmentId: string) => {
@@ -199,6 +231,8 @@ export function FlightFields({ flight, onChange }: FlightProps) {
             index={index}
             canRemove={segments.length > 1}
             canImport={canImport}
+            onAddSegment={addSegment}
+            onClear={() => clearSegment(segment.id)}
             onChange={(patch) => updateSegment(segment.id, patch)}
             onRemove={() => removeSegment(segment.id)}
           />
@@ -212,10 +246,6 @@ export function FlightFields({ flight, onChange }: FlightProps) {
           Total air time: {formatTravelDuration(totalFlightMinutes)}
         </p>
       ) : null}
-
-      <Button variant="secondary" onClick={addSegment}>
-        Add segment
-      </Button>
 
       <TravelPaidFields
         idPrefix="flight"

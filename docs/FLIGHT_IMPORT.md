@@ -1,8 +1,10 @@
 # AeroDataBox flight import
 
-Match Calendar imports a flight into one segment at a time. The user supplies a
-flight number and local departure date, selects the matching AeroDataBox result,
-and may then edit the imported fields normally.
+Match Calendar imports a flight into one segment at a time. The user supplies
+the combined airline/flight number (for example, `DL1073`), local departure
+date, and three-letter departing-airport code. The backend filters the single AeroDataBox response by
+departure airport and imports a unique match immediately. Imported fields
+remain editable.
 
 ## Architecture
 

@@ -188,6 +188,10 @@
   flex-wrap: wrap;
 }
 
+.rs-flight-segment__action-separator {
+  color: var(--rs-color-muted);
+}
+
 .rs-flight-import {
   display: flex;
   flex-direction: column;
@@ -196,6 +200,10 @@
   border: 1px solid var(--rs-color-border);
   border-radius: var(--rs-radius-input);
   background: var(--rs-color-surface-muted);
+}
+
+.rs-flight-import__add-segment {
+  width: 100%;
 }
 
 .rs-flight-import__results {

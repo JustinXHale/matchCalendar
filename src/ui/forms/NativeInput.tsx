@@ -10,6 +10,7 @@ type Props = {
   label?: string;
   type?: HTMLInputTypeAttribute;
   value: string;
+  placeholder?: string;
   onChange: (value: string) => void;
   validated?: 'default' | 'error' | 'success' | 'warning';
   error?: string;
@@ -28,6 +29,7 @@ export function NativeInput({
   label,
   type = 'text',
   value,
+  placeholder,
   onChange,
   validated = 'default',
   error,
@@ -64,6 +66,7 @@ export function NativeInput({
         type={type}
         className={inputClass}
         value={value}
+        placeholder={placeholder}
         inputMode={inputMode}
         autoCapitalize={autoUppercase ? 'characters' : undefined}
         autoCorrect={autoUppercase ? 'off' : undefined}

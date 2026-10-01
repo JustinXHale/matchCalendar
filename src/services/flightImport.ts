@@ -27,12 +27,21 @@ export async function hasFlightImportAccess(): Promise<boolean> {
 export async function searchFlightData(
   flightNumber: string,
   departureDate: string,
+  departureAirport: string,
 ): Promise<FlightLookupOption[]> {
   const callable = httpsCallable<
-    { flightNumber: string; departureDate: string },
+    {
+      flightNumber: string;
+      departureDate: string;
+      departureAirport: string;
+    },
     FlightSearchResult
   >(requireFunctions(), 'searchMatchCalendarFlights');
-  const result = await callable({ flightNumber, departureDate });
+  const result = await callable({
+    flightNumber,
+    departureDate,
+    departureAirport,
+  });
   return result.data.flights;
 }
 
