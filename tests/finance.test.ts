@@ -86,6 +86,7 @@ const unpaidUpcoming: Match = {
   expenses: [{ id: 'food2', category: 'food', amount: 25, reimbursementStatus: 'not_expected', createdAt: now }],
 };
 const glance = getMoneyGlanceSummary([unpaidPast, unpaidUpcoming, match]);
+assert.equal(glance.income, 250);
 assert.equal(glance.unpaidFees, 350);
 assert.equal(glance.awaitingReimbursement, 340);
 assert.equal(glance.outOfPocket, 445);

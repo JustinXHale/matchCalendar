@@ -37,6 +37,8 @@ import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { getFlightSegments, hasFlightSegmentData } from '@/features/matches/flightUtils';
 import { openDirections } from '@/utils/maps';
 import { useAppToast } from '@/ui/AppToastProvider';
+import { hasAeroDataBoxImport } from '@/features/matches/flightImport';
+import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
 
 export function MatchDetailPage() {
   const { matchId } = useParams();
@@ -228,6 +230,9 @@ export function MatchDetailPage() {
               </p>
             )}
             {match.flight.notes && <p>{match.flight.notes}</p>}
+            {match.flight.segments?.some(hasAeroDataBoxImport) ? (
+              <FlightDataAttribution />
+            ) : null}
           </div>
         </section>
       )}

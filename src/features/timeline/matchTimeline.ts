@@ -10,6 +10,7 @@ export type TimelineItem = {
   at: Date;
   label: string;
   detail?: string;
+  dataProvider?: 'aerodatabox';
 };
 
 export function hasFlightData(match: Match): boolean {
@@ -88,6 +89,7 @@ export function buildMatchTimeline(
         at: segment.departureAt,
         label: 'Flight departure',
         detail: [segment.departureAirport, segment.airline, segment.flightNumber].filter(Boolean).join(' '),
+        dataProvider: segment.providerImport?.provider,
       });
     }
 
@@ -98,6 +100,7 @@ export function buildMatchTimeline(
         at: segment.arrivalAt,
         label: 'Flight arrival',
         detail: [segment.arrivalAirport, segment.confirmation].filter(Boolean).join(' · '),
+        dataProvider: segment.providerImport?.provider,
       });
     }
   }

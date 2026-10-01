@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Button, FormGroup } from '@patternfly/react-core';
 import { FormTextInput } from '@/ui/forms/FormTextInput';
 import type {
@@ -18,6 +19,10 @@ import {
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
 import { NativeInput } from '@/ui/forms/NativeInput';
 import { TravelPaidFields } from '@/ui/forms/TravelPaidFields';
+import { FlightImportPanel } from '@/ui/forms/FlightImportPanel';
+import { hasFlightImportAccess } from '@/services/flightImport';
+import { hasAeroDataBoxImport } from '@/features/matches/flightImport';
+import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
 
 type FlightProps = {
   flight: FlightInfo;
@@ -38,85 +43,108 @@ function FlightSegmentFields({
   segment,
   index,
   canRemove,
+  canImport,
   onChange,
   onRemove,
 }: {
   segment: FlightSegment;
   index: number;
   canRemove: boolean;
+  canImport: boolean;
   onChange: (patch: Partial<FlightSegment>) => void;
   onRemove: () => void;
 }) {
   const idPrefix = `flight-${segment.id}`;
+  const [importing, setImporting] = useState(false);
 
   return (
     <div className="rs-flight-segment">
       <div className="rs-flight-segment__header">
         <span className="rs-flight-segment__title">Segment {index + 1}</span>
-        {canRemove ? (
-          <Button variant="link" isInline onClick={onRemove}>
-            Remove
-          </Button>
-        ) : null}
+        <div className="rs-flight-segment__actions">
+          {canImport ? (
+            <Button variant="link" isInline onClick={() => setImporting((value) => !value)}>
+              {importing ? 'Cancel import' : 'Import flight'}
+            </Button>
+          ) : null}
+          {canRemove ? (
+            <Button variant="link" isInline onClick={onRemove}>
+              Remove
+            </Button>
+          ) : null}
+        </div>
       </div>
 
-      <div className="rs-form-row rs-flight-identity">
-        <NativeInput
-          id={`${idPrefix}-airline`}
-          label="Airline"
-          list={`${idPrefix}-airlines`}
-          value={segment.airline ?? ''}
-          onChange={(value) => onChange({ airline: value })}
+      {importing ? (
+        <FlightImportPanel
+          segment={segment}
+          onCancel={() => setImporting(false)}
+          onImport={(patch) => {
+            onChange(patch);
+            setImporting(false);
+          }}
         />
-        <NativeInput
-          id={`${idPrefix}-number`}
-          label="Flight #"
-          autoUppercase
-          value={segment.flightNumber ?? ''}
-          onChange={(value) => onChange({ flightNumber: value })}
-        />
-        <NativeInput
-          id={`${idPrefix}-confirmation`}
-          label="Confirmation"
-          autoUppercase
-          value={segment.confirmation ?? ''}
-          onChange={(value) => onChange({ confirmation: value })}
-        />
-      </div>
+      ) : (
+        <>
+          <div className="rs-form-row rs-flight-identity">
+            <NativeInput
+              id={`${idPrefix}-airline`}
+              label="Airline"
+              list={`${idPrefix}-airlines`}
+              value={segment.airline ?? ''}
+              onChange={(value) => onChange({ airline: value })}
+            />
+            <NativeInput
+              id={`${idPrefix}-number`}
+              label="Flight #"
+              autoUppercase
+              value={segment.flightNumber ?? ''}
+              onChange={(value) => onChange({ flightNumber: value })}
+            />
+            <NativeInput
+              id={`${idPrefix}-confirmation`}
+              label="Confirmation"
+              autoUppercase
+              value={segment.confirmation ?? ''}
+              onChange={(value) => onChange({ confirmation: value })}
+            />
+          </div>
 
-      <datalist id={`${idPrefix}-airlines`}>
-        {['American Airlines', 'Delta Air Lines', 'United Airlines', 'Southwest Airlines', 'JetBlue', 'Alaska Airlines', 'Air Canada', 'British Airways', 'Lufthansa', 'Emirates'].sort((a, b) => a.localeCompare(b)).map((airline) => <option key={airline} value={airline} />)}
-      </datalist>
-      <div className="rs-form-row">
-        <NativeInput
-          id={`${idPrefix}-departure-airport`}
-          label="Departing airport"
-          autoUppercase
-          value={segment.departureAirport ?? ''}
-          onChange={(departureAirport) => onChange({ departureAirport })}
-        />
-        <DateTimeInput
-          id={`${idPrefix}-departure`}
-          label="Departure date & time"
-          value={segment.departureAt}
-          onChange={(departureAt) => onChange({ departureAt })}
-        />
-      </div>
-      <div className="rs-form-row">
-        <NativeInput
-          id={`${idPrefix}-arrival-airport`}
-          label="Arriving airport"
-          autoUppercase
-          value={segment.arrivalAirport ?? ''}
-          onChange={(arrivalAirport) => onChange({ arrivalAirport })}
-        />
-        <DateTimeInput
-          id={`${idPrefix}-arrival`}
-          label="Arrival date & time"
-          value={segment.arrivalAt}
-          onChange={(arrivalAt) => onChange({ arrivalAt })}
-        />
-      </div>
+          <datalist id={`${idPrefix}-airlines`}>
+            {['American Airlines', 'Delta Air Lines', 'United Airlines', 'Southwest Airlines', 'JetBlue', 'Alaska Airlines', 'Air Canada', 'British Airways', 'Lufthansa', 'Emirates'].sort((a, b) => a.localeCompare(b)).map((airline) => <option key={airline} value={airline} />)}
+          </datalist>
+          <div className="rs-form-row">
+            <NativeInput
+              id={`${idPrefix}-departure-airport`}
+              label="Departing airport"
+              autoUppercase
+              value={segment.departureAirport ?? ''}
+              onChange={(departureAirport) => onChange({ departureAirport })}
+            />
+            <DateTimeInput
+              id={`${idPrefix}-departure`}
+              label="Departure date & time"
+              value={segment.departureAt}
+              onChange={(departureAt) => onChange({ departureAt })}
+            />
+          </div>
+          <div className="rs-form-row">
+            <NativeInput
+              id={`${idPrefix}-arrival-airport`}
+              label="Arriving airport"
+              autoUppercase
+              value={segment.arrivalAirport ?? ''}
+              onChange={(arrivalAirport) => onChange({ arrivalAirport })}
+            />
+            <DateTimeInput
+              id={`${idPrefix}-arrival`}
+              label="Arrival date & time"
+              value={segment.arrivalAt}
+              onChange={(arrivalAt) => onChange({ arrivalAt })}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -124,6 +152,21 @@ function FlightSegmentFields({
 export function FlightFields({ flight, onChange }: FlightProps) {
   const segments = getFlightSegments(flight);
   const totalFlightMinutes = getTotalFlightMinutes(flight);
+  const [canImport, setCanImport] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void hasFlightImportAccess()
+      .then((enabled) => {
+        if (active) setCanImport(enabled);
+      })
+      .catch(() => {
+        if (active) setCanImport(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const updateSegments = (nextSegments: FlightSegment[]) => {
     onChange({ segments: nextSegments });
@@ -155,11 +198,14 @@ export function FlightFields({ flight, onChange }: FlightProps) {
             segment={segment}
             index={index}
             canRemove={segments.length > 1}
+            canImport={canImport}
             onChange={(patch) => updateSegment(segment.id, patch)}
             onRemove={() => removeSegment(segment.id)}
           />
         ))}
       </div>
+
+      {segments.some(hasAeroDataBoxImport) ? <FlightDataAttribution /> : null}
 
       {totalFlightMinutes != null ? (
         <p className="rs-flight-total-time">

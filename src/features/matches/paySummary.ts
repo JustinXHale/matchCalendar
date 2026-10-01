@@ -266,6 +266,7 @@ export function getSettlementPaidTotal(match: Match): number {
 }
 
 export type MoneyGlanceSummary = {
+  income: number;
   unpaidFees: number;
   awaitingReimbursement: number;
   outOfPocket: number;
@@ -294,14 +295,16 @@ function sumAwaitingReimbursement(match: Match): number {
   return total;
 }
 
-/** Compact Money-page totals: fees owed, pending reimbursements, OOP, open events. */
+/** Compact shared totals: received income, fees owed, pending reimbursements, OOP, and open events. */
 export function getMoneyGlanceSummary(matches: Match[], now = new Date()): MoneyGlanceSummary {
+  let income = 0;
   let unpaidFees = 0;
   let awaitingReimbursement = 0;
   let outOfPocket = 0;
   let openSettlements = 0;
 
   for (const match of matches) {
+    income += getSettlementPaidTotal(match);
     if (match.payStatus === 'unpaid' && match.expectedPay != null) {
       unpaidFees += match.expectedPay;
     }
@@ -313,6 +316,7 @@ export function getMoneyGlanceSummary(matches: Match[], now = new Date()): Money
   }
 
   return {
+    income,
     unpaidFees,
     awaitingReimbursement,
     outOfPocket,

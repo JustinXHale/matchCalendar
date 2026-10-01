@@ -349,7 +349,10 @@ Tournament may provide shared travel/lodging to its child matches later.
 
 Timeline presentation is derived from existing match/travel facts. It is not a parallel itinerary database. Only show/expand it when there is meaningful content beyond the match itself. Future custom items and per-match timing overrides may be persisted when required.
 
-Flight lookup APIs are backlog only. Production behavior must remain fully functional with manual flight entry and no paid aviation service.
+Manual flight entry remains fully functional. Gated AeroDataBox import is
+implemented as an optional enhancement; its secret-backed callable functions
+live in the MatchReadyTX backend. See `docs/FLIGHT_IMPORT.md` for authorization,
+deployment, and provider-retention requirements.
 
 ---
 

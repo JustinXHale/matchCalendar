@@ -12,6 +12,7 @@ export type PlatformMember = {
   calendarSeenAt: string | null;
   matchCount: number;
   tournamentCount: number;
+  flightImportEnabled: boolean;
 };
 
 export type PlatformInsightsResult = {

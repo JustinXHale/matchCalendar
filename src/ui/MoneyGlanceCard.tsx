@@ -11,8 +11,14 @@ export function MoneyGlanceCard({ summary }: Props) {
   return (
     <section className="rs-money-glance" aria-label="Money summary">
       <div>
+        <strong>{formatCurrency(summary.income)}</strong>
+        <span>Income</span>
+      </div>
+      <div>
         <strong>{formatCurrency(summary.unpaidFees)}</strong>
-        <span>Unpaid fees</span>
+        <span>
+          Unpaid fees<br />({number.format(summary.openSettlements)}) Open
+        </span>
       </div>
       <div>
         <strong>{formatCurrency(summary.awaitingReimbursement)}</strong>
@@ -21,10 +27,6 @@ export function MoneyGlanceCard({ summary }: Props) {
       <div>
         <strong>{formatCurrency(summary.outOfPocket)}</strong>
         <span>Out of pocket</span>
-      </div>
-      <div>
-        <strong>{number.format(summary.openSettlements)}</strong>
-        <span>Open settlements</span>
       </div>
     </section>
   );

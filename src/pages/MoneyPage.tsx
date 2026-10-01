@@ -13,15 +13,13 @@ import { MoneyGlanceCard } from '@/ui/MoneyGlanceCard';
 import { MoneyMatchRow } from '@/ui/MoneyMatchRow';
 import { PageHeader } from '@/ui/PageHeader';
 
-type MoneyFilter = 'all' | 'unpaid' | 'paid' | 'donated' | 'cancelled';
+type MoneyFilter = 'all' | 'unpaid' | 'paid';
 type MoneyDateSort = 'oldest' | 'newest';
 
 const FILTERS: { key: MoneyFilter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'unpaid', label: 'Unpaid' },
   { key: 'paid', label: 'Paid' },
-  { key: 'donated', label: 'Donated' },
-  { key: 'cancelled', label: 'Cancelled' },
 ];
 
 const DATE_SORT_OPTIONS: { key: MoneyDateSort; label: string }[] = [
@@ -47,11 +45,9 @@ export function MoneyPage() {
   const filtered = useMemo(() => {
     const matchesFilter = events.filter((match) =>
       filter === 'all' ||
-      (filter === 'cancelled'
-        ? match.status === 'cancelled'
-        : filter === 'unpaid'
-          ? isPayLineOpen(match)
-          : match.payStatus === filter),
+      (filter === 'unpaid'
+        ? isPayLineOpen(match)
+        : match.payStatus === filter),
     );
 
     return matchesFilter.sort((a, b) => {

@@ -179,6 +179,71 @@
   gap: var(--rs-space-sm);
 }
 
+.rs-flight-segment__actions,
+.rs-flight-import__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--rs-space-sm);
+  flex-wrap: wrap;
+}
+
+.rs-flight-import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+  padding: var(--rs-space-sm);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-input);
+  background: var(--rs-color-surface-muted);
+}
+
+.rs-flight-import__results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-xs);
+  padding-top: var(--rs-space-sm);
+  border-top: 1px solid var(--rs-color-border);
+}
+
+.rs-flight-import__results-label {
+  margin: 0 0 var(--rs-space-xs);
+  color: var(--rs-color-muted);
+  font: var(--rs-font-body);
+}
+
+.rs-flight-import__result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  width: 100%;
+  padding: var(--rs-space-sm);
+  border: 1px solid var(--rs-color-border);
+  border-radius: var(--rs-radius-input);
+  background: var(--rs-color-surface);
+  color: var(--rs-color-ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.rs-flight-import__result:hover,
+.rs-flight-import__result:focus-visible {
+  border-color: var(--rs-color-primary);
+  outline: none;
+}
+
+.rs-flight-import__result span {
+  color: var(--rs-color-muted);
+  font-size: 0.8125rem;
+}
+
+.rs-flight-attribution {
+  margin: 0;
+  color: var(--rs-color-muted);
+  font-size: 0.75rem;
+}
+
 .rs-flight-segment__title {
   font: var(--rs-font-nav);
   font-weight: 700;

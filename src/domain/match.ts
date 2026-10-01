@@ -78,11 +78,19 @@ export type FlightSegment = {
   id: string;
   airline?: string;
   flightNumber?: string;
+  /** User-supplied local departure date used to refresh provider data. */
+  flightLookupDepartureDate?: string;
   departureAirport?: string;
   arrivalAirport?: string;
   departureAt?: Date;
   arrivalAt?: Date;
   confirmation?: string;
+  providerImport?: {
+    provider: 'aerodatabox';
+    lookupFlightNumber: string;
+    importedAt: Date;
+    expiresAt: Date;
+  };
 };
 
 export type FlightInfo = TravelSelfPaidInfo & {

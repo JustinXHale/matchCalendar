@@ -11,12 +11,30 @@
   display: grid;
   grid-template-columns: 4.5rem 1fr;
   gap: var(--rs-space-sm);
-  align-items: start;
+  align-items: baseline;
 }
 
 .rs-timeline__time {
   font: var(--rs-font-nav);
   color: var(--rs-color-muted);
+}
+
+.rs-timeline__day-divider {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  align-items: center;
+  gap: var(--rs-space-sm);
+  margin: var(--rs-space-xs) 0;
+}
+
+.rs-timeline__day-divider time {
+  color: var(--rs-color-muted);
+  font: var(--rs-font-nav);
+  text-transform: uppercase;
+}
+
+.rs-timeline__day-divider > span {
+  border-top: 1px solid var(--rs-color-border);
 }
 
 .rs-timeline__body {

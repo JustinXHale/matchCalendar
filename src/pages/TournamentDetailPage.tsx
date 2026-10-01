@@ -23,6 +23,8 @@ import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { useMatchesContext } from '@/features/matches/MatchesProvider';
 import { useAppToast } from '@/ui/AppToastProvider';
 import { openDirections } from '@/utils/maps';
+import { hasAeroDataBoxImport } from '@/features/matches/flightImport';
+import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
 
 export function TournamentDetailPage() {
   const { tournamentId } = useParams();
@@ -178,6 +180,9 @@ export function TournamentDetailPage() {
                 {[segment.airline, segment.flightNumber].filter(Boolean).join(' ')}
               </p>
             ))}
+            {tournament.flight?.segments?.some(hasAeroDataBoxImport) ? (
+              <FlightDataAttribution />
+            ) : null}
             {tournament.lodging?.propertyName && (
               <p>Lodging: {tournament.lodging.propertyName}</p>
             )}

@@ -6,6 +6,8 @@ type Props = {
   loading: boolean;
   error: string | null;
   onRefresh: () => void;
+  updatingUid: string | null;
+  onFlightImportChange: (uid: string, enabled: boolean) => void;
 };
 
 function formatWhen(value: string | null): string {
@@ -25,7 +27,14 @@ function formatJoined(value: string | null): { date: string; time: string | null
   };
 }
 
-export function ProfileMembersPanel({ data, loading, error, onRefresh }: Props) {
+export function ProfileMembersPanel({
+  data,
+  loading,
+  error,
+  onRefresh,
+  updatingUid,
+  onFlightImportChange,
+}: Props) {
   const members = data?.members ?? [];
 
   return (
@@ -67,11 +76,28 @@ export function ProfileMembersPanel({ data, loading, error, onRefresh }: Props) 
                     {member.tournamentCount === 1 ? '' : 's'}
                   </span>
                 </div>
-                <div className="rs-member-row__joined">
-                  <span className="rs-member-row__date">{joined.date}</span>
-                  {joined.time && (
-                    <span className="rs-member-row__time">{joined.time}</span>
-                  )}
+                <div className="rs-member-row__controls">
+                  <label className="rs-member-row__flight-toggle">
+                    <input
+                      type="checkbox"
+                      role="switch"
+                      aria-label={`Flight import for ${member.displayName}`}
+                      checked={member.flightImportEnabled}
+                      disabled={updatingUid !== null}
+                      onChange={(event) =>
+                        onFlightImportChange(member.uid, event.target.checked)
+                      }
+                    />
+                    <span>
+                      {updatingUid === member.uid ? 'Saving…' : 'Flight import'}
+                    </span>
+                  </label>
+                  <div className="rs-member-row__joined">
+                    <span className="rs-member-row__date">{joined.date}</span>
+                    {joined.time && (
+                      <span className="rs-member-row__time">{joined.time}</span>
+                    )}
+                  </div>
                 </div>
               </li>
             );

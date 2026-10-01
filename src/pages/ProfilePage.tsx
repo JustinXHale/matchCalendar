@@ -17,6 +17,10 @@ import {
   platformInsightsErrorMessage,
 } from '@/services/platformInsights';
 import type { PlatformInsightsResult } from '@/services/platformInsightsTypes';
+import {
+  flightImportAccessErrorMessage,
+  setFlightImportAccess,
+} from '@/services/flightImport';
 import { DangerConfirmModal } from '@/ui/DangerConfirmModal';
 import { PageHeader } from '@/ui/PageHeader';
 import {
@@ -55,6 +59,9 @@ export function ProfilePage() {
   );
   const [platformLoading, setPlatformLoading] = useState(false);
   const [platformError, setPlatformError] = useState<string | null>(null);
+  const [flightAccessUpdatingUid, setFlightAccessUpdatingUid] = useState<
+    string | null
+  >(null);
 
   const showAdminTabs = isPlatformAdmin(
     user?.uid,
@@ -108,6 +115,56 @@ export function ProfilePage() {
     clearLocalAppData();
     replaceAllMatches([]);
     disableDemoMode();
+  };
+
+  const handleFlightImportChange = async (uid: string, enabled: boolean) => {
+    if (flightAccessUpdatingUid) return;
+
+    setFlightAccessUpdatingUid(uid);
+    setPlatformError(null);
+    setPlatformData((current) =>
+      current
+        ? {
+            ...current,
+            members: current.members.map((member) =>
+              member.uid === uid
+                ? { ...member, flightImportEnabled: enabled }
+                : member,
+            ),
+          }
+        : current,
+    );
+    try {
+      const result = await setFlightImportAccess(uid, enabled);
+      setPlatformData((current) =>
+        current
+          ? {
+              ...current,
+              members: current.members.map((member) =>
+                member.uid === result.uid
+                  ? { ...member, flightImportEnabled: result.enabled }
+                  : member,
+              ),
+            }
+          : current,
+      );
+    } catch (err) {
+      setPlatformData((current) =>
+        current
+          ? {
+              ...current,
+              members: current.members.map((member) =>
+                member.uid === uid
+                  ? { ...member, flightImportEnabled: !enabled }
+                  : member,
+              ),
+            }
+          : current,
+      );
+      setPlatformError(flightImportAccessErrorMessage(err));
+    } finally {
+      setFlightAccessUpdatingUid(null);
+    }
   };
 
   const handleSignOut = async () => {
@@ -203,6 +260,10 @@ export function ProfilePage() {
             loading={platformLoading}
             error={platformError}
             onRefresh={loadPlatformData}
+            updatingUid={flightAccessUpdatingUid}
+            onFlightImportChange={(uid, enabled) =>
+              void handleFlightImportChange(uid, enabled)
+            }
           />
         )}
 
