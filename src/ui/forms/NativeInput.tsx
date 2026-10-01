@@ -73,6 +73,7 @@ export function NativeInput({
         spellCheck={autoUppercase ? false : undefined}
         enterKeyHint={resolvedEnterKeyHint}
         required={isRequired}
+        aria-invalid={validated === 'error' || undefined}
         onChange={(event) => commitValue(event.target.value)}
         onInput={(event) => commitValue(event.currentTarget.value)}
         onKeyDown={(event) => {

@@ -24,6 +24,9 @@ type ImportDraft = {
   flightNumber: string;
 };
 
+type LookupField = 'departureAirport' | 'departureDate' | 'flightNumber';
+type DraftFieldErrors = Partial<Record<LookupField, true>>;
+
 function initialDraft(segment: FlightSegment): ImportDraft {
   return {
     id: crypto.randomUUID(),
@@ -50,7 +53,26 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
     initialDraft(segment),
   ]);
   const [error, setError] = useState<string>();
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, DraftFieldErrors>
+  >({});
   const [searching, setSearching] = useState(false);
+
+  const markFieldErrors = (id: string, fields: LookupField[]) => {
+    setFieldErrors((current) => ({
+      ...current,
+      [id]: Object.fromEntries(fields.map((field) => [field, true])),
+    }));
+  };
+
+  const clearFieldError = (id: string, field: LookupField) => {
+    setFieldErrors((current) => {
+      if (!current[id]?.[field]) return current;
+      const nextForDraft = { ...current[id] };
+      delete nextForDraft[field];
+      return { ...current, [id]: nextForDraft };
+    });
+  };
 
   const updateDraft = (id: string, patch: Partial<ImportDraft>) => {
     setDrafts((current) =>
@@ -69,12 +91,18 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
 
   const removeDraft = (id: string) => {
     setDrafts((current) => current.filter((draft) => draft.id !== id));
+    setFieldErrors((current) => {
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
   };
 
   const search = async (event: FormEvent) => {
     event.preventDefault();
     setSearching(true);
     setError(undefined);
+    setFieldErrors({});
 
     const patches: Partial<FlightSegment>[] = [];
     let previousArrivalAirport = '';
@@ -86,9 +114,19 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
           draft.departureAirport.trim().toUpperCase() || previousArrivalAirport;
         const confirmation = draft.confirmation.trim().toUpperCase();
 
-        if (!flightNumber || !draft.departureDate || !departureAirport) {
+        const invalidFields: LookupField[] = [];
+        if (!/^(?:[A-Z0-9]{2}|[A-Z]{3})\d{1,4}[A-Z]?$/.test(flightNumber)) {
+          invalidFields.push('flightNumber');
+        }
+        if (!draft.departureDate) invalidFields.push('departureDate');
+        if (!/^[A-Z]{3}$/.test(departureAirport)) {
+          invalidFields.push('departureAirport');
+        }
+
+        if (invalidFields.length > 0) {
+          markFieldErrors(draft.id, invalidFields);
           throw new Error(
-            `Segment ${index + 1}: enter the flight number, departure date, and departing airport.`,
+            `Segment ${index + 1}: check the highlighted lookup fields.`,
           );
         }
 
@@ -98,11 +136,17 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
           departureAirport,
         );
         if (flights.length === 0) {
+          markFieldErrors(draft.id, [
+            'departureAirport',
+            'departureDate',
+            'flightNumber',
+          ]);
           throw new Error(
             `Segment ${index + 1}: no matching flight was found. Check the three lookup fields.`,
           );
         }
         if (flights.length > 1) {
+          markFieldErrors(draft.id, ['departureAirport', 'flightNumber']);
           throw new Error(
             `Segment ${index + 1}: more than one flight matched. Check the flight and airport codes.`,
           );
@@ -129,7 +173,11 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
   };
 
   return (
-    <form className="rs-flight-import" onSubmit={(event) => void search(event)}>
+    <form
+      className="rs-flight-import"
+      noValidate
+      onSubmit={(event) => void search(event)}
+    >
       <p className="rs-form-hint">
         Enter the codes shown on your itinerary. Unique matches import together.
       </p>
@@ -171,9 +219,13 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
               placeholder={index > 0 ? 'Auto from prior arrival' : 'e.g. SAT'}
               autoUppercase
               isRequired={index === 0}
-              onChange={(departureAirport) =>
-                updateDraft(draft.id, { departureAirport })
+              validated={
+                fieldErrors[draft.id]?.departureAirport ? 'error' : 'default'
               }
+              onChange={(departureAirport) => {
+                updateDraft(draft.id, { departureAirport });
+                clearFieldError(draft.id, 'departureAirport');
+              }}
             />
           </div>
           <div className="rs-form-row">
@@ -183,9 +235,13 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
               type="date"
               value={draft.departureDate}
               isRequired
-              onChange={(departureDate) =>
-                updateDraft(draft.id, { departureDate })
+              validated={
+                fieldErrors[draft.id]?.departureDate ? 'error' : 'default'
               }
+              onChange={(departureDate) => {
+                updateDraft(draft.id, { departureDate });
+                clearFieldError(draft.id, 'departureDate');
+              }}
             />
             <NativeInput
               id={`flight-import-number-${draft.id}`}
@@ -194,9 +250,13 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
               placeholder="e.g. DL1073"
               autoUppercase
               isRequired
-              onChange={(flightNumber) =>
-                updateDraft(draft.id, { flightNumber })
+              validated={
+                fieldErrors[draft.id]?.flightNumber ? 'error' : 'default'
               }
+              onChange={(flightNumber) => {
+                updateDraft(draft.id, { flightNumber });
+                clearFieldError(draft.id, 'flightNumber');
+              }}
             />
           </div>
         </div>

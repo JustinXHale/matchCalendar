@@ -129,10 +129,10 @@ function FlightSegmentFields({
           <datalist id={`${idPrefix}-airlines`}>
             {['American Airlines', 'Delta Air Lines', 'United Airlines', 'Southwest Airlines', 'JetBlue', 'Alaska Airlines', 'Air Canada', 'British Airways', 'Lufthansa', 'Emirates'].sort((a, b) => a.localeCompare(b)).map((airline) => <option key={airline} value={airline} />)}
           </datalist>
-          <div className="rs-form-row">
+          <div className="rs-form-row rs-flight-route-time">
             <NativeInput
               id={`${idPrefix}-departure-airport`}
-              label="Departing airport"
+              label="Depart"
               autoUppercase
               value={segment.departureAirport ?? ''}
               onChange={(departureAirport) => onChange({ departureAirport })}
@@ -144,10 +144,10 @@ function FlightSegmentFields({
               onChange={(departureAt) => onChange({ departureAt })}
             />
           </div>
-          <div className="rs-form-row">
+          <div className="rs-form-row rs-flight-route-time">
             <NativeInput
               id={`${idPrefix}-arrival-airport`}
-              label="Arriving airport"
+              label="Arrive"
               autoUppercase
               value={segment.arrivalAirport ?? ''}
               onChange={(arrivalAirport) => onChange({ arrivalAirport })}
