@@ -81,6 +81,7 @@ export type FlightSegment = {
   /** User-supplied local departure date used to refresh provider data. */
   flightLookupDepartureDate?: string;
   departureAirport?: string;
+  departureGate?: string;
   arrivalAirport?: string;
   departureAt?: Date;
   arrivalAt?: Date;

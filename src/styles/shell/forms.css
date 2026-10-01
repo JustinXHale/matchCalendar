@@ -179,6 +179,13 @@
   gap: var(--rs-space-sm);
 }
 
+.rs-flight-segment__heading {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-space-sm);
+  min-width: 0;
+}
+
 .rs-flight-segment__actions,
 .rs-flight-import__actions {
   display: flex;
@@ -204,6 +211,24 @@
 
 .rs-flight-import__add-segment {
   width: 100%;
+}
+
+.rs-flight-import__segment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-sm);
+}
+
+.rs-flight-import__segment + .rs-flight-import__segment {
+  padding-top: var(--rs-space-sm);
+  border-top: 1px solid var(--rs-color-border);
+}
+
+.rs-flight-import__segment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rs-space-sm);
 }
 
 .rs-flight-import__results {

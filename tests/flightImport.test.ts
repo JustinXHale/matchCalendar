@@ -10,6 +10,7 @@ const patch = flightLookupToSegmentPatch({
     airportCode: 'SAT',
     airportName: 'San Antonio International Airport',
     scheduledUtc: '2026-10-02T10:30:00Z',
+    gate: 'B7',
   },
   arrival: {
     airportCode: 'ATL',
@@ -26,6 +27,7 @@ assert.equal(patch.airline, 'Delta Air Lines');
 assert.equal(patch.flightNumber, 'DL1073');
 assert.equal(patch.flightLookupDepartureDate, '2026-10-02');
 assert.equal(patch.departureAirport, 'SAT');
+assert.equal(patch.departureGate, 'B7');
 assert.equal(patch.arrivalAirport, 'ATL');
 assert.equal(patch.departureAt?.toISOString(), '2026-10-02T10:30:00.000Z');
 assert.equal(patch.arrivalAt?.toISOString(), '2026-10-02T12:53:00.000Z');

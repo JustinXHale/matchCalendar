@@ -10,6 +10,7 @@ export type TimelineItem = {
   at: Date;
   label: string;
   detail?: string;
+  secondaryDetail?: string;
   dataProvider?: 'aerodatabox';
 };
 
@@ -89,6 +90,9 @@ export function buildMatchTimeline(
         at: segment.departureAt,
         label: 'Flight departure',
         detail: [segment.departureAirport, segment.airline, segment.flightNumber].filter(Boolean).join(' '),
+        secondaryDetail: segment.departureGate
+          ? `Gate ${segment.departureGate}`
+          : undefined,
         dataProvider: segment.providerImport?.provider,
       });
     }

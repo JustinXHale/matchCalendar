@@ -44,18 +44,18 @@ function FlightSegmentFields({
   index,
   canRemove,
   canImport,
-  onAddSegment,
   onClear,
   onChange,
+  onImport,
   onRemove,
 }: {
   segment: FlightSegment;
   index: number;
   canRemove: boolean;
   canImport: boolean;
-  onAddSegment: () => void;
   onClear: () => void;
   onChange: (patch: Partial<FlightSegment>) => void;
+  onImport: (patches: Partial<FlightSegment>[]) => void;
   onRemove: () => void;
 }) {
   const idPrefix = `flight-${segment.id}`;
@@ -64,22 +64,24 @@ function FlightSegmentFields({
   return (
     <div className="rs-flight-segment">
       <div className="rs-flight-segment__header">
-        <span className="rs-flight-segment__title">Segment {index + 1}</span>
-        <div className="rs-flight-segment__actions">
+        <div className="rs-flight-segment__heading">
+          <span className="rs-flight-segment__title">Segment {index + 1}</span>
           {!importing ? (
             <Button variant="link" isInline onClick={onClear}>
               Clear segment
             </Button>
           ) : null}
-          {!importing && canImport ? (
-            <span className="rs-flight-segment__action-separator" aria-hidden>
-              |
-            </span>
-          ) : null}
+        </div>
+        <div className="rs-flight-segment__actions">
           {canImport ? (
             <Button variant="link" isInline onClick={() => setImporting((value) => !value)}>
               {importing ? 'Cancel import' : 'Import flight'}
             </Button>
+          ) : null}
+          {canImport && canRemove ? (
+            <span className="rs-flight-segment__action-separator" aria-hidden>
+              |
+            </span>
           ) : null}
           {canRemove ? (
             <Button variant="link" isInline onClick={onRemove}>
@@ -93,9 +95,8 @@ function FlightSegmentFields({
         <FlightImportPanel
           segment={segment}
           onCancel={() => setImporting(false)}
-          onAddSegment={onAddSegment}
-          onImport={(patch) => {
-            onChange(patch);
+          onImport={(patches) => {
+            onImport(patches);
             setImporting(false);
           }}
         />
@@ -203,7 +204,7 @@ export function FlightFields({ flight, onChange }: FlightProps) {
     );
   };
 
-  const addSegment = () => {
+  const addManualSegment = () => {
     const previousSegment = segments[segments.length - 1];
     updateSegments([
       ...segments,
@@ -214,6 +215,29 @@ export function FlightFields({ flight, onChange }: FlightProps) {
           : {}),
       },
     ]);
+  };
+
+  const importSegments = (
+    segmentId: string,
+    patches: Partial<FlightSegment>[],
+  ) => {
+    const segmentIndex = segments.findIndex((segment) => segment.id === segmentId);
+    if (segmentIndex < 0 || patches.length === 0) return;
+
+    const nextSegments = [...segments];
+    nextSegments[segmentIndex] = {
+      ...nextSegments[segmentIndex],
+      ...patches[0],
+    };
+    nextSegments.splice(
+      segmentIndex + 1,
+      0,
+      ...patches.slice(1).map((patch) => ({
+        ...emptyFlightSegment(),
+        ...patch,
+      })),
+    );
+    updateSegments(nextSegments);
   };
 
   const removeSegment = (segmentId: string) => {
@@ -231,9 +255,9 @@ export function FlightFields({ flight, onChange }: FlightProps) {
             index={index}
             canRemove={segments.length > 1}
             canImport={canImport}
-            onAddSegment={addSegment}
             onClear={() => clearSegment(segment.id)}
             onChange={(patch) => updateSegment(segment.id, patch)}
+            onImport={(patches) => importSegments(segment.id, patches)}
             onRemove={() => removeSegment(segment.id)}
           />
         ))}
@@ -246,6 +270,10 @@ export function FlightFields({ flight, onChange }: FlightProps) {
           Total air time: {formatTravelDuration(totalFlightMinutes)}
         </p>
       ) : null}
+
+      <Button variant="secondary" onClick={addManualSegment}>
+        Add segment
+      </Button>
 
       <TravelPaidFields
         idPrefix="flight"

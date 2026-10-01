@@ -85,6 +85,7 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
               <div className="rs-timeline__body">
                 <strong>{item.label}</strong>
                 {item.detail ? <span>{item.detail}</span> : null}
+                {item.secondaryDetail ? <span>{item.secondaryDetail}</span> : null}
                 {canEdit && editingId !== item.id ? (
                   <Button variant="link" isInline onClick={() => startEdit(item)}>
                     Change time

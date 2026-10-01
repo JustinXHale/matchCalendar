@@ -8,6 +8,7 @@ export type FlightLookupMovement = {
   revisedUtc?: string;
   revisedLocal?: string;
   timeZone?: string;
+  gate?: string;
 };
 
 export type FlightLookupOption = {
@@ -43,6 +44,7 @@ export function flightLookupToSegmentPatch(
     ...(flight.departure.airportCode || flight.departure.airportName
       ? { departureAirport: flight.departure.airportCode || flight.departure.airportName }
       : {}),
+    ...(flight.departure.gate ? { departureGate: flight.departure.gate } : {}),
     ...(flight.arrival.airportCode || flight.arrival.airportName
       ? { arrivalAirport: flight.arrival.airportCode || flight.arrival.airportName }
       : {}),

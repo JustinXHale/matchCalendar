@@ -24,8 +24,8 @@ remain editable.
 - Lookups use the dated Flight Status endpoint with
   `dateLocalRole=Departure`; nearest-day searches are intentionally avoided.
 - Imported provider fields expire after six days. Firestore triggers register
-  each import and a scheduled function removes airline, airport, and schedule
-  fields every six hours. The user-entered flight number and departure date
+  each import and a scheduled function removes airline, airport, gate, and
+  schedule fields every six hours. The user-entered flight number and departure date
   remain available for a later refresh.
 - Provider-backed screens include linked AeroDataBox attribution.
 
