@@ -78,6 +78,22 @@ assert.equal(
   `Flight (${formatFlightMiles(timedMiles!)} · ${formatTravelDuration(245)})`,
 );
 
+const importedFlight: FlightInfo = {
+  segments: timedFlight.segments?.map((segment) => ({
+    ...segment,
+    providerImport: {
+      provider: 'aerodatabox' as const,
+      lookupFlightNumber: 'UA123',
+      importedAt: new Date(2026, 8, 1),
+      expiresAt: new Date(2026, 8, 8),
+    },
+  })),
+};
+assert.equal(
+  flightExpandCardTitle(importedFlight),
+  `Flight (${formatFlightMiles(timedMiles!)} · ${formatTravelDuration(245)})`,
+);
+
 const now = new Date();
 const match = {
   ...buildMatchFromForm(createEmptyMatchForm()),

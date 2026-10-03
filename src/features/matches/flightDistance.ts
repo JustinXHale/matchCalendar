@@ -1,7 +1,6 @@
 import type { FlightInfo, FlightSegment } from '@/domain/match';
 import airportRegistry from '@/features/matches/airportRegistry.json';
 import { getFlightSegments } from '@/features/matches/flightUtils';
-import { hasAeroDataBoxImport } from '@/features/matches/flightImport';
 import { formatTravelDuration, getTotalFlightMinutes } from '@/features/matches/travelDuration';
 
 type AirportCoords = {
@@ -82,9 +81,6 @@ export function formatFlightMiles(miles: number): string {
 }
 
 export function flightExpandCardTitle(flight?: FlightInfo): string {
-  if (flight?.segments?.some(hasAeroDataBoxImport)) {
-    return 'Flight · AeroDataBox';
-  }
   const miles = getTotalFlightMiles(flight);
   const minutes = getTotalFlightMinutes(flight);
   const parts: string[] = [];
