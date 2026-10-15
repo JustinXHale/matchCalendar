@@ -17,8 +17,10 @@ import { isTournamentLumpPay } from '@/features/tournaments/tournamentFormUtils'
 import { InsightsSummaryView } from '@/features/insights/InsightsSummaryView';
 import { MoneyGlanceCard } from '@/ui/MoneyGlanceCard';
 import { PageHeader } from '@/ui/PageHeader';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function InsightsPage() {
+  const { t } = useI18n();
   const { matches, isDemo } = useMatches();
   const { tournaments } = useTournamentsContext();
   const [dateRange, setDateRange] = useState<InsightsDateRange>({});
@@ -48,15 +50,15 @@ export function InsightsPage() {
 
   return (
     <div className="rs-stack rs-insights-page">
-      <PageHeader title="Insights" />
+      <PageHeader title={t('nav.insights')} />
       <p className="rs-page-lede">
-        Your events, travel, and money at a glance · {rangeLabel}
+        {t('insights.description')} · {rangeLabel}
       </p>
       <MoneyGlanceCard summary={glance} />
       <InsightsDateFilter range={dateRange} onChange={setDateRange} />
       {summary.eventCount === 0 && isInsightsDateRangeActive(dateRange) && isValidInsightsDateRange(dateRange) ? (
         <div className="rs-placeholder-card">
-          <p>No events fall within this date range.</p>
+          <p>{t('insights.noEvents')}</p>
         </div>
       ) : null}
       <InsightsSummaryView summary={summary} />

@@ -8,6 +8,8 @@ import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import { ExpandableFormCard } from '@/ui/forms/ExpandableFormCard';
 import { ProfileAvatar } from '@/ui/ProfileAvatar';
+import { useI18n } from '@/i18n/I18nProvider';
+import type { LanguagePreference } from '@/i18n/languages';
 
 type Props = {
   onDeleteCalendarData: () => void;
@@ -76,6 +78,7 @@ export function ProfileSettingsPanel({
   const { matches, matchReadySyncing, matchReadyLastSyncedAt, syncMatchReady } =
     useMatches();
   const { isDemoMode } = useDemoMode();
+  const { t } = useI18n();
 
   return (
     <>
@@ -97,6 +100,23 @@ export function ProfileSettingsPanel({
           photoUrl={profile.photoUrl}
           size="md"
         />
+
+        <FormGroup label={t('profile.language')} fieldId="profile-language">
+          <select
+            id="profile-language"
+            className="rs-select"
+            value={profile.languagePreference}
+            onChange={(event) => updateProfile({
+              languagePreference: event.target.value as LanguagePreference,
+            })}
+          >
+            <option value="auto">{t('profile.languageAuto')}</option>
+            <option value="en">{t('profile.languageEnglish')}</option>
+            <option value="es">{t('profile.languageSpanish')}</option>
+            <option value="fr">{t('profile.languageFrench')}</option>
+            <option value="pt-BR">{t('profile.languagePortuguese')}</option>
+          </select>
+        </FormGroup>
 
         {profile.isLive ? (
           <>

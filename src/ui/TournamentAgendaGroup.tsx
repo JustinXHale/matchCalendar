@@ -24,6 +24,7 @@ import {
 } from '@/features/timeline/matchTimeline';
 import { MatchCard } from '@/ui/MatchCard';
 import { MatchTimeline } from '@/ui/MatchTimeline';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type Props = {
   tournament: Tournament;
@@ -42,10 +43,13 @@ export function TournamentAgendaGroup({
 }: Props) {
   const matchBackTarget = back ?? tournamentBack(tournament.id);
   const { profile } = useProfile();
+  const { locale, t } = useI18n();
   const [matchesExpanded, setMatchesExpanded] = useState(defaultExpanded);
   const [timelineOpen, setTimelineOpen] = useState(false);
-  const matchLabel = `${matches.length} match${matches.length === 1 ? '' : 'es'}`;
-  const { month, day, weekday } = formatIsoDateCard(tournament.startDate);
+  const matchLabel = matches.length === 1
+    ? t('calendar.oneMatch')
+    : t('calendar.matchCount', { count: matches.length });
+  const { month, day, weekday } = formatIsoDateCard(tournament.startDate, locale);
 
   const timelineMatch = useMemo(
     () => tournamentTimelineMatch(tournament),

@@ -25,6 +25,17 @@ import {
   hasMeaningfulTimeline,
 } from '@/features/timeline/matchTimeline';
 import { MatchTimeline } from '@/ui/MatchTimeline';
+import { useI18n } from '@/i18n/I18nProvider';
+
+function translatedPosition(position: string, t: ReturnType<typeof useI18n>['t']): string {
+  const normalized = position.trim().toLowerCase();
+  if (normalized === 'referee') return t('role.referee');
+  if (normalized === 'assistant referee') return t('role.assistantReferee');
+  if (normalized === '4th official' || normalized === 'fourth official') return t('role.fourthOfficial');
+  if (normalized === 'assessor') return t('role.assessor');
+  if (normalized === 'other') return t('role.other');
+  return position;
+}
 
 type Props = {
   match: Match;
@@ -58,16 +69,17 @@ export function MatchCard({
   detailTo,
   back,
 }: Props) {
+  const { locale, t } = useI18n();
   const { profile } = useProfile();
   const [timelineOpen, setTimelineOpen] = useState(false);
   const isTournamentChild = Boolean(match.tournamentId);
-  const { month, day, weekday } = formatCardDate(match);
+  const { month, day, weekday } = formatCardDate(match, locale);
   const title = getMatchDisplayTitle(match);
   const home = match.home?.trim();
   const away = match.away?.trim();
   const pay =
     match.expectedPay != null
-      ? formatCurrency(match.expectedPay, match.payCurrency)
+      ? formatCurrency(match.expectedPay, match.payCurrency, locale)
       : null;
   const showTeams = Boolean(home || away);
   const showEventTitle = Boolean(match.title?.trim() && showTeams);
@@ -109,12 +121,12 @@ export function MatchCard({
               <span className="rs-assignment__month">{month}</span>
               <span className="rs-assignment__day">{day}</span>
               <span className="rs-assignment__weekday">{weekday}</span>
-              <span className="rs-assignment__time">{formatMatchTime(match)}</span>
+              <span className="rs-assignment__time">{formatMatchTime(match, locale)}</span>
             </div>
 
             <div className="rs-assignment__content">
               <div className="rs-assignment__chips" aria-label="Role, pay, and source">
-                <span className="rs-pill rs-assignment__chip">{match.position}</span>
+                <span className="rs-pill rs-assignment__chip">{translatedPosition(match.position, t)}</span>
                 {pay ? (
                   <span className="rs-pill rs-assignment__chip rs-assignment__chip--pay">
                     {pay}
@@ -127,16 +139,16 @@ export function MatchCard({
                 ) : null}
                 {match.payStatus === 'unpaid' && match.status !== 'cancelled' ? (
                   <span className="rs-pill rs-pill--urgent rs-assignment__chip">
-                    Unpaid
+                    {t('status.unpaid')}
                   </span>
                 ) : null}
-                {match.payStatus === 'paid' && <span className="rs-pill rs-assignment__chip">Paid</span>}
+                {match.payStatus === 'paid' && <span className="rs-pill rs-assignment__chip">{t('status.paid')}</span>}
                 {match.payStatus === 'donated' ? (
-                  <span className="rs-pill rs-assignment__chip">Donated</span>
+                  <span className="rs-pill rs-assignment__chip">{t('status.donated')}</span>
                 ) : null}
                 {match.status === 'cancelled' ? (
                   <span className="rs-pill rs-pill--urgent rs-assignment__chip">
-                    Cancelled
+                    {t('status.cancelled')}
                   </span>
                 ) : null}
               </div>

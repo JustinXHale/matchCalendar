@@ -12,6 +12,7 @@ import { AuthProvider } from '@/features/auth/AuthProvider';
 import { MatchesProvider } from '@/features/matches/MatchesProvider';
 import { ProfileProvider } from '@/features/profile/ProfileProvider';
 import { TournamentsProvider } from '@/features/tournaments/TournamentsProvider';
+import { I18nProvider } from '@/i18n/I18nProvider';
 
 document.documentElement.classList.add('rs-theme');
 initTheme();
@@ -23,11 +24,13 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <DemoModeProvider>
           <ProfileProvider>
-            <MatchesProvider>
-              <TournamentsProvider>
-                <AppRouter />
-              </TournamentsProvider>
-            </MatchesProvider>
+            <I18nProvider>
+              <MatchesProvider>
+                <TournamentsProvider>
+                  <AppRouter />
+                </TournamentsProvider>
+              </MatchesProvider>
+            </I18nProvider>
           </ProfileProvider>
         </DemoModeProvider>
       </AuthProvider>

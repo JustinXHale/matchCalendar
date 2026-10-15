@@ -1,4 +1,5 @@
 import type { PositionPreset } from '@/domain/match';
+import { isLanguagePreference, type LanguagePreference } from '@/i18n/languages';
 import { readJson, STORAGE_KEYS, writeJson } from '@/services/localStore';
 
 export type LocalProfile = {
@@ -6,6 +7,7 @@ export type LocalProfile = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  languagePreference: LanguagePreference;
 };
 
 const DEFAULT_PROFILE: LocalProfile = {
@@ -13,6 +15,7 @@ const DEFAULT_PROFILE: LocalProfile = {
   defaultPositionPreset: 'referee',
   pitchArrivalMinutesBeforeKickoff: 60,
   airportArrivalMinutesBeforeFlight: 120,
+  languagePreference: 'auto',
 };
 
 export function loadProfile(): LocalProfile {
@@ -29,6 +32,9 @@ export function loadProfile(): LocalProfile {
         raw.pitchArrivalMinutesBeforeKickoff ?? 60,
       airportArrivalMinutesBeforeFlight:
         raw.airportArrivalMinutesBeforeFlight ?? 120,
+      languagePreference: isLanguagePreference(raw.languagePreference)
+        ? raw.languagePreference
+        : 'auto',
     };
   }
 
@@ -39,6 +45,9 @@ export function loadProfile(): LocalProfile {
       raw.pitchArrivalMinutesBeforeKickoff ?? 60,
     airportArrivalMinutesBeforeFlight:
       raw.airportArrivalMinutesBeforeFlight ?? 120,
+    languagePreference: isLanguagePreference(raw.languagePreference)
+      ? raw.languagePreference
+      : 'auto',
   };
 }
 

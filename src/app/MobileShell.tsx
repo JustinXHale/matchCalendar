@@ -16,9 +16,11 @@ import { AppDataGate } from '@/ui/AppDataGate';
 import { OfflineBanner } from '@/ui/OfflineBanner';
 import { UpdatePrompt } from '@/pwa/UpdatePrompt';
 import { appBuildLabel } from '@/app/appBuild';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function MobileShell() {
   const { isDemoMode } = useDemoMode();
+  const { t } = useI18n();
 
   return (
     <Page
@@ -43,7 +45,7 @@ export function MobileShell() {
       }
     >
       <a className="rs-skip-link" href="#main-content">
-        Skip to main content
+        {t('shell.skip')}
       </a>
       <PageSection
         id="main-content"
@@ -53,8 +55,8 @@ export function MobileShell() {
       >
         {isDemoMode && (
           <div className="rs-demo-banner" role="status">
-            <strong>Demo mode</strong>
-            <span>Sample matches for preview — not your live data.</span>
+            <strong>{t('demo.mode')}</strong>
+            <span>{t('demo.description')}</span>
           </div>
         )}
         <OfflineBanner />

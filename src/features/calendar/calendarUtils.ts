@@ -50,8 +50,8 @@ export function getMatchesForDate(matches: Match[], date: Date): Match[] {
     .sort((a, b) => a.kickoffAt.getTime() - b.kickoffAt.getTime());
 }
 
-export function formatMonthLabel(year: number, month: number): string {
-  return new Date(year, month, 1).toLocaleDateString(undefined, {
+export function formatMonthLabel(year: number, month: number, locale?: string): string {
+  return new Date(year, month, 1).toLocaleDateString(locale, {
     month: 'long',
     year: 'numeric',
   });

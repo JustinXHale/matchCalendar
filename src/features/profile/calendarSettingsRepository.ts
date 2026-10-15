@@ -5,6 +5,7 @@ import {
   type CalendarSettings,
 } from '@/features/profile/calendarSettings';
 import { requireDb } from '@/services/firebase';
+import { isLanguagePreference } from '@/i18n/languages';
 
 function settingsRef(uid: string) {
   return doc(requireDb(), 'users', uid, 'matchCalendar', CALENDAR_SETTINGS_DOC_ID);
@@ -26,6 +27,9 @@ export function calendarSettingsFromFirestore(
       typeof data.airportArrivalMinutesBeforeFlight === 'number'
         ? data.airportArrivalMinutesBeforeFlight
         : DEFAULT_CALENDAR_SETTINGS.airportArrivalMinutesBeforeFlight,
+    languagePreference: isLanguagePreference(data.languagePreference)
+      ? data.languagePreference
+      : DEFAULT_CALENDAR_SETTINGS.languagePreference,
     migratedFromLocalAt:
       typeof data.migratedFromLocalAt === 'string'
         ? data.migratedFromLocalAt

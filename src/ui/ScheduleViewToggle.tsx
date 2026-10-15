@@ -1,4 +1,6 @@
 import type { ScheduleView } from '@/features/schedule/scheduleView';
+import { useI18n } from '@/i18n/I18nProvider';
+import type { TranslationKey } from '@/i18n/translations';
 
 type Props = {
   view: ScheduleView;
@@ -6,17 +8,18 @@ type Props = {
   panelId?: string;
 };
 
-const OPTIONS: { key: ScheduleView; label: string }[] = [
-  { key: 'calendar', label: 'Cal' },
-  { key: 'agenda', label: 'Agenda' },
+const OPTIONS: { key: ScheduleView; label: TranslationKey }[] = [
+  { key: 'calendar', label: 'schedule.calendarShort' },
+  { key: 'agenda', label: 'schedule.agenda' },
 ];
 
 export function ScheduleViewToggle({ view, onChange, panelId }: Props) {
+  const { t } = useI18n();
   return (
     <div
       className="rs-schedule-toggle"
       role="tablist"
-      aria-label="Schedule view"
+      aria-label={t('schedule.view')}
     >
       {OPTIONS.map((option) => (
         <button
@@ -34,7 +37,7 @@ export function ScheduleViewToggle({ view, onChange, panelId }: Props) {
             .join(' ')}
           onClick={() => onChange(option.key)}
         >
-          {option.label}
+          {t(option.label)}
         </button>
       ))}
     </div>

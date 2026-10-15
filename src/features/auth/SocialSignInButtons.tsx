@@ -53,6 +53,7 @@ export function GoogleSignInButton({
   disabled,
   onClick,
 }: SocialButtonProps) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
@@ -65,7 +66,7 @@ export function GoogleSignInButton({
       ) : (
         <GoogleGIcon />
       )}
-      <span>{busy ? 'Signing in…' : 'Continue with Google'}</span>
+      <span>{busy ? t('login.signingIn') : t('login.google')}</span>
     </button>
   );
 }
@@ -75,6 +76,7 @@ export function AppleSignInButton({
   disabled,
   onClick,
 }: SocialButtonProps) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
@@ -90,7 +92,8 @@ export function AppleSignInButton({
       ) : (
         <AppleLogoIcon />
       )}
-      <span>{busy ? 'Signing in…' : 'Sign in with Apple'}</span>
+      <span>{busy ? t('login.signingIn') : t('login.apple')}</span>
     </button>
   );
 }
+import { useI18n } from '@/i18n/I18nProvider';

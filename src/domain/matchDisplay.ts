@@ -22,49 +22,41 @@ export function formatMatchDate(match: Match): string {
   });
 }
 
-export function formatMatchTime(match: Match): string {
-  return match.kickoffAt.toLocaleTimeString(undefined, {
+export function formatMatchTime(match: Match, locale?: string): string {
+  return match.kickoffAt.toLocaleTimeString(locale, {
     hour: 'numeric',
     minute: '2-digit',
     timeZone: match.timezone,
   });
 }
 
-export function formatCurrency(amount: number, currency = 'USD'): string {
+export function formatCurrency(amount: number, currency = 'USD', locale = 'en-US'): string {
   const normalized = currency.trim().toUpperCase() || 'USD';
-  const value = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 0,
-  }).format(amount);
-
-  if (normalized === 'USD') {
-    return `$${value}`;
-  }
-
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: normalized,
     maximumFractionDigits: 0,
   }).format(amount);
 }
 
-export function formatCardDate(match: Match): {
+export function formatCardDate(match: Match, locale?: string): {
   month: string;
   day: string;
   weekday: string;
 } {
   const month = match.kickoffAt
-    .toLocaleDateString(undefined, {
+    .toLocaleDateString(locale, {
       month: 'short',
       timeZone: match.timezone,
     })
     .replace(/\.$/, '')
     .toUpperCase();
-  const day = match.kickoffAt.toLocaleDateString(undefined, {
+  const day = match.kickoffAt.toLocaleDateString(locale, {
     day: 'numeric',
     timeZone: match.timezone,
   });
   const weekday = `${match.kickoffAt
-    .toLocaleDateString(undefined, {
+    .toLocaleDateString(locale, {
       weekday: 'short',
       timeZone: match.timezone,
     })
@@ -73,7 +65,7 @@ export function formatCardDate(match: Match): {
   return { month, day, weekday };
 }
 
-export function formatIsoDateCard(isoDate: string): {
+export function formatIsoDateCard(isoDate: string, locale?: string): {
   month: string;
   day: string;
   weekday: string;
@@ -82,12 +74,12 @@ export function formatIsoDateCard(isoDate: string): {
   const date = new Date(year, monthIndex - 1, dayNum);
 
   const month = date
-    .toLocaleDateString(undefined, { month: 'short' })
+    .toLocaleDateString(locale, { month: 'short' })
     .replace(/\.$/, '')
     .toUpperCase();
-  const day = date.toLocaleDateString(undefined, { day: 'numeric' });
+  const day = date.toLocaleDateString(locale, { day: 'numeric' });
   const weekday = `${date
-    .toLocaleDateString(undefined, { weekday: 'short' })
+    .toLocaleDateString(locale, { weekday: 'short' })
     .replace(/\.$/, '')}.`;
 
   return { month, day, weekday };

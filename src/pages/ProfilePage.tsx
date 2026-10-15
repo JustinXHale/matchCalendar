@@ -30,6 +30,7 @@ import {
 import { ProfileMembersPanel } from '@/pages/profile/ProfileMembersPanel';
 import { ProfilePlatformInsightsPanel } from '@/pages/profile/ProfilePlatformInsightsPanel';
 import { ProfileSettingsPanel } from '@/pages/profile/ProfileSettingsPanel';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type DeleteModalKind = 'calendar-data' | 'account' | null;
 
@@ -45,6 +46,7 @@ function resolveTab(
 }
 
 export function ProfilePage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, signOut } = useAuth();
@@ -73,12 +75,12 @@ export function ProfilePage() {
     () =>
       showAdminTabs
         ? [
-            { key: 'profile' as const, label: 'Profile' },
-            { key: 'members' as const, label: 'Members' },
-            { key: 'insights' as const, label: 'Insights' },
+            { key: 'profile' as const, label: t('profile.title') },
+            { key: 'members' as const, label: t('common.members') },
+            { key: 'insights' as const, label: t('nav.insights') },
           ]
-        : [{ key: 'profile' as const, label: 'Profile' }],
-    [showAdminTabs],
+        : [{ key: 'profile' as const, label: t('profile.title') }],
+    [showAdminTabs, t],
   );
 
   const setTab = (nextTab: ProfileSectionTab) => {
@@ -220,7 +222,7 @@ export function ProfilePage() {
   return (
     <div className="rs-stack">
       <PageHeader
-        title="Profile"
+        title={t('profile.title')}
         actions={
           tabOptions.length > 1 ? (
             <ProfileSectionTabs

@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleHalfStroke, faMoon } from '@fortawesome/free-solid-svg-icons';
 import { persistTheme, type ThemeMode } from '@/app/theme';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type Props = {
   className?: string;
 };
 
 export function ThemeToggle({ className }: Props) {
+  const { t } = useI18n();
   const [theme, setTheme] = useState<ThemeMode>(() =>
     document.documentElement.classList.contains('pf-v6-theme-dark')
       ? 'dark'
@@ -26,7 +28,7 @@ export function ThemeToggle({ className }: Props) {
       className={['rs-theme-toggle', className].filter(Boolean).join(' ')}
       onClick={toggle}
       aria-label={
-        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        theme === 'dark' ? t('theme.toLight') : t('theme.toDark')
       }
     >
       <FontAwesomeIcon

@@ -1,7 +1,9 @@
 import { useDemoMode } from '@/demo/DemoModeContext';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function DemoModeToggle() {
   const { isDemoMode, enableDemoMode, disableDemoMode } = useDemoMode();
+  const { t } = useI18n();
 
   return (
     <button
@@ -10,7 +12,7 @@ export function DemoModeToggle() {
       onClick={isDemoMode ? disableDemoMode : enableDemoMode}
       aria-pressed={isDemoMode}
     >
-      {isDemoMode ? 'Exit demo' : 'View demo'}
+      {isDemoMode ? t('demo.exit') : t('demo.view')}
     </button>
   );
 }

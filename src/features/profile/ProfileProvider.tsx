@@ -31,6 +31,7 @@ import {
 } from '@/features/profile/localProfile';
 import { firestoreErrorMessage } from '@/services/firestoreErrors';
 import { useAppToast } from '@/ui/AppToastProvider';
+import type { LanguagePreference } from '@/i18n/languages';
 
 export type AppProfile = {
   displayName: string;
@@ -39,6 +40,7 @@ export type AppProfile = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  languagePreference: LanguagePreference;
   isLive: boolean;
 };
 
@@ -49,6 +51,7 @@ type ProfilePatch = Partial<
     | 'defaultPositionPreset'
     | 'pitchArrivalMinutesBeforeKickoff'
     | 'airportArrivalMinutesBeforeFlight'
+    | 'languagePreference'
   >
 >;
 
@@ -65,6 +68,7 @@ function localToAppProfile(local: LocalProfile): AppProfile {
     defaultPositionPreset: local.defaultPositionPreset,
     pitchArrivalMinutesBeforeKickoff: local.pitchArrivalMinutesBeforeKickoff,
     airportArrivalMinutesBeforeFlight: local.airportArrivalMinutesBeforeFlight,
+    languagePreference: local.languagePreference,
     isLive: false,
   };
 }
@@ -94,6 +98,7 @@ function settingsToAppProfile(
     defaultPositionPreset: settings.defaultPositionPreset,
     pitchArrivalMinutesBeforeKickoff: settings.pitchArrivalMinutesBeforeKickoff,
     airportArrivalMinutesBeforeFlight: settings.airportArrivalMinutesBeforeFlight,
+    languagePreference: settings.languagePreference,
     isLive: true,
   };
 }
@@ -143,6 +148,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     (patch: ProfilePatch) => {
       if (isLive && uid) {
         const nextSettings: CalendarSettings = {
+          ...calendarSettings,
           defaultPositionPreset:
             patch.defaultPositionPreset ?? calendarSettings.defaultPositionPreset,
           pitchArrivalMinutesBeforeKickoff:
@@ -151,7 +157,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           airportArrivalMinutesBeforeFlight:
             patch.airportArrivalMinutesBeforeFlight ??
             calendarSettings.airportArrivalMinutesBeforeFlight,
-          migratedFromLocalAt: calendarSettings.migratedFromLocalAt,
+          languagePreference:
+            patch.languagePreference ?? calendarSettings.languagePreference,
         };
         setCalendarSettings(nextSettings);
         void saveCalendarSettings(uid, nextSettings).catch((error) => {

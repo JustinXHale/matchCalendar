@@ -35,7 +35,8 @@ export async function migrateLocalDataToFirestore(uid: string): Promise<void> {
     localProfile.displayName.length > 0 ||
     localProfile.defaultPositionPreset !== 'referee' ||
     localProfile.pitchArrivalMinutesBeforeKickoff !== 60 ||
-    localProfile.airportArrivalMinutesBeforeFlight !== 120;
+    localProfile.airportArrivalMinutesBeforeFlight !== 120 ||
+    localProfile.languagePreference !== 'auto';
 
   if (!hasLocalMatches && !hasLocalTournaments && !hasLocalProfile) {
     await saveCalendarSettings(uid, {
@@ -71,6 +72,7 @@ export async function migrateLocalDataToFirestore(uid: string): Promise<void> {
       localProfile.pitchArrivalMinutesBeforeKickoff,
     airportArrivalMinutesBeforeFlight:
       localProfile.airportArrivalMinutesBeforeFlight,
+    languagePreference: localProfile.languagePreference,
     migratedFromLocalAt: new Date().toISOString(),
   });
 

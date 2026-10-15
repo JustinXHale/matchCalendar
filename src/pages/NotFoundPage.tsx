@@ -2,22 +2,24 @@ import { Button } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@/app/routes';
 import { PageHeader } from '@/ui/PageHeader';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function NotFoundPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   return (
     <div className="rs-stack">
-      <PageHeader title="Page not found" />
+      <PageHeader title={t('notFound.title')} />
       <div className="rs-placeholder-card">
-        <p>This page does not exist.</p>
+        <p>{t('notFound.message')}</p>
       </div>
       <Button
         variant="primary"
         isBlock
         onClick={() => navigate(routes.schedule)}
       >
-        Back to Agenda
+        {t('notFound.back')}
       </Button>
     </div>
   );

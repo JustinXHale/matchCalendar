@@ -7,6 +7,7 @@ import {
   toDateKey,
 } from '@/features/calendar/calendarUtils';
 import type { Match } from '@/domain/match';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type Props = {
   year: number;
@@ -19,8 +20,6 @@ type Props = {
   onToday: () => void;
 };
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 export function CalendarGrid({
   year,
   month,
@@ -31,9 +30,13 @@ export function CalendarGrid({
   onNextMonth,
   onToday,
 }: Props) {
+  const { locale, t } = useI18n();
   const days = getMonthGrid(year, month);
   const matchDates = getMatchDates(matches);
   const today = new Date();
+  const weekdays = Array.from({ length: 7 }, (_, index) =>
+    new Date(2023, 0, index + 1).toLocaleDateString(locale, { weekday: 'short' }),
+  );
 
   return (
     <div className="rs-calendar">
@@ -42,9 +45,9 @@ export function CalendarGrid({
           ‹
         </button>
         <div className="rs-calendar__title-wrap">
-          <h2 className="rs-calendar__title">{formatMonthLabel(year, month)}</h2>
+          <h2 className="rs-calendar__title">{formatMonthLabel(year, month, locale)}</h2>
           <button type="button" className="rs-calendar__today" onClick={onToday}>
-            Today
+            {t('common.today')}
           </button>
         </div>
         <button type="button" className="rs-calendar__nav" onClick={onNextMonth}>
@@ -53,12 +56,12 @@ export function CalendarGrid({
       </div>
 
       <div className="rs-calendar__weekdays" aria-hidden>
-        {WEEKDAYS.map((day) => (
+        {weekdays.map((day) => (
           <span key={day} className="rs-calendar__weekday">{day}</span>
         ))}
       </div>
 
-      <div className="rs-calendar__grid" role="grid" aria-label="Month calendar">
+      <div className="rs-calendar__grid" role="grid" aria-label={t('calendar.monthCalendar')}>
         {days.map((day) => {
           const inMonth = day.getMonth() === month;
           const key = toDateKey(day);
@@ -82,11 +85,11 @@ export function CalendarGrid({
                 .filter(Boolean)
                 .join(' ')}
               onClick={() => onSelectDate(day)}
-              aria-label={`${day.toLocaleDateString(undefined, {
+              aria-label={`${day.toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
-              })}${dayMatches.length > 0 ? `, ${dayMatches.length} matches` : ''}`}
+              })}${dayMatches.length > 0 ? `, ${dayMatches.length === 1 ? t('calendar.oneMatch') : t('calendar.matchCount', { count: dayMatches.length })}` : ''}`}
             >
               <span className="rs-calendar__day-num">{day.getDate()}</span>
               {hasMatches ? (

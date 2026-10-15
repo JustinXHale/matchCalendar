@@ -10,13 +10,15 @@ import { routes } from '@/app/routes';
 import { countNeedsClosureMatches } from '@/features/matches/matchQueries';
 import { useMatches } from '@/features/matches/useMatches';
 import { AddAction } from '@/ui/AddAction';
+import { useI18n } from '@/i18n/I18nProvider';
+import type { TranslationKey } from '@/i18n/translations';
 
 const navIconClass = 'rs-bottom-nav__icon';
 
 const items = [
   {
     to: routes.schedule,
-    label: 'Schedule',
+    label: 'nav.schedule' as TranslationKey,
     icon: (
       <FontAwesomeIcon icon={faCalendarDays} className={navIconClass} aria-hidden />
     ),
@@ -27,7 +29,7 @@ const items = [
   },
   {
     to: routes.money,
-    label: 'Money',
+    label: 'nav.money' as TranslationKey,
     icon: (
       <FontAwesomeIcon icon={faDollarSign} className={navIconClass} aria-hidden />
     ),
@@ -37,7 +39,7 @@ const items = [
   },
   {
     to: routes.insights,
-    label: 'Insights',
+    label: 'nav.insights' as TranslationKey,
     icon: (
       <FontAwesomeIcon icon={faChartLine} className={navIconClass} aria-hidden />
     ),
@@ -45,7 +47,7 @@ const items = [
   },
   {
     to: routes.about,
-    label: 'About',
+    label: 'nav.about' as TranslationKey,
     icon: (
       <FontAwesomeIcon icon={faCircleInfo} className={navIconClass} aria-hidden />
     ),
@@ -56,12 +58,13 @@ const items = [
 export function BottomNav() {
   const location = useLocation();
   const { matches } = useMatches();
+  const { t } = useI18n();
   const needsClosureCount = countNeedsClosureMatches(matches);
   const left = items.slice(0, 2);
   const right = items.slice(2);
 
   return (
-    <nav className="rs-bottom-nav" aria-label="Primary">
+    <nav className="rs-bottom-nav" aria-label={t('nav.primary')}>
       {left.map((item) => (
         <NavLink
           key={item.to}
@@ -71,7 +74,7 @@ export function BottomNav() {
           }
         >
           {item.icon}
-          <span>{item.label}</span>
+          <span>{t(item.label)}</span>
         </NavLink>
       ))}
       <AddAction />
@@ -84,9 +87,9 @@ export function BottomNav() {
           }
         >
           {item.icon}
-          <span>{item.label}</span>
+          <span>{t(item.label)}</span>
           {item.to === routes.money && needsClosureCount > 0 ? (
-            <span className="rs-bottom-nav__badge" aria-label={`${needsClosureCount} matches need settlement`}>
+            <span className="rs-bottom-nav__badge" aria-label={t('nav.settlementCount', { count: needsClosureCount })}>
               {needsClosureCount}
             </span>
           ) : null}

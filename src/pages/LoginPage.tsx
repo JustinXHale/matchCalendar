@@ -19,6 +19,7 @@ import { PwaInstallCard } from '@/ui/PwaInstallCard';
 import { ThemeToggle } from '@/ui/ThemeToggle';
 import { appBuildLabel } from '@/app/appBuild';
 import '@/features/public/public.css';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export function LoginPage() {
   const [busyProvider, setBusyProvider] = useState<'google' | 'apple' | null>(
     null,
   );
+  const { t } = useI18n();
 
   if (isFirebaseConfigured && authReady && user && !isDemoMode) {
     return <Navigate to={routes.schedule} replace />;
@@ -84,11 +86,11 @@ export function LoginPage() {
         <h1 className="rs-signin__title">Match Calendar</h1>
         <p className="rs-signin__build">{appBuildLabel()}</p>
         <p className="rs-signin__lede">
-          Personal referee schedule, travel, and pay records
+          {t('login.lede')}
         </p>
       </header>
 
-      <section className="rs-signin__providers" aria-label="Sign in">
+      <section className="rs-signin__providers" aria-label={t('login.signIn')}>
         <GoogleSignInButton
           busy={busyProvider === 'google'}
           disabled={busy}
@@ -106,7 +108,7 @@ export function LoginPage() {
           isDisabled={busy}
           onClick={tryDemo}
         >
-          Try demo
+          {t('login.tryDemo')}
         </Button>
         {authNote && (
           <p className="rs-signin__note" role="status">

@@ -10,12 +10,14 @@ import { useTournamentsContext } from '@/features/tournaments/TournamentsProvide
 import { MatchCard } from '@/ui/MatchCard';
 import { ScheduleItemList } from '@/ui/ScheduleItemList';
 import { TournamentAgendaGroup } from '@/ui/TournamentAgendaGroup';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function AgendaScheduleView() {
   const navigate = useNavigate();
   const location = useLocation();
   const { matches } = useMatches();
   const { getTournamentById } = useTournamentsContext();
+  const { t } = useI18n();
   const upcoming = getUpcomingMatches(matches);
   const { next, rest } = splitAgendaNext(upcoming);
   const sections = groupAgendaMatches(rest);
@@ -24,17 +26,17 @@ export function AgendaScheduleView() {
     return (
       <>
       <PastMatchesExpandable />
-      <section className="rs-empty-state" aria-label="No matches yet">
-        <h2 className="rs-empty-state__title">No matches yet</h2>
+      <section className="rs-empty-state" aria-label={t('schedule.noMatchesYet')}>
+        <h2 className="rs-empty-state__title">{t('schedule.noMatchesYet')}</h2>
         <p className="rs-empty-state__text">
-          Add your first match and keep the important details in one place.
+          {t('schedule.addFirst')}
         </p>
         <Button
           variant="primary"
           isBlock
           onClick={() => openQuickMatch(navigate, location)}
         >
-          Quick Match
+          {t('common.quickMatch')}
         </Button>
       </section>
       </>
@@ -45,8 +47,8 @@ export function AgendaScheduleView() {
     <>
       <PastMatchesExpandable />
       {next && (
-        <section aria-label="Next match">
-          <h2 className="rs-section-label">Next match</h2>
+        <section aria-label={t('schedule.nextMatch')}>
+          <h2 className="rs-section-label">{t('schedule.nextMatch')}</h2>
           {next.type === 'match' ? (
             <ul className="rs-list">
               <MatchCard match={next.match} variant="hero" allowTimelineExpand />
@@ -80,16 +82,18 @@ export function AgendaScheduleView() {
         </section>
       )}
 
-      {sections.map((section) => (
-        <section key={section.key} aria-label={section.label}>
-          <h2 className="rs-section-label">{section.label}</h2>
+      {sections.map((section) => {
+        const sectionLabel = t(`schedule.${section.key}` as 'schedule.today');
+        return (
+        <section key={section.key} aria-label={sectionLabel}>
+          <h2 className="rs-section-label">{sectionLabel}</h2>
           <ScheduleItemList
             matches={section.matches}
             getTournamentById={getTournamentById}
             allowTimelineExpand
           />
         </section>
-      ))}
+      );})}
 
       <div className="rs-agenda-quick-match">
         <Button
@@ -97,7 +101,7 @@ export function AgendaScheduleView() {
           isBlock
           onClick={() => openQuickMatch(navigate, location)}
         >
-          Quick Match
+          {t('common.quickMatch')}
         </Button>
       </div>
     </>

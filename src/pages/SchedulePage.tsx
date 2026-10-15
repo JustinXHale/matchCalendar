@@ -7,9 +7,11 @@ import {
 } from '@/features/schedule/scheduleView';
 import { PageHeader } from '@/ui/PageHeader';
 import { ScheduleViewToggle } from '@/ui/ScheduleViewToggle';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function SchedulePage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useI18n();
   const view = parseScheduleView(searchParams.get('view'));
 
   const setView = (nextView: ScheduleView) => {
@@ -30,7 +32,7 @@ export function SchedulePage() {
         .join(' ')}
     >
       <PageHeader
-        title="Schedule"
+        title={t('nav.schedule')}
         actions={
           <ScheduleViewToggle
             view={view}

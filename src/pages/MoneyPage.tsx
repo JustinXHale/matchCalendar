@@ -12,22 +12,22 @@ import { useMatches } from '@/features/matches/useMatches';
 import { MoneyGlanceCard } from '@/ui/MoneyGlanceCard';
 import { MoneyMatchRow } from '@/ui/MoneyMatchRow';
 import { PageHeader } from '@/ui/PageHeader';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type MoneyFilter = 'all' | 'unpaid' | 'paid';
 type MoneyDateSort = 'oldest' | 'newest';
 
-const FILTERS: { key: MoneyFilter; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'unpaid', label: 'Unpaid' },
-  { key: 'paid', label: 'Paid' },
-];
-
-const DATE_SORT_OPTIONS: { key: MoneyDateSort; label: string }[] = [
-  { key: 'oldest', label: 'Oldest' },
-  { key: 'newest', label: 'Newest' },
-];
-
 export function MoneyPage() {
+  const { t } = useI18n();
+  const filters = [
+    { key: 'all' as const, label: t('money.all') },
+    { key: 'unpaid' as const, label: t('status.unpaid') },
+    { key: 'paid' as const, label: t('status.paid') },
+  ];
+  const dateSortOptions = [
+    { key: 'oldest' as const, label: t('money.oldest') },
+    { key: 'newest' as const, label: t('money.newest') },
+  ];
   const { matches } = useMatches();
   const { tournaments, updateTournament } = useTournamentsContext();
   const events = useMemo(
@@ -58,18 +58,17 @@ export function MoneyPage() {
 
   return (
     <div className="rs-stack rs-money-page">
-      <PageHeader title="Money" />
+      <PageHeader title={t('nav.money')} />
 
       <p className="rs-page-lede">
-        Record pay, reimbursements, and expenses for each match so your records are
-        ready at tax time.
+        {t('money.description')}
       </p>
 
       <MoneyGlanceCard summary={glance} />
 
       <div className="rs-money-toolbar">
-        <div className="rs-filter-row" role="tablist" aria-label="Money filters">
-          {FILTERS.map((item) => (
+        <div className="rs-filter-row" role="tablist" aria-label={t('money.filters')}>
+          {filters.map((item) => (
             <button
               key={item.key}
               type="button"
@@ -85,9 +84,9 @@ export function MoneyPage() {
         <div
           className="rs-schedule-toggle"
           role="tablist"
-          aria-label="Event date sort"
+          aria-label={t('money.dateSort')}
         >
-          {DATE_SORT_OPTIONS.map((option) => (
+          {dateSortOptions.map((option) => (
             <button
               key={option.key}
               type="button"
@@ -109,7 +108,7 @@ export function MoneyPage() {
       </div>
       {filtered.length === 0 ? (
         <div className="rs-placeholder-card"><p>{events.length === 0
-          ? 'Events appear here as soon as you create them.' : 'No events match this filter.'}</p></div>
+          ? t('money.empty') : t('money.noFilterResults')}</p></div>
       ) : <ul className="rs-list">{filtered.map((match) => (
         tournaments.some((item) => item.id === match.id) ? (
           <li key={match.id} className="rs-money-match-row">

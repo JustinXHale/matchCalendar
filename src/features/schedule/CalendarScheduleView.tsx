@@ -4,10 +4,12 @@ import { getMatchesForDate } from '@/features/calendar/calendarUtils';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
 import { CalendarGrid } from '@/ui/CalendarGrid';
 import { ScheduleItemList } from '@/ui/ScheduleItemList';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function CalendarScheduleView() {
   const { matches } = useMatches();
   const { getTournamentById } = useTournamentsContext();
+  const { locale, t } = useI18n();
   const today = new Date();
   const [viewDate, setViewDate] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
@@ -48,9 +50,9 @@ export function CalendarScheduleView() {
         onNextMonth={goNextMonth}
         onToday={goToday}
       />
-      <section aria-label="Matches on selected date">
+      <section aria-label={t('calendar.matchesOnDate')}>
         <h2 className="rs-section-label">
-          {selectedDate.toLocaleDateString(undefined, {
+          {selectedDate.toLocaleDateString(locale, {
             weekday: 'long',
             month: 'long',
             day: 'numeric',
@@ -58,7 +60,7 @@ export function CalendarScheduleView() {
         </h2>
         {dayMatches.length === 0 ? (
           <div className="rs-placeholder-card">
-            <p>No matches on this date.</p>
+            <p>{t('calendar.noMatches')}</p>
           </div>
         ) : (
           <ScheduleItemList

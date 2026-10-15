@@ -4,11 +4,13 @@ import { openQuickMatch } from '@/app/navigation';
 import { routes } from '@/app/routes';
 import { backFromLocation } from '@/nav/backDefaults';
 import { backState } from '@/nav/backNav';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export function AddAction() {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const { t } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export function AddAction() {
       <button
         type="button"
         className="rs-add-event__btn"
-        aria-label="Add event"
+        aria-label={t('common.addEvent')}
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
@@ -48,7 +50,7 @@ export function AddAction() {
         <div
           className="rs-add-menu"
           role="menu"
-          aria-label="Add event options"
+          aria-label={t('common.addEventOptions')}
         >
           <button
             type="button"
@@ -59,7 +61,7 @@ export function AddAction() {
               openQuickMatch(navigate, location);
             }}
           >
-            Quick Match
+            {t('common.quickMatch')}
           </button>
           <Link
             to={routes.fullMatch}
@@ -67,7 +69,7 @@ export function AddAction() {
             state={backState(backFromLocation(location))}
             onClick={() => setOpen(false)}
           >
-            Full details
+            {t('common.fullDetails')}
           </Link>
         </div>
       )}
