@@ -54,6 +54,19 @@
   font: var(--rs-font-body);
 }
 
+.rs-timeline__map-link {
+  width: fit-content;
+  color: var(--rs-color-primary);
+  font: var(--rs-font-body);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.rs-timeline__map-link:hover {
+  color: var(--rs-color-primary-muted);
+}
+
 .rs-timeline__edit {
   display: flex;
   flex-direction: column;

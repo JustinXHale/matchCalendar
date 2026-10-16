@@ -12,7 +12,20 @@ export type TimelineItem = {
   detail?: string;
   secondaryDetail?: string;
   dataProvider?: 'aerodatabox';
+  mapLocation?: {
+    label: string;
+    query: string;
+  };
 };
+
+function mapLocation(label?: string, address?: string): TimelineItem['mapLocation'] {
+  const visibleLabel = address?.trim() || label?.trim();
+  if (!visibleLabel) return undefined;
+  return {
+    label: visibleLabel,
+    query: [label?.trim(), address?.trim()].filter(Boolean).join(', '),
+  };
+}
 
 export function hasFlightData(match: Match): boolean {
   return Boolean(
@@ -126,6 +139,10 @@ export function buildMatchTimeline(
       at: dateFromYmd(match.lodging.checkInDate, 15),
       label: 'Hotel check-in',
       detail: match.lodging.propertyName,
+      mapLocation: mapLocation(
+        match.lodging.propertyName,
+        match.lodging.address,
+      ),
     });
   }
 
@@ -140,6 +157,7 @@ export function buildMatchTimeline(
       at: new Date(match.kickoffAt.getTime() - arrivalMinutes * 60_000),
       label: 'Arrive at pitch',
       detail: `${arrivalMinutes} min before kickoff`,
+      mapLocation: mapLocation(match.location),
     });
   }
 
@@ -148,7 +166,7 @@ export function buildMatchTimeline(
     kind: 'factual',
     at: match.kickoffAt,
     label: 'Match kickoff',
-    detail: match.location,
+    mapLocation: mapLocation(match.location),
   });
 
   if (match.lodging?.checkOutDate) {
@@ -158,6 +176,10 @@ export function buildMatchTimeline(
       at: dateFromYmd(match.lodging.checkOutDate, 11),
       label: 'Hotel check-out',
       detail: match.lodging.propertyName,
+      mapLocation: mapLocation(
+        match.lodging.propertyName,
+        match.lodging.address,
+      ),
     });
   }
 

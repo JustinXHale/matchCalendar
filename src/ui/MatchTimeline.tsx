@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import type { TimelineItem } from '@/features/timeline/matchTimeline';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
 import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
+import { directionsUrl } from '@/utils/maps';
 
 type Props = {
   items: TimelineItem[];
@@ -85,6 +86,17 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
               <div className="rs-timeline__body">
                 <strong>{item.label}</strong>
                 {item.detail ? <span>{item.detail}</span> : null}
+                {item.mapLocation ? (
+                  <a
+                    className="rs-timeline__map-link"
+                    href={directionsUrl(item.mapLocation.query)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${item.mapLocation.label} in maps`}
+                  >
+                    {item.mapLocation.label}
+                  </a>
+                ) : null}
                 {item.secondaryDetail ? <span>{item.secondaryDetail}</span> : null}
                 {canEdit && editingId !== item.id ? (
                   <Button variant="link" isInline onClick={() => startEdit(item)}>
