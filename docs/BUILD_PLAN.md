@@ -36,7 +36,7 @@ Firestore field names and types in `DATA_MODEL.md` still apply to the TypeScript
 
 - Vite + React 19 + TypeScript
 - React Router v7
-- PatternFly React v6
+- MUI Material components with Material 3 semantic theming
 - Firebase client setup
 - `vite-plugin-pwa`
 - global design tokens

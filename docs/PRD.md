@@ -83,6 +83,7 @@ A match is always standalone.
 
 - Date
 - Time
+- Venue timezone
 - Location
 - Position
 - Match type
@@ -184,6 +185,7 @@ Recommended content hierarchy:
 
 - Date
 - Time
+- Venue timezone
 - Event title or Home vs Away
 - Location
 - Position
@@ -257,6 +259,7 @@ Quick Match should feel approximately as easy as creating an event in a native c
 
 - Date
 - Time
+- Venue timezone
 - Event title
 - Home
 - Away
@@ -299,6 +302,7 @@ Recommended sections:
 
 - Date
 - Time
+- Venue timezone
 - Event title
 - Home
 - Away
@@ -695,7 +699,7 @@ Use the same general frontend foundation as MatchReadyTX so code and design know
 - React 19
 - TypeScript
 - React Router v7
-- PatternFly React v6
+- MUI Material components with Material 3 semantic theming
 - Firebase Auth
 - Cloud Firestore
 - Firebase Functions only where needed
@@ -706,7 +710,7 @@ Use the same general frontend foundation as MatchReadyTX so code and design know
 Reuse the MatchReadyTX visual system as the starting point:
 
 - Custom `--rs-*` design tokens
-- PatternFly theme overrides
+- Material 3 semantic theme roles mapped to custom `--rs-*` tokens
 - Monochrome palette
 - Border-driven surfaces instead of heavy shadows
 - Red reserved primarily for urgency / destructive states
@@ -897,7 +901,7 @@ MVP rules are straightforward because data is personal.
 ### Phase 0 — Shell
 
 - Vite / React / TypeScript
-- PatternFly
+- MUI Material 3 foundation
 - design tokens
 - Firebase config
 - Google / Apple auth
@@ -1007,7 +1011,7 @@ These do not block initial wireframing:
 - Final brand name vs “Match Calendar” working name
 - Exact bottom-nav labels and icon choices
 - Whether Tournament ships in v1 or immediately after the core match loop
-- Whether users can change currency / timezone in v1
+- Whether users can change currency in v1 (venue timezone selection ships in v1)
 - Whether expected pay should support tax withholding notes later
 - Exact final label for the finance area (`Expenses`, `Insights`, or another name)
 - Exact preset rugby position list beyond the initial design set

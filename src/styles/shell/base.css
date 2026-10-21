@@ -15,6 +15,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.pf-v6-c-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.pf-v6-c-page__main-section {
+  flex: 1 1 auto;
+}
+
+.pf-v6-c-masthead {
+  min-height: 4rem;
+}
+
 .pf-v6-c-button.pf-m-primary {
   background-color: var(--rs-color-primary) !important;
   border-color: var(--rs-color-primary) !important;

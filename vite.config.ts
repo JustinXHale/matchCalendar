@@ -55,6 +55,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@patternfly/react-core': path.resolve(__dirname, 'src/lib/pf-mui/index.ts'),
+      '@patternfly/react-icons': path.resolve(__dirname, 'src/lib/pf-mui/icons.tsx'),
     },
   },
   build: {
@@ -73,10 +75,13 @@ export default defineConfig({
             return 'vendor-firebase-core';
           }
           if (
-            id.includes('node_modules/@patternfly/react-core/') ||
-            id.includes('node_modules/@patternfly/react-icons/')
+            id.includes('node_modules/@mui/x-date-pickers/') ||
+            id.includes('node_modules/dayjs/')
           ) {
-            return 'vendor-patternfly';
+            return 'vendor-date-pickers';
+          }
+          if (id.includes('node_modules/@mui/') || id.includes('node_modules/@emotion/')) {
+            return 'vendor-mui';
           }
           if (id.includes('node_modules/react-router-dom/')) {
             return 'vendor-router';

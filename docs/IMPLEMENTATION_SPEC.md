@@ -16,7 +16,7 @@ If documents conflict, product behavior follows the PRD. Firestore field names a
 |---|---|
 | App | Vite + React 19 + TypeScript |
 | Routing | React Router v7 |
-| UI | PatternFly React v6 (`@patternfly/react-core`) |
+| UI | MUI (`@mui/material`, `@mui/x-date-pickers`) with Material 3 semantic theming |
 | Styling | Custom CSS + semantic `--rs-*` design tokens |
 | Auth | Firebase Auth |
 | Sign-in | Google + Apple only |
@@ -96,6 +96,7 @@ Fields:
 
 - date
 - time
+- venue timezone
 - event title
 - home
 - away
@@ -108,6 +109,7 @@ Validation:
 
 - date required
 - time required
+- venue timezone required
 - location required
 - position required
 - match type required
@@ -550,13 +552,25 @@ Firestore subscription and background write failures should map to readable mess
 
 ## 18. Time and date handling
 
-Store a canonical kickoff timestamp plus the user's intended timezone when needed.
+Store a canonical UTC kickoff timestamp plus the match venue's intended IANA timezone.
 
 MVP defaults:
 
-- use the device/user timezone for manually created matches
-- render dates/times in the user's local timezone
+- default new manually created matches to the device timezone
+- let the user choose a common venue timezone in Quick Match and Full Match
+- interpret entered date/time as wall-clock time in that selected venue timezone
+- render match date/time in the stored match timezone with a visible short zone label
 - imported records should preserve their source timezone if supplied
+
+Edits must populate date/time fields in the stored match timezone, never reinterpret the
+saved instant through the current device timezone. Agenda sorting remains based on the
+absolute kickoff instant; calendar day grouping remains device-local in v1.
+
+Match timelines normalize their displayed times and day dividers to the match timezone.
+Match ground-travel and custom-itinerary editors also use that timezone. Flight departure
+and arrival fields remain device-local until airport-specific timezone support is added;
+do not reinterpret them as venue-local. Paid and reimbursed fields are calendar dates and
+do not inherit the match timezone.
 
 Do not hard-code America/Chicago from MatchReadyTX into Match Calendar.
 

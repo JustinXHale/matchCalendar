@@ -13,6 +13,11 @@ import type { MatchFormValues } from '@/features/matches/matchValidation';
 import type { Tournament } from '@/domain/tournament';
 import { isTournamentLumpPay } from '@/features/tournaments/tournamentFormUtils';
 import { LOCAL_OWNER_UID } from '@/services/localStore';
+import {
+  deviceTimeZone,
+  utcToZonedWall,
+  zonedWallToUtc,
+} from '@/domain/matchTimezone';
 
 export function createEmptyMatchForm(
   defaultPositionPreset: PositionPreset = 'referee',
@@ -21,6 +26,7 @@ export function createEmptyMatchForm(
   return {
     date: toDateInputValue(now),
     time: toTimeInputValue(now),
+    timezone: deviceTimeZone(),
     title: '',
     home: '',
     away: '',
@@ -51,9 +57,12 @@ export function matchToFormValues(match: Match): MatchFormValues {
       }
     : inferPositionPreset(match.position);
 
+  const timezone = match.timezone ?? deviceTimeZone();
+  const kickoff = utcToZonedWall(match.kickoffAt, timezone);
   return {
-    date: toDateInputValue(match.kickoffAt),
-    time: toTimeInputValue(match.kickoffAt),
+    date: kickoff.date,
+    time: kickoff.time,
+    timezone,
     title: match.title ?? '',
     home: match.home ?? '',
     away: match.away ?? '',
@@ -106,10 +115,12 @@ export function resolveTournamentChildExpectedPay(
   return parseOptionalNumber(parentDefaultPay ?? '');
 }
 
-export function formValuesToKickoffAt(date: string, time: string): Date {
-  const [year, month, day] = date.split('-').map(Number);
-  const [hours, minutes] = time.split(':').map(Number);
-  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+export function formValuesToKickoffAt(
+  date: string,
+  time: string,
+  timezone = deviceTimeZone(),
+): Date {
+  return zonedWallToUtc(date, time, timezone);
 }
 
 export function parseOptionalNumber(value: string): number | undefined {
@@ -145,7 +156,7 @@ export function buildMatchFromForm(
   existing?: Match,
   options?: BuildMatchOptions,
 ): Omit<Match, 'id' | 'createdAt' | 'updatedAt'> {
-  const kickoffAt = formValuesToKickoffAt(values.date, values.time);
+  const kickoffAt = formValuesToKickoffAt(values.date, values.time, values.timezone);
   const position = resolvePositionLabel(
     values.positionPreset,
     values.customPosition,
@@ -155,8 +166,7 @@ export function buildMatchFromForm(
   return {
     ownerUid: existing?.ownerUid ?? LOCAL_OWNER_UID,
     kickoffAt,
-    timezone:
-      existing?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezone: values.timezone,
     title: values.title.trim() || undefined,
     home: values.home.trim() || undefined,
     away: values.away.trim() || undefined,

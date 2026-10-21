@@ -2,7 +2,7 @@
 
 **Status:** Draft v0.1  
 **Visual lineage:** MatchReadyTX / Rabbit Hole Apps monochrome system  
-**UI framework:** PatternFly React v6
+**UI framework:** MUI with Material Design 3 semantics
 
 Match Calendar should feel related to MatchReadyTX without copying its scheduling/admin density.
 
@@ -28,7 +28,7 @@ The app should feel like a useful personal tool, not an enterprise operations da
 
 Keep:
 
-- PatternFly React v6
+- MUI Material components and Material 3 semantic roles
 - semantic CSS token approach
 - monochrome brand
 - light/dark support
@@ -77,7 +77,7 @@ Use three layers:
 
 1. literal palette values only in `tokens.css`
 2. semantic `--rs-color-*`, `--rs-space-*`, `--rs-radius-*` tokens
-3. PatternFly global token overrides where appropriate
+3. M3 semantic role aliases (`--rs-m3-*`) mapped into product tokens
 
 Do not use raw hex values in feature/component CSS.
 
@@ -161,7 +161,7 @@ Cards should feel crisp rather than floating.
 
 ## 7. Typography
 
-Use the existing MatchReadyTX / PatternFly-compatible type foundation unless branding changes.
+Use the existing MatchReadyTX typography foundation expressed through the MUI theme unless branding changes.
 
 Hierarchy:
 
@@ -232,7 +232,8 @@ Avoid turning every metadata value into a pill.
 
 ## 11. Forms
 
-Prefer PatternFly form controls.
+Prefer MUI form controls. Date and time fields use MUI X responsive pickers with
+desktop popovers and mobile dialogs.
 
 Guidelines:
 
@@ -282,7 +283,7 @@ Do not create separate component-specific dark palettes when semantic tokens can
 
 ## 14. Accessibility
 
-Target strong contrast and PatternFly's accessible defaults.
+Target strong contrast and MUI/Material accessible defaults.
 
 Requirements:
 
@@ -302,7 +303,7 @@ Requirements:
 
 - visual DNA
 - CSS/token architecture
-- PatternFly conventions
+- Material 3 component semantics
 - high-contrast treatment
 - PWA shell patterns
 

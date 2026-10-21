@@ -16,6 +16,7 @@ try {
       'tests/matchReadyMerge.test.ts',
       'tests/i18n.test.ts',
       'tests/timelineMaps.test.ts',
+      'tests/matchTimezone.test.ts',
     ],
     bundle: true,
     platform: 'node',
@@ -32,6 +33,7 @@ try {
   await import(pathToFileURL(join(directory, 'matchReadyMerge.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'i18n.test.mjs')).href);
   await import(pathToFileURL(join(directory, 'timelineMaps.test.mjs')).href);
+  await import(pathToFileURL(join(directory, 'matchTimezone.test.mjs')).href);
 } finally {
   await rm(directory, { recursive: true, force: true });
 }

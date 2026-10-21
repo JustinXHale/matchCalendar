@@ -10,6 +10,7 @@ import { resolvePositionLabel } from '@/domain/matchConstants';
 export type MatchFormValues = {
   date: string;
   time: string;
+  timezone: string;
   title: string;
   home: string;
   away: string;
@@ -40,6 +41,7 @@ function validateCoreIdentity(values: MatchFormValues): MatchFormErrors {
 
   if (!values.date) errors.date = 'Date is required';
   if (!values.time) errors.time = 'Time is required';
+  if (!values.timezone) errors.timezone = 'Timezone is required';
 
   const position = resolvePositionLabel(
     values.positionPreset,

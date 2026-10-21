@@ -4,21 +4,24 @@ import type { TimelineItem } from '@/features/timeline/matchTimeline';
 import { DateTimeInput } from '@/ui/forms/DateTimeInput';
 import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
 import { directionsUrl } from '@/utils/maps';
+import {
+  dateKeyInTimezone,
+  formatTimezoneShort,
+} from '@/domain/matchTimezone';
 
 type Props = {
   items: TimelineItem[];
   editable?: boolean;
   onEditItem?: (itemId: string, newAt: Date) => void;
+  timeZone?: string;
 };
 
-function localDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
+export function MatchTimeline({
+  items,
+  editable = false,
+  onEditItem,
+  timeZone,
+}: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftAt, setDraftAt] = useState<Date | undefined>();
 
@@ -49,9 +52,9 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
           editable &&
           onEditItem &&
           (item.kind === 'derived' || item.kind === 'custom');
-        const dateKey = localDateKey(item.at);
+        const dateKey = dateKeyInTimezone(item.at, timeZone);
         const startsNewDay =
-          index > 0 && localDateKey(items[index - 1].at) !== dateKey;
+          index > 0 && dateKeyInTimezone(items[index - 1].at, timeZone) !== dateKey;
 
         return (
           <Fragment key={item.id}>
@@ -64,11 +67,13 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric',
+                    timeZone,
                   })}
                 >
                   {item.at.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric',
+                    timeZone,
                   })}
                 </time>
                 <span aria-hidden="true" />
@@ -81,7 +86,9 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
                 {item.at.toLocaleTimeString(undefined, {
                   hour: 'numeric',
                   minute: '2-digit',
+                  timeZone,
                 })}
+                {timeZone ? ` ${formatTimezoneShort(timeZone, item.at)}` : ''}
               </span>
               <div className="rs-timeline__body">
                 <strong>{item.label}</strong>
@@ -109,6 +116,7 @@ export function MatchTimeline({ items, editable = false, onEditItem }: Props) {
                       id={`timeline-edit-${item.id}`}
                       label="Time"
                       value={draftAt}
+                      timeZone={timeZone}
                       onChange={setDraftAt}
                     />
                     <div className="rs-timeline__edit-actions">

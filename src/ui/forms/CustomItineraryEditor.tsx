@@ -6,9 +6,10 @@ import type { CustomItineraryItem } from '@/domain/match';
 type Props = {
   items: CustomItineraryItem[];
   onChange: (items: CustomItineraryItem[]) => void;
+  timeZone?: string;
 };
 
-export function CustomItineraryEditor({ items, onChange }: Props) {
+export function CustomItineraryEditor({ items, onChange, timeZone }: Props) {
   const addItem = () => {
     onChange([
       ...items,
@@ -45,7 +46,8 @@ export function CustomItineraryEditor({ items, onChange }: Props) {
             />
           </FormGroup>
           <DateTimeInput id={`itinerary-at-${item.id}`} label="Date and time"
-            value={item.at} onChange={(at) => { if (at) updateItem(item.id, { at }); }} />
+            value={item.at} timeZone={timeZone}
+            onChange={(at) => { if (at) updateItem(item.id, { at }); }} />
           {(!(item.at instanceof Date) || Number.isNaN(item.at.getTime())) && (
             <span className="rs-form-error" role="alert">Choose a date and time to show this item on the timeline.</span>
           )}

@@ -28,7 +28,7 @@ Use:
 - React 19
 - TypeScript
 - React Router v7
-- PatternFly React v6
+- MUI with Material Design 3 semantics and MUI X date/time pickers
 - Firebase Auth / Firestore / Functions
 - `vite-plugin-pwa`
 - custom CSS tokens
@@ -39,7 +39,7 @@ Do not add:
 - Tailwind
 - Redux or another global-state library without need
 - a second backend/database
-- a component library that duplicates PatternFly
+- a second component library that duplicates MUI
 
 ## Product boundary
 
@@ -76,7 +76,7 @@ Do not accidentally build:
 ## UI
 
 - mobile-first
-- PatternFly first
+- MUI Material 3 first
 - reuse MatchReadyTX/Rabbit Hole monochrome DNA, not its admin density
 - no raw hex in feature CSS
 - use semantic `--rs-*` tokens

@@ -14,11 +14,14 @@
     "deploy:hosting": "npm run build && firebase deploy --only hosting:matchcalendar"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
-    "@patternfly/react-core": "^6.6.0",
-    "@patternfly/react-icons": "^6.6.0",
+    "@mui/material": "^9.5.0",
+    "@mui/x-date-pickers": "^9.16.0",
+    "dayjs": "^1.11.23",
     "firebase": "^11.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

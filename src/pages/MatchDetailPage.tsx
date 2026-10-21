@@ -12,7 +12,8 @@ import { DetailBackButton } from '@/ui/DetailBackButton';
 import {
   formatCurrency,
   formatMatchDate,
-  formatMatchTime,
+  formatMatchDateTime,
+  formatMatchTimeWithTimezone,
   getMatchDisplayTitle,
 } from '@/domain/matchDisplay';
 import { needsSettlementAttention } from '@/features/matches/matchClosure';
@@ -123,7 +124,7 @@ export function MatchDetailPage() {
 
       <article className="rs-detail-card">
         <p className="rs-detail-card__primary">
-          {formatMatchDate(match)} · {formatMatchTime(match)}
+          {formatMatchDate(match)} · {formatMatchTimeWithTimezone(match)}
         </p>
         {match.home && match.away && (
           <p className="rs-detail-card__teams">
@@ -150,6 +151,7 @@ export function MatchDetailPage() {
           <div className="rs-detail-card">
             <MatchTimeline
               items={timelineItems}
+              timeZone={match.timezone}
               editable
               onEditItem={(itemId, newAt) => {
                 const patch = applyTimelineTimeEdit(match, itemId, newAt);
@@ -263,10 +265,10 @@ export function MatchDetailPage() {
           <div className="rs-detail-card">
             {match.groundTravel.provider && <p>{match.groundTravel.provider}</p>}
             {match.groundTravel.pickupAt && (
-              <p>Pickup: {match.groundTravel.pickupAt.toLocaleString()}</p>
+              <p>Pickup: {formatMatchDateTime(match, match.groundTravel.pickupAt)}</p>
             )}
             {match.groundTravel.returnAt && (
-              <p>Return: {match.groundTravel.returnAt.toLocaleString()}</p>
+              <p>Return: {formatMatchDateTime(match, match.groundTravel.returnAt)}</p>
             )}
             {match.groundTravel.confirmation && (
               <p>Confirmation: {match.groundTravel.confirmation}</p>

@@ -1,6 +1,5 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@patternfly/react-core/dist/styles/base.css';
 import '@/styles/tokens.css';
 import '@/styles/theme-high-contrast.css';
 import '@/styles/shell/index.css';
@@ -13,6 +12,7 @@ import { MatchesProvider } from '@/features/matches/MatchesProvider';
 import { ProfileProvider } from '@/features/profile/ProfileProvider';
 import { TournamentsProvider } from '@/features/tournaments/TournamentsProvider';
 import { I18nProvider } from '@/i18n/I18nProvider';
+import { MuiThemeProvider } from '@/theme/MuiThemeProvider';
 
 document.documentElement.classList.add('rs-theme');
 initTheme();
@@ -20,20 +20,22 @@ watchSystemContrastPreferences();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppToastProvider>
-      <AuthProvider>
-        <DemoModeProvider>
-          <ProfileProvider>
-            <I18nProvider>
-              <MatchesProvider>
-                <TournamentsProvider>
-                  <AppRouter />
-                </TournamentsProvider>
-              </MatchesProvider>
-            </I18nProvider>
-          </ProfileProvider>
-        </DemoModeProvider>
-      </AuthProvider>
-    </AppToastProvider>
+    <MuiThemeProvider>
+      <AppToastProvider>
+        <AuthProvider>
+          <DemoModeProvider>
+            <ProfileProvider>
+              <I18nProvider>
+                <MatchesProvider>
+                  <TournamentsProvider>
+                    <AppRouter />
+                  </TournamentsProvider>
+                </MatchesProvider>
+              </I18nProvider>
+            </ProfileProvider>
+          </DemoModeProvider>
+        </AuthProvider>
+      </AppToastProvider>
+    </MuiThemeProvider>
   </StrictMode>,
 );

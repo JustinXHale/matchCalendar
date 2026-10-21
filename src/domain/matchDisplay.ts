@@ -1,4 +1,5 @@
 import type { Match } from '@/domain/match';
+import { formatTimezoneShort } from '@/domain/matchTimezone';
 
 export function getMatchDisplayTitle(match: Match): string {
   if (match.title?.trim()) return match.title.trim();
@@ -28,6 +29,25 @@ export function formatMatchTime(match: Match, locale?: string): string {
     minute: '2-digit',
     timeZone: match.timezone,
   });
+}
+
+export function formatMatchTimeWithTimezone(match: Match, locale?: string): string {
+  const timezone = match.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return `${formatMatchTime(match, locale)} ${formatTimezoneShort(timezone, match.kickoffAt)}`;
+}
+
+export function formatMatchDateTime(
+  match: Match,
+  date: Date,
+  locale?: string,
+): string {
+  const timezone = match.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const formatted = date.toLocaleString(locale, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: timezone,
+  });
+  return `${formatted} ${formatTimezoneShort(timezone, date)}`;
 }
 
 export function formatCurrency(amount: number, currency = 'USD', locale = 'en-US'): string {

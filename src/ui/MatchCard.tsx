@@ -9,7 +9,7 @@ import {
 import {
   formatCardDate,
   formatCurrency,
-  formatMatchTime,
+  formatMatchTimeWithTimezone,
   getMatchDisplayTitle,
 } from '@/domain/matchDisplay';
 import type { Match } from '@/domain/match';
@@ -121,7 +121,7 @@ export function MatchCard({
               <span className="rs-assignment__month">{month}</span>
               <span className="rs-assignment__day">{day}</span>
               <span className="rs-assignment__weekday">{weekday}</span>
-              <span className="rs-assignment__time">{formatMatchTime(match, locale)}</span>
+              <span className="rs-assignment__time">{formatMatchTimeWithTimezone(match, locale)}</span>
             </div>
 
             <div className="rs-assignment__content">
@@ -235,7 +235,7 @@ export function MatchCard({
 
         {timelineOpen && showTimeline ? (
           <div className="rs-assignment__timeline-panel" aria-label="Match timeline">
-            <MatchTimeline items={timelineItems} />
+            <MatchTimeline items={timelineItems} timeZone={match.timezone} />
           </div>
         ) : null}
 

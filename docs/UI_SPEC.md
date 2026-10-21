@@ -132,13 +132,14 @@ Use one compact page or mobile bottom sheet.
 
 1. Date
 2. Time
-3. Event title
-4. Home
-5. Away
-6. Location
-7. Position preset (`Other` reveals custom text)
-8. Match type preset (`XVs`, `10s`, `7s`, `Tournament`, `Other`; `Other` reveals custom text)
-9. Pay (optional)
+3. Venue timezone
+4. Event title
+5. Home
+6. Away
+7. Location
+8. Position preset (`Other` reveals custom text)
+9. Match type preset (`XVs`, `10s`, `7s`, `Tournament`, `Other`; `Other` reveals custom text)
+10. Pay (optional)
 
 At least one of Event title / Home / Away is required.
 
@@ -151,7 +152,7 @@ Secondary: `More details`
 
 ### Interaction guidance
 
-- Use native-friendly date/time controls when practical.
+- Use MUI X responsive date/time pickers for structured date and time entry.
 - Do not force a second confirmation after Save.
 - On successful create, navigate to Agenda.
 - If the new record is now the next match, it should naturally appear in the hero.
@@ -167,6 +168,7 @@ Use sections. Avoid one giant undifferentiated form.
 
 - Date
 - Time
+- Venue timezone
 - Event title
 - Home
 - Away
@@ -522,7 +524,7 @@ Copy direction:
 - icon-only controls require accessible names
 - forms expose validation text programmatically
 
-PatternFly behavior should be used rather than replaced when it already solves accessibility.
+MUI behavior and native platform semantics should be used when they solve accessibility.
 
 ---
 

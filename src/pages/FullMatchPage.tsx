@@ -449,6 +449,7 @@ export function FullMatchPage() {
       >
         <GroundTravelFields
           groundTravel={extras.groundTravel}
+          timeZone={isTournamentForm ? undefined : values.timezone}
           onChange={(patch) =>
             setExtras((current) => ({
               ...current,
@@ -468,6 +469,7 @@ export function FullMatchPage() {
       >
         <CustomItineraryEditor
           items={extras.customItinerary}
+          timeZone={isTournamentForm ? undefined : values.timezone}
           onChange={(customItinerary) =>
             setExtras((current) => ({ ...current, customItinerary }))
           }

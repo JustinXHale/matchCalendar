@@ -37,6 +37,7 @@ type LodgingProps = {
 type GroundProps = {
   groundTravel: GroundTravelInfo;
   onChange: (patch: Partial<GroundTravelInfo>) => void;
+  timeZone?: string;
 };
 
 function FlightSegmentFields({
@@ -351,7 +352,11 @@ export function LodgingFields({ lodging, onChange }: LodgingProps) {
   );
 }
 
-export function GroundTravelFields({ groundTravel, onChange }: GroundProps) {
+export function GroundTravelFields({
+  groundTravel,
+  onChange,
+  timeZone,
+}: GroundProps) {
   return (
     <div className="rs-form-stack rs-form-stack--compact">
       <NativeInput
@@ -366,12 +371,14 @@ export function GroundTravelFields({ groundTravel, onChange }: GroundProps) {
           id="ground-pickup"
           label="Pickup"
           value={groundTravel.pickupAt}
+          timeZone={timeZone}
           onChange={(pickupAt) => onChange({ pickupAt })}
         />
         <DateTimeInput
           id="ground-return"
           label="Return"
           value={groundTravel.returnAt}
+          timeZone={timeZone}
           onChange={(returnAt) => onChange({ returnAt })}
         />
       </div>

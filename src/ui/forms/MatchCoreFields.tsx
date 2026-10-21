@@ -8,6 +8,7 @@ import { NativeInput } from '@/ui/forms/NativeInput';
 import type { TournamentPayScope } from '@/domain/tournament';
 import { PresetSelectFields } from '@/ui/forms/PresetSelectFields';
 import { TournamentPayScopeField } from '@/ui/forms/TournamentPayScopeField';
+import { TimezoneSelect } from '@/ui/forms/TimezoneSelect';
 
 type Props = {
   values: MatchFormValues;
@@ -52,19 +53,27 @@ export function MatchCoreFields({
   if (tournamentChild) {
     return (
       <div className="rs-form-stack rs-form-stack--compact">
-        <NativeInput
-          id="match-datetime"
-          label="Date and time"
-          type="datetime-local"
-          isRequired
-          value={values.date && values.time ? `${values.date}T${values.time}` : ''}
-          onChange={(value) => {
-            const [date = '', time = ''] = value.split('T');
-            onChange({ date, time });
-          }}
-          validated={errors.date || errors.time ? 'error' : 'default'}
-          error={errors.date || errors.time}
-        />
+        <div className="rs-form-row">
+          <NativeInput
+            id="match-datetime"
+            label="Date and time"
+            type="datetime-local"
+            isRequired
+            value={values.date && values.time ? `${values.date}T${values.time}` : ''}
+            onChange={(value) => {
+              const [date = '', time = ''] = value.split('T');
+              onChange({ date, time });
+            }}
+            validated={errors.date || errors.time ? 'error' : 'default'}
+            error={errors.date || errors.time}
+          />
+          <TimezoneSelect
+            id="match-timezone"
+            value={values.timezone}
+            error={errors.timezone}
+            onChange={(timezone) => onChange({ timezone })}
+          />
+        </div>
 
         <FormGroup label="Event title" fieldId="match-title">
           <FormTextInput
@@ -145,19 +154,27 @@ export function MatchCoreFields({
   return (
     <div className="rs-form-stack rs-form-stack--compact">
       {!tournament && (
-        <NativeInput
-          id="match-datetime"
-          label="Date and time"
-          type="datetime-local"
-          isRequired
-          value={values.date && values.time ? `${values.date}T${values.time}` : ''}
-          onChange={(value) => {
-            const [date = '', time = ''] = value.split('T');
-            onChange({ date, time });
-          }}
-          validated={errors.date || errors.time ? 'error' : 'default'}
-          error={errors.date || errors.time}
-        />
+        <div className="rs-form-row">
+          <NativeInput
+            id="match-datetime"
+            label="Date and time"
+            type="datetime-local"
+            isRequired
+            value={values.date && values.time ? `${values.date}T${values.time}` : ''}
+            onChange={(value) => {
+              const [date = '', time = ''] = value.split('T');
+              onChange({ date, time });
+            }}
+            validated={errors.date || errors.time ? 'error' : 'default'}
+            error={errors.date || errors.time}
+          />
+          <TimezoneSelect
+            id="match-timezone"
+            value={values.timezone}
+            error={errors.timezone}
+            onChange={(timezone) => onChange({ timezone })}
+          />
+        </div>
       )}
 
       <FormGroup label="Event title" fieldId="match-title">

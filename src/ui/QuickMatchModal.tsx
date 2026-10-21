@@ -21,6 +21,7 @@ import {
 } from '@/features/matches/matchValidation';
 import { NativeInput } from '@/ui/forms/NativeInput';
 import { PresetSelectFields } from '@/ui/forms/PresetSelectFields';
+import { TimezoneSelect } from '@/ui/forms/TimezoneSelect';
 
 export function QuickMatchModal() {
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ export function QuickMatchModal() {
             />
           </FormGroup>
 
-          <div className="rs-form-row">
+          <div className="rs-form-row rs-form-row--3">
             <NativeInput
               id="quick-date"
               label="Day"
@@ -132,6 +133,12 @@ export function QuickMatchModal() {
               onChange={(value) => onChange({ time: value })}
               validated={errors.time ? 'error' : 'default'}
               error={errors.time}
+            />
+            <TimezoneSelect
+              id="quick-timezone"
+              value={values.timezone}
+              error={errors.timezone}
+              onChange={(timezone) => onChange({ timezone })}
             />
           </div>
 
