@@ -7,20 +7,51 @@ import { directionsUrl } from '@/utils/maps';
 import {
   dateKeyInTimezone,
   formatTimezoneShort,
+  timezonesDiffer,
 } from '@/domain/matchTimezone';
 
 type Props = {
   items: TimelineItem[];
   editable?: boolean;
   onEditItem?: (itemId: string, newAt: Date) => void;
+  /** Primary display zone — home / travel clock. */
   timeZone?: string;
+  /** Venue zone — dual-label kickoff-related rows when different from home. */
+  venueTimeZone?: string;
 };
+
+const VENUE_DUAL_LABEL_IDS = new Set(['kickoff', 'arrive-pitch']);
+
+function formatPrimaryTime(at: Date, timeZone?: string): string {
+  const clock = at.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone,
+  });
+  return timeZone ? `${clock} ${formatTimezoneShort(timeZone, at)}` : clock;
+}
+
+function formatTimelineClock(
+  item: TimelineItem,
+  homeTimeZone?: string,
+  venueTimeZone?: string,
+): string {
+  const primary = formatPrimaryTime(item.at, homeTimeZone);
+  if (
+    !VENUE_DUAL_LABEL_IDS.has(item.id) ||
+    !timezonesDiffer(homeTimeZone, venueTimeZone, item.at)
+  ) {
+    return primary;
+  }
+  return `${primary} · ${formatPrimaryTime(item.at, venueTimeZone)}`;
+}
 
 export function MatchTimeline({
   items,
   editable = false,
   onEditItem,
   timeZone,
+  venueTimeZone,
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftAt, setDraftAt] = useState<Date | undefined>();
@@ -83,12 +114,7 @@ export function MatchTimeline({
               className={`rs-timeline__item rs-timeline__item--${item.kind}`}
             >
               <span className="rs-timeline__time">
-                {item.at.toLocaleTimeString(undefined, {
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  timeZone,
-                })}
-                {timeZone ? ` ${formatTimezoneShort(timeZone, item.at)}` : ''}
+                {formatTimelineClock(item, timeZone, venueTimeZone)}
               </span>
               <div className="rs-timeline__body">
                 <strong>{item.label}</strong>

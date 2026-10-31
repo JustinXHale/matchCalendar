@@ -27,6 +27,8 @@ import { FlightDataAttribution } from '@/ui/FlightDataAttribution';
 type FlightProps = {
   flight: FlightInfo;
   onChange: (patch: Partial<FlightInfo>) => void;
+  /** Home timezone for departure/arrival wall-clock entry. */
+  timeZone?: string;
 };
 
 type LodgingProps = {
@@ -45,6 +47,7 @@ function FlightSegmentFields({
   index,
   canRemove,
   canImport,
+  timeZone,
   onClear,
   onChange,
   onImport,
@@ -54,6 +57,7 @@ function FlightSegmentFields({
   index: number;
   canRemove: boolean;
   canImport: boolean;
+  timeZone?: string;
   onClear: () => void;
   onChange: (patch: Partial<FlightSegment>) => void;
   onImport: (patches: Partial<FlightSegment>[]) => void;
@@ -142,6 +146,7 @@ function FlightSegmentFields({
               id={`${idPrefix}-departure`}
               label="Departure date & time"
               value={segment.departureAt}
+              timeZone={timeZone}
               onChange={(departureAt) => onChange({ departureAt })}
             />
           </div>
@@ -157,6 +162,7 @@ function FlightSegmentFields({
               id={`${idPrefix}-arrival`}
               label="Arrival date & time"
               value={segment.arrivalAt}
+              timeZone={timeZone}
               onChange={(arrivalAt) => onChange({ arrivalAt })}
             />
           </div>
@@ -166,7 +172,7 @@ function FlightSegmentFields({
   );
 }
 
-export function FlightFields({ flight, onChange }: FlightProps) {
+export function FlightFields({ flight, onChange, timeZone }: FlightProps) {
   const segments = getFlightSegments(flight);
   const totalFlightMinutes = getTotalFlightMinutes(flight);
   const [canImport, setCanImport] = useState(false);
@@ -256,6 +262,7 @@ export function FlightFields({ flight, onChange }: FlightProps) {
             index={index}
             canRemove={segments.length > 1}
             canImport={canImport}
+            timeZone={timeZone}
             onClear={() => clearSegment(segment.id)}
             onChange={(patch) => updateSegment(segment.id, patch)}
             onImport={(patches) => importSegments(segment.id, patches)}

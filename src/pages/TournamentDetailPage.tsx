@@ -165,7 +165,11 @@ export function TournamentDetailPage() {
         <section className="rs-detail-section">
           <h2 className="rs-section-label">Event timeline</h2>
           <div className="rs-detail-card">
-            <MatchTimeline items={timelineItems} />
+            <MatchTimeline
+              items={timelineItems}
+              timeZone={profile.homeTimezone}
+              venueTimeZone={timelineMatch.timezone}
+            />
           </div>
         </section>
       )}

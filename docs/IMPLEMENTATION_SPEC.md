@@ -558,19 +558,24 @@ MVP defaults:
 
 - default new manually created matches to the device timezone
 - let the user choose a common venue timezone in Quick Match and Full Match
-- interpret entered date/time as wall-clock time in that selected venue timezone
-- render match date/time in the stored match timezone with a visible short zone label
+- interpret entered kickoff date/time as wall-clock time in that selected venue timezone
+- render match card/detail kickoff in the stored venue timezone with a visible short zone label
 - imported records should preserve their source timezone if supplied
 
-Edits must populate date/time fields in the stored match timezone, never reinterpret the
-saved instant through the current device timezone. Agenda sorting remains based on the
-absolute kickoff instant; calendar day grouping remains device-local in v1.
+Profile stores an optional `homeTimezone` (IANA). When unset, resolve to the device timezone.
+Home timezone is the user's travel/day clock (often Central for Texas-based officials even
+when kickoff is Eastern).
 
-Match timelines normalize their displayed times and day dividers to the match timezone.
-Match ground-travel and custom-itinerary editors also use that timezone. Flight departure
-and arrival fields remain device-local until airport-specific timezone support is added;
-do not reinterpret them as venue-local. Paid and reimbursed fields are calendar dates and
-do not inherit the match timezone.
+- Match timelines display times and day dividers in **home** timezone
+- Kickoff-related timeline rows (`kickoff`, `arrive-pitch`) also show venue time when home
+  and venue zones differ (e.g. `6:00 PM CT · 7:00 PM ET`)
+- Flight, ground-travel, and custom-itinerary editors enter/edit wall-clock times in **home**
+  timezone (not venue)
+- Kickoff form fields continue to use **venue** timezone
+- Paid and reimbursed fields are calendar dates and do not inherit either timezone
+
+Agenda sorting remains based on the absolute kickoff instant; calendar day grouping remains
+device-local in v1.
 
 Do not hard-code America/Chicago from MatchReadyTX into Match Calendar.
 

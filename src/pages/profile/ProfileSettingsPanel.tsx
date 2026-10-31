@@ -7,6 +7,7 @@ import { useDemoMode } from '@/demo/DemoModeContext';
 import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import { ExpandableFormCard } from '@/ui/forms/ExpandableFormCard';
+import { TimezoneSelect } from '@/ui/forms/TimezoneSelect';
 import { ProfileAvatar } from '@/ui/ProfileAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 import type { LanguagePreference } from '@/i18n/languages';
@@ -151,6 +152,14 @@ export function ProfileSettingsPanel({
             ))}
           </select>
         </FormGroup>
+
+        <TimezoneSelect
+          id="profile-home-timezone"
+          label="Home timezone"
+          helperText="Used for timelines and travel times"
+          value={profile.homeTimezone}
+          onChange={(homeTimezone) => updateProfile({ homeTimezone })}
+        />
 
         <div className="rs-form-row">
           <FormGroup

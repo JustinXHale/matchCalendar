@@ -32,6 +32,7 @@ import {
 import { firestoreErrorMessage } from '@/services/firestoreErrors';
 import { useAppToast } from '@/ui/AppToastProvider';
 import type { LanguagePreference } from '@/i18n/languages';
+import { resolveHomeTimezone } from '@/domain/matchTimezone';
 
 export type AppProfile = {
   displayName: string;
@@ -40,6 +41,8 @@ export type AppProfile = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  /** Resolved IANA home zone (device fallback when unset). */
+  homeTimezone: string;
   languagePreference: LanguagePreference;
   isLive: boolean;
 };
@@ -51,6 +54,7 @@ type ProfilePatch = Partial<
     | 'defaultPositionPreset'
     | 'pitchArrivalMinutesBeforeKickoff'
     | 'airportArrivalMinutesBeforeFlight'
+    | 'homeTimezone'
     | 'languagePreference'
   >
 >;
@@ -68,6 +72,7 @@ function localToAppProfile(local: LocalProfile): AppProfile {
     defaultPositionPreset: local.defaultPositionPreset,
     pitchArrivalMinutesBeforeKickoff: local.pitchArrivalMinutesBeforeKickoff,
     airportArrivalMinutesBeforeFlight: local.airportArrivalMinutesBeforeFlight,
+    homeTimezone: resolveHomeTimezone(local.homeTimezone),
     languagePreference: local.languagePreference,
     isLive: false,
   };
@@ -98,6 +103,7 @@ function settingsToAppProfile(
     defaultPositionPreset: settings.defaultPositionPreset,
     pitchArrivalMinutesBeforeKickoff: settings.pitchArrivalMinutesBeforeKickoff,
     airportArrivalMinutesBeforeFlight: settings.airportArrivalMinutesBeforeFlight,
+    homeTimezone: resolveHomeTimezone(settings.homeTimezone),
     languagePreference: settings.languagePreference,
     isLive: true,
   };
@@ -157,6 +163,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           airportArrivalMinutesBeforeFlight:
             patch.airportArrivalMinutesBeforeFlight ??
             calendarSettings.airportArrivalMinutesBeforeFlight,
+          homeTimezone:
+            patch.homeTimezone ?? calendarSettings.homeTimezone,
           languagePreference:
             patch.languagePreference ?? calendarSettings.languagePreference,
         };

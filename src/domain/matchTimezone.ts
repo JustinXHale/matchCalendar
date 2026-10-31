@@ -62,6 +62,12 @@ export function deviceTimeZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 }
 
+/** Profile home timezone, falling back to the device zone when unset. */
+export function resolveHomeTimezone(homeTimezone?: string | null): string {
+  const trimmed = homeTimezone?.trim();
+  return trimmed || deviceTimeZone();
+}
+
 /** Interpret date/time form fields as wall-clock values in an IANA timezone. */
 export function zonedWallToUtc(date: string, time: string, timeZone: string): Date {
   const [year, month, day] = date.split('-').map(Number);
@@ -107,6 +113,20 @@ export function formatTimezoneShort(timeZone: string, date = new Date()): string
     timeZoneName: 'shortGeneric',
   }).formatToParts(date);
   return parts.find((part) => part.type === 'timeZoneName')?.value ?? timeZone;
+}
+
+/** True when two IANA zones would show different wall clocks for this instant. */
+export function timezonesDiffer(
+  left?: string | null,
+  right?: string | null,
+  at = new Date(),
+): boolean {
+  const a = left?.trim();
+  const b = right?.trim();
+  if (!a || !b || a === b) return false;
+  const leftWall = utcToZonedWall(at, a);
+  const rightWall = utcToZonedWall(at, b);
+  return leftWall.date !== rightWall.date || leftWall.time !== rightWall.time;
 }
 
 export function dateKeyInTimezone(date: Date, timeZone?: string): string {

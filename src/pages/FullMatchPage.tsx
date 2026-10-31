@@ -419,6 +419,7 @@ export function FullMatchPage() {
       >
         <FlightFields
           flight={extras.flight}
+          timeZone={profile.homeTimezone}
           onChange={(patch) =>
             setExtras((current) => ({
               ...current,
@@ -449,7 +450,7 @@ export function FullMatchPage() {
       >
         <GroundTravelFields
           groundTravel={extras.groundTravel}
-          timeZone={isTournamentForm ? undefined : values.timezone}
+          timeZone={profile.homeTimezone}
           onChange={(patch) =>
             setExtras((current) => ({
               ...current,
@@ -469,7 +470,7 @@ export function FullMatchPage() {
       >
         <CustomItineraryEditor
           items={extras.customItinerary}
-          timeZone={isTournamentForm ? undefined : values.timezone}
+          timeZone={profile.homeTimezone}
           onChange={(customItinerary) =>
             setExtras((current) => ({ ...current, customItinerary }))
           }

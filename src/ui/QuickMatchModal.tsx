@@ -136,6 +136,8 @@ export function QuickMatchModal() {
             />
             <TimezoneSelect
               id="quick-timezone"
+              label="Venue timezone"
+              helperText="Kickoff local time at the pitch"
               value={values.timezone}
               error={errors.timezone}
               onChange={(timezone) => onChange({ timezone })}

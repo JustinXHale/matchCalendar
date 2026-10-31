@@ -7,6 +7,8 @@ export type CalendarSettings = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  /** IANA zone for timelines/travel; omit to follow the device timezone. */
+  homeTimezone?: string;
   languagePreference: LanguagePreference;
   migratedFromLocalAt?: string;
   matchReadyLastSyncedAt?: string;

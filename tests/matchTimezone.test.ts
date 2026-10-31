@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import {
   dateKeyInTimezone,
   formatTimezoneShort,
+  resolveHomeTimezone,
+  timezonesDiffer,
   utcToZonedWall,
   zonedWallToUtc,
 } from '../src/domain/matchTimezone';
@@ -35,4 +37,15 @@ const afterMidnightUtc = new Date('2026-07-19T00:30:00.000Z');
 assert.equal(
   dateKeyInTimezone(afterMidnightUtc, 'America/New_York'),
   '2026-07-18',
+);
+
+assert.equal(resolveHomeTimezone('America/Chicago'), 'America/Chicago');
+assert.equal(resolveHomeTimezone('  '), resolveHomeTimezone(undefined));
+assert.equal(
+  timezonesDiffer('America/Chicago', 'America/New_York', summerKickoff),
+  true,
+);
+assert.equal(
+  timezonesDiffer('America/Chicago', 'America/Chicago', summerKickoff),
+  false,
 );

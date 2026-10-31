@@ -1,4 +1,10 @@
-import { useEffect, useState, type HTMLInputTypeAttribute, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type HTMLInputTypeAttribute,
+  type KeyboardEvent,
+} from 'react';
 import { InputAdornment, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -55,6 +61,7 @@ function MaterialPickerInput({
   hasError: boolean;
 }) {
   const [draft, setDraft] = useState<Dayjs | null>(() => pickerValue(value, type));
+  const scrollYRef = useRef(0);
 
   useEffect(() => {
     setDraft(pickerValue(value, type));
@@ -69,6 +76,17 @@ function MaterialPickerInput({
     }
   };
 
+  const rememberScroll = () => {
+    scrollYRef.current = window.scrollY;
+  };
+
+  const restoreScroll = () => {
+    const top = scrollYRef.current;
+    requestAnimationFrame(() => {
+      window.scrollTo(0, top);
+    });
+  };
+
   const fieldProps = {
     id,
     required: isRequired,
@@ -76,6 +94,23 @@ function MaterialPickerInput({
     helperText: error,
     fullWidth: true,
     size: 'small' as const,
+    onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+      // Date/time fields sit inside forms (e.g. flight import). Enter must not submit.
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    },
+  };
+
+  const pickerSlotProps = {
+    textField: fieldProps,
+    // Default <button> inside a <form> is type=submit — block accidental imports/saves.
+    openPickerButton: { type: 'button' as const },
+    clearButton: { type: 'button' as const },
+    // Mobile pickers use a Dialog that locks body scroll; unlock + restore avoids jump-to-top.
+    dialog: {
+      disableScrollLock: true,
+    },
   };
 
   if (type === 'date') {
@@ -84,8 +119,10 @@ function MaterialPickerInput({
         label={label}
         value={draft}
         onChange={update}
+        onOpen={rememberScroll}
+        onClose={restoreScroll}
         format="MM/DD/YYYY"
-        slotProps={{ textField: fieldProps }}
+        slotProps={pickerSlotProps}
       />
     );
   }
@@ -96,8 +133,10 @@ function MaterialPickerInput({
         label={label}
         value={draft}
         onChange={update}
+        onOpen={rememberScroll}
+        onClose={restoreScroll}
         format="hh:mm A"
-        slotProps={{ textField: fieldProps }}
+        slotProps={pickerSlotProps}
       />
     );
   }
@@ -107,8 +146,10 @@ function MaterialPickerInput({
       label={label}
       value={draft}
       onChange={update}
+      onOpen={rememberScroll}
+      onClose={restoreScroll}
       format="MM/DD/YYYY hh:mm A"
-      slotProps={{ textField: fieldProps }}
+      slotProps={pickerSlotProps}
     />
   );
 }

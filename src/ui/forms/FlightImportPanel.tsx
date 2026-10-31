@@ -177,6 +177,16 @@ export function FlightImportPanel({ segment, onImport, onCancel }: Props) {
       className="rs-flight-import"
       noValidate
       onSubmit={(event) => void search(event)}
+      onKeyDown={(event) => {
+        // Mobile date pickers / Enter in inputs must not fire Import as a side effect.
+        if (
+          event.key === 'Enter' &&
+          event.target instanceof HTMLElement &&
+          event.target.tagName !== 'BUTTON'
+        ) {
+          event.preventDefault();
+        }
+      }}
     >
       <p className="rs-form-hint">
         Enter the codes shown on your itinerary. Unique matches import together.

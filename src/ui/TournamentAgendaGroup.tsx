@@ -170,7 +170,11 @@ export function TournamentAgendaGroup({
             className="rs-assignment__timeline-panel"
             aria-label="Tournament timeline"
           >
-            <MatchTimeline items={timelineItems} />
+            <MatchTimeline
+              items={timelineItems}
+              timeZone={profile.homeTimezone}
+              venueTimeZone={timelineMatch.timezone}
+            />
           </div>
         ) : null}
       </div>

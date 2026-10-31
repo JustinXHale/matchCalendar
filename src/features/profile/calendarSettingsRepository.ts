@@ -27,6 +27,10 @@ export function calendarSettingsFromFirestore(
       typeof data.airportArrivalMinutesBeforeFlight === 'number'
         ? data.airportArrivalMinutesBeforeFlight
         : DEFAULT_CALENDAR_SETTINGS.airportArrivalMinutesBeforeFlight,
+    homeTimezone:
+      typeof data.homeTimezone === 'string' && data.homeTimezone.trim()
+        ? data.homeTimezone.trim()
+        : undefined,
     languagePreference: isLanguagePreference(data.languagePreference)
       ? data.languagePreference
       : DEFAULT_CALENDAR_SETTINGS.languagePreference,

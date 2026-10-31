@@ -36,6 +36,8 @@ type CalendarSettings = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  /** IANA home zone for timelines/travel; omit to follow the device timezone. */
+  homeTimezone?: string;
   migratedFromLocalAt?: string; // ISO — one-time localStorage import marker
 };
 ```

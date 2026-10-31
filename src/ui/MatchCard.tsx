@@ -235,7 +235,11 @@ export function MatchCard({
 
         {timelineOpen && showTimeline ? (
           <div className="rs-assignment__timeline-panel" aria-label="Match timeline">
-            <MatchTimeline items={timelineItems} timeZone={match.timezone} />
+            <MatchTimeline
+              items={timelineItems}
+              timeZone={profile.homeTimezone}
+              venueTimeZone={match.timezone}
+            />
           </div>
         ) : null}
 

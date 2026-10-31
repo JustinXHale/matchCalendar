@@ -151,7 +151,8 @@ export function MatchDetailPage() {
           <div className="rs-detail-card">
             <MatchTimeline
               items={timelineItems}
-              timeZone={match.timezone}
+              timeZone={profile.homeTimezone}
+              venueTimeZone={match.timezone}
               editable
               onEditItem={(itemId, newAt) => {
                 const patch = applyTimelineTimeEdit(match, itemId, newAt);

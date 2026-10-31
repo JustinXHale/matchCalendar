@@ -7,6 +7,7 @@ export type LocalProfile = {
   defaultPositionPreset: PositionPreset;
   pitchArrivalMinutesBeforeKickoff: number;
   airportArrivalMinutesBeforeFlight: number;
+  homeTimezone?: string;
   languagePreference: LanguagePreference;
 };
 
@@ -24,6 +25,11 @@ export function loadProfile(): LocalProfile {
     {},
   );
 
+  const homeTimezone =
+    typeof raw.homeTimezone === 'string' && raw.homeTimezone.trim()
+      ? raw.homeTimezone.trim()
+      : undefined;
+
   if (raw.defaultPositionPreset) {
     return {
       displayName: raw.displayName ?? '',
@@ -32,6 +38,7 @@ export function loadProfile(): LocalProfile {
         raw.pitchArrivalMinutesBeforeKickoff ?? 60,
       airportArrivalMinutesBeforeFlight:
         raw.airportArrivalMinutesBeforeFlight ?? 120,
+      homeTimezone,
       languagePreference: isLanguagePreference(raw.languagePreference)
         ? raw.languagePreference
         : 'auto',
@@ -45,6 +52,7 @@ export function loadProfile(): LocalProfile {
       raw.pitchArrivalMinutesBeforeKickoff ?? 60,
     airportArrivalMinutesBeforeFlight:
       raw.airportArrivalMinutesBeforeFlight ?? 120,
+    homeTimezone,
     languagePreference: isLanguagePreference(raw.languagePreference)
       ? raw.languagePreference
       : 'auto',
