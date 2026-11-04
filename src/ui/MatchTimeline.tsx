@@ -36,6 +36,7 @@ function formatTimelineClock(
   homeTimeZone?: string,
   venueTimeZone?: string,
 ): string {
+  if (item.precision === 'date') return 'Date only';
   const primary = formatPrimaryTime(item.at, homeTimeZone);
   if (
     !VENUE_DUAL_LABEL_IDS.has(item.id) ||
@@ -44,6 +45,18 @@ function formatTimelineClock(
     return primary;
   }
   return `${primary} · ${formatPrimaryTime(item.at, venueTimeZone)}`;
+}
+
+function timelineDateKey(item: TimelineItem, timeZone?: string): string {
+  return item.precision === 'date' && item.dateKey
+    ? item.dateKey
+    : dateKeyInTimezone(item.at, timeZone);
+}
+
+function dateForLabel(item: TimelineItem): Date {
+  if (item.precision !== 'date' || !item.dateKey) return item.at;
+  const [year, month, day] = item.dateKey.split('-').map(Number);
+  return new Date(year, month - 1, day, 12, 0, 0, 0);
 }
 
 export function MatchTimeline({
@@ -57,6 +70,10 @@ export function MatchTimeline({
   const [draftAt, setDraftAt] = useState<Date | undefined>();
 
   if (items.length === 0) return null;
+
+  const showDayDividers = new Set(
+    items.map((item) => timelineDateKey(item, timeZone)),
+  ).size > 1;
 
   const startEdit = (item: TimelineItem) => {
     setEditingId(item.id);
@@ -83,9 +100,12 @@ export function MatchTimeline({
           editable &&
           onEditItem &&
           (item.kind === 'derived' || item.kind === 'custom');
-        const dateKey = dateKeyInTimezone(item.at, timeZone);
+        const dateKey = timelineDateKey(item, timeZone);
         const startsNewDay =
-          index > 0 && dateKeyInTimezone(items[index - 1].at, timeZone) !== dateKey;
+          showDayDividers &&
+          (index === 0 || timelineDateKey(items[index - 1], timeZone) !== dateKey);
+        const labelDate = dateForLabel(item);
+        const labelTimeZone = item.precision === 'date' ? undefined : timeZone;
 
         return (
           <Fragment key={item.id}>
@@ -93,18 +113,18 @@ export function MatchTimeline({
               <li className="rs-timeline__day-divider">
                 <time
                   dateTime={dateKey}
-                  aria-label={item.at.toLocaleDateString(undefined, {
+                  aria-label={labelDate.toLocaleDateString(undefined, {
                     weekday: 'long',
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric',
-                    timeZone,
+                    timeZone: labelTimeZone,
                   })}
                 >
-                  {item.at.toLocaleDateString(undefined, {
+                  {labelDate.toLocaleDateString(undefined, {
                     month: 'short',
                     day: 'numeric',
-                    timeZone,
+                    timeZone: labelTimeZone,
                   })}
                 </time>
                 <span aria-hidden="true" />

@@ -10,10 +10,10 @@ import { formatCurrency } from '@/domain/matchDisplay';
 import { useMatches } from '@/features/matches/useMatches';
 import { useProfile } from '@/features/profile/ProfileProvider';
 import { tournamentTimelineMatch } from '@/features/tournaments/tournamentEvent';
+import { buildTournamentTimeline } from '@/features/tournaments/tournamentTimeline';
 import { isTournamentLumpPay } from '@/features/tournaments/tournamentFormUtils';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
 import {
-  buildMatchTimeline,
   hasMeaningfulTimeline,
 } from '@/features/timeline/matchTimeline';
 import { MatchCard } from '@/ui/MatchCard';
@@ -59,7 +59,7 @@ export function TournamentDetailPage() {
   const defaultPay = tournament.matchDefaults?.expectedPay;
   const timelineMatch = tournamentTimelineMatch(tournament);
   const timelineItems = hasMeaningfulTimeline(timelineMatch)
-    ? buildMatchTimeline(timelineMatch, profile)
+    ? buildTournamentTimeline(tournament, profile)
     : [];
   const deletableChildCount = childMatches.filter(isManualMatch).length;
   const skippedMrChildren = childMatches.length - deletableChildCount;

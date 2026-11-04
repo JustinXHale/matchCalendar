@@ -9,6 +9,7 @@ import {
 import type { Match } from '@/domain/match';
 import type { Tournament } from '@/domain/tournament';
 import { formatIsoDateCard } from '@/domain/matchDisplay';
+import { dateKeyInTimezone } from '@/domain/matchTimezone';
 import { routes } from '@/app/routes';
 import { backState, type BackNav } from '@/nav/backNav';
 import { tournamentBack } from '@/nav/backDefaults';
@@ -16,7 +17,10 @@ import { useProfile } from '@/features/profile/ProfileProvider';
 import { flightExpandCardTitle } from '@/features/matches/flightDistance';
 import { tournamentTimelineMatch } from '@/features/tournaments/tournamentEvent';
 import {
-  buildMatchTimeline,
+  buildTournamentTimeline,
+  TOURNAMENT_BOUNDARY_IDS,
+} from '@/features/tournaments/tournamentTimeline';
+import {
   hasFlightData,
   hasGroundData,
   hasLodgingData,
@@ -34,6 +38,14 @@ type Props = {
   allowTimelineExpand?: boolean;
   back?: BackNav;
 };
+
+function formatShortDate(date: string, locale?: string): string {
+  const [year, month, day] = date.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(locale, {
+    month: 'short',
+    day: 'numeric',
+  });
+}
 
 export function TournamentAgendaGroup({
   tournament,
@@ -59,8 +71,16 @@ export function TournamentAgendaGroup({
   const showTimeline =
     allowTimelineExpand && hasMeaningfulTimeline(timelineMatch);
   const timelineItems = showTimeline
-    ? buildMatchTimeline(timelineMatch, profile)
+    ? buildTournamentTimeline(tournament, profile)
     : [];
+  const firstTravelItem = timelineItems.find(
+    (item) => !TOURNAMENT_BOUNDARY_IDS.has(item.id),
+  );
+  const travelStartDate = firstTravelItem
+    ? firstTravelItem.precision === 'date' && firstTravelItem.dateKey
+      ? firstTravelItem.dateKey
+      : dateKeyInTimezone(firstTravelItem.at, profile.homeTimezone)
+    : undefined;
   const hasHotel = hasLodgingData(timelineMatch);
   const hasFlight = hasFlightData(timelineMatch);
   const hasCar = hasGroundData(timelineMatch);
@@ -103,6 +123,9 @@ export function TournamentAgendaGroup({
               <p className="rs-assignment__venue">
                 {tournament.startDate} — {tournament.endDate}
                 {tournament.location ? `\n${tournament.location}` : ''}
+                {travelStartDate && travelStartDate < tournament.startDate
+                  ? `\nTravel begins ${formatShortDate(travelStartDate, locale)}`
+                  : ''}
               </p>
 
               {(hasHotel || hasFlight || hasCar) && showTimeline ? (

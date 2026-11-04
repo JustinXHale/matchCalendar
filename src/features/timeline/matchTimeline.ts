@@ -8,6 +8,10 @@ export type TimelineItem = {
   id: string;
   kind: TimelineItemKind;
   at: Date;
+  /** Date-only facts must not display an invented clock time. */
+  precision?: 'date' | 'datetime';
+  /** Stable local calendar date for date-only facts. */
+  dateKey?: string;
   label: string;
   detail?: string;
   secondaryDetail?: string;
@@ -71,6 +75,7 @@ export function buildMatchTimeline(
     LocalProfile,
     'pitchArrivalMinutesBeforeKickoff' | 'airportArrivalMinutesBeforeFlight'
   >,
+  options: { includeMatchMilestones?: boolean } = {},
 ): TimelineItem[] {
   const items: TimelineItem[] = [];
 
@@ -136,7 +141,9 @@ export function buildMatchTimeline(
     items.push({
       id: 'lodging-check-in',
       kind: 'factual',
-      at: dateFromYmd(match.lodging.checkInDate, 15),
+      at: dateFromYmd(match.lodging.checkInDate, 0),
+      precision: 'date',
+      dateKey: match.lodging.checkInDate,
       label: 'Hotel check-in',
       detail: match.lodging.propertyName,
       mapLocation: mapLocation(
@@ -146,11 +153,11 @@ export function buildMatchTimeline(
     });
   }
 
-  const arrivalMinutes =
-    match.pitchArrivalOverrideMinutes ??
+  const includeMatchMilestones = options.includeMatchMilestones !== false;
+  const arrivalMinutes = match.pitchArrivalOverrideMinutes ??
     profile.pitchArrivalMinutesBeforeKickoff;
 
-  if (arrivalMinutes > 0) {
+  if (includeMatchMilestones && arrivalMinutes > 0) {
     items.push({
       id: 'arrive-pitch',
       kind: 'derived',
@@ -161,19 +168,23 @@ export function buildMatchTimeline(
     });
   }
 
-  items.push({
-    id: 'kickoff',
-    kind: 'factual',
-    at: match.kickoffAt,
-    label: 'Match kickoff',
-    mapLocation: mapLocation(match.location),
-  });
+  if (includeMatchMilestones) {
+    items.push({
+      id: 'kickoff',
+      kind: 'factual',
+      at: match.kickoffAt,
+      label: 'Match kickoff',
+      mapLocation: mapLocation(match.location),
+    });
+  }
 
   if (match.lodging?.checkOutDate) {
     items.push({
       id: 'lodging-check-out',
       kind: 'factual',
-      at: dateFromYmd(match.lodging.checkOutDate, 11),
+      at: dateFromYmd(match.lodging.checkOutDate, 0),
+      precision: 'date',
+      dateKey: match.lodging.checkOutDate,
       label: 'Hotel check-out',
       detail: match.lodging.propertyName,
       mapLocation: mapLocation(

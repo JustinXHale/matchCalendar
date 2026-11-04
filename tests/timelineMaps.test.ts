@@ -28,6 +28,9 @@ assert.deepEqual(items.find((item) => item.id === 'lodging-check-in')?.mapLocati
   label: '100 Main St, Austin, TX',
   query: 'Example Hotel, 100 Main St, Austin, TX',
 });
+assert.equal(items.find((item) => item.id === 'lodging-check-in')?.precision, 'date');
+assert.equal(items.find((item) => item.id === 'lodging-check-in')?.dateKey, '2026-10-16');
+assert.equal(items.find((item) => item.id === 'lodging-check-out')?.precision, 'date');
 assert.equal(
   items.find((item) => item.id === 'arrive-pitch')?.mapLocation?.query,
   '1 Stadium Way, Austin, TX',
