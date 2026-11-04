@@ -98,6 +98,10 @@ export function TournamentsProvider({ children }: { children: ReactNode }) {
       if (isLive && uid) {
         try {
           await upsertTournament(uid, tournament);
+          setRealTournaments((current) => {
+            if (current.some((item) => item.id === tournament.id)) return current;
+            return [...current, tournament];
+          });
         } catch (error) {
           pushError(firestoreErrorMessage(error));
           throw error;

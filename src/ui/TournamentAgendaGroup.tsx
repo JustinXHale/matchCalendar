@@ -179,14 +179,16 @@ export function TournamentAgendaGroup({
         ) : null}
       </div>
 
-      <button
-        type="button"
-        className="rs-tournament-agenda-group__toggle"
-        aria-expanded={matchesExpanded}
-        onClick={() => setMatchesExpanded((value) => !value)}
-      >
-        {matchesExpanded ? `Hide ${matchLabel}` : `Show ${matchLabel}`}
-      </button>
+      {matches.length > 0 ? (
+        <button
+          type="button"
+          className="rs-tournament-agenda-group__toggle"
+          aria-expanded={matchesExpanded}
+          onClick={() => setMatchesExpanded((value) => !value)}
+        >
+          {matchesExpanded ? `Hide ${matchLabel}` : `Show ${matchLabel}`}
+        </button>
+      ) : null}
 
       {matchesExpanded ? (
         <ul className="rs-list rs-tournament-agenda-group__matches">

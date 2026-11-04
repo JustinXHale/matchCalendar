@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { openQuickMatch } from '@/app/navigation';
@@ -7,6 +8,10 @@ import { useMatches } from '@/features/matches/useMatches';
 import { PastMatchesExpandable } from '@/features/schedule/PastMatchesExpandable';
 import { splitAgendaNext } from '@/features/schedule/scheduleListItems';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
+import {
+  removeTournamentSchedulePlaceholders,
+  withStandaloneTournamentPlaceholders,
+} from '@/features/schedule/tournamentSchedulePlaceholders';
 import { MatchCard } from '@/ui/MatchCard';
 import { ScheduleItemList } from '@/ui/ScheduleItemList';
 import { TournamentAgendaGroup } from '@/ui/TournamentAgendaGroup';
@@ -16,9 +21,13 @@ export function AgendaScheduleView() {
   const navigate = useNavigate();
   const location = useLocation();
   const { matches } = useMatches();
-  const { getTournamentById } = useTournamentsContext();
+  const { tournaments, getTournamentById } = useTournamentsContext();
   const { t } = useI18n();
-  const upcoming = getUpcomingMatches(matches);
+  const scheduleMatches = useMemo(
+    () => withStandaloneTournamentPlaceholders(matches, tournaments),
+    [matches, tournaments],
+  );
+  const upcoming = getUpcomingMatches(scheduleMatches);
   const { next, rest } = splitAgendaNext(upcoming);
   const sections = groupAgendaMatches(rest);
 
@@ -71,7 +80,7 @@ export function AgendaScheduleView() {
                 return (
                   <TournamentAgendaGroup
                     tournament={tournament}
-                    matches={next.matches}
+                    matches={removeTournamentSchedulePlaceholders(next.matches)}
                     defaultExpanded
                     allowTimelineExpand
                   />

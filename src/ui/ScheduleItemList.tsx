@@ -8,6 +8,7 @@ import {
 } from '@/features/schedule/scheduleListItems';
 import { MatchCard } from '@/ui/MatchCard';
 import { TournamentAgendaGroup } from '@/ui/TournamentAgendaGroup';
+import { removeTournamentSchedulePlaceholders } from '@/features/schedule/tournamentSchedulePlaceholders';
 
 type Props = {
   matches: Match[];
@@ -52,7 +53,7 @@ function renderItem(
     <TournamentAgendaGroup
       key={item.tournamentId}
       tournament={tournament}
-      matches={item.matches}
+      matches={removeTournamentSchedulePlaceholders(item.matches)}
       defaultExpanded={tournamentDefaultExpanded}
       allowTimelineExpand={allowTimelineExpand}
       back={back}

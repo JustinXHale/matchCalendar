@@ -22,3 +22,11 @@ export const DEFAULT_CALENDAR_SETTINGS: CalendarSettings = {
   languagePreference: 'auto',
   matchReadySyncEnabled: true,
 };
+
+export function calendarSettingsToFirestore(
+  settings: CalendarSettings,
+): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(settings).filter(([, value]) => value !== undefined),
+  );
+}

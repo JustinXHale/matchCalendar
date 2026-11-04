@@ -2,13 +2,14 @@ import { useMemo, useState } from 'react';
 import { useMatches } from '@/features/matches/useMatches';
 import { getMatchesForDate } from '@/features/calendar/calendarUtils';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
+import { withStandaloneTournamentPlaceholders } from '@/features/schedule/tournamentSchedulePlaceholders';
 import { CalendarGrid } from '@/ui/CalendarGrid';
 import { ScheduleItemList } from '@/ui/ScheduleItemList';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export function CalendarScheduleView() {
   const { matches } = useMatches();
-  const { getTournamentById } = useTournamentsContext();
+  const { tournaments, getTournamentById } = useTournamentsContext();
   const { locale, t } = useI18n();
   const today = new Date();
   const [viewDate, setViewDate] = useState(
@@ -19,9 +20,13 @@ export function CalendarScheduleView() {
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
 
+  const scheduleMatches = useMemo(
+    () => withStandaloneTournamentPlaceholders(matches, tournaments),
+    [matches, tournaments],
+  );
   const dayMatches = useMemo(
-    () => getMatchesForDate(matches, selectedDate),
-    [matches, selectedDate],
+    () => getMatchesForDate(scheduleMatches, selectedDate),
+    [scheduleMatches, selectedDate],
   );
 
   const goPrevMonth = () => {
@@ -43,7 +48,7 @@ export function CalendarScheduleView() {
       <CalendarGrid
         year={year}
         month={month}
-        matches={matches}
+        matches={scheduleMatches}
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
         onPrevMonth={goPrevMonth}

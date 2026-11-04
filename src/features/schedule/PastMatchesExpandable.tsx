@@ -2,15 +2,21 @@ import { useMemo } from 'react';
 import { getHistoryMatches } from '@/features/matches/matchQueries';
 import { useMatches } from '@/features/matches/useMatches';
 import { useTournamentsContext } from '@/features/tournaments/TournamentsProvider';
+import { withStandaloneTournamentPlaceholders } from '@/features/schedule/tournamentSchedulePlaceholders';
 import { ExpandableFormCard } from '@/ui/forms/ExpandableFormCard';
 import { ScheduleItemList } from '@/ui/ScheduleItemList';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export function PastMatchesExpandable() {
   const { matches } = useMatches();
-  const { getTournamentById } = useTournamentsContext();
+  const { tournaments, getTournamentById } = useTournamentsContext();
   const { t } = useI18n();
-  const pastMatches = useMemo(() => getHistoryMatches(matches), [matches]);
+  const pastMatches = useMemo(
+    () => getHistoryMatches(
+      withStandaloneTournamentPlaceholders(matches, tournaments),
+    ),
+    [matches, tournaments],
+  );
 
   if (pastMatches.length === 0) {
     return null;

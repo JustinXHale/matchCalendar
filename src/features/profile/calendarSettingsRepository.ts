@@ -2,6 +2,7 @@ import { doc, getDoc, onSnapshot, setDoc, type Unsubscribe } from 'firebase/fire
 import {
   CALENDAR_SETTINGS_DOC_ID,
   DEFAULT_CALENDAR_SETTINGS,
+  calendarSettingsToFirestore,
   type CalendarSettings,
 } from '@/features/profile/calendarSettings';
 import { requireDb } from '@/services/firebase';
@@ -80,5 +81,7 @@ export async function saveCalendarSettings(
   uid: string,
   settings: CalendarSettings,
 ): Promise<void> {
-  await setDoc(settingsRef(uid), settings, { merge: true });
+  await setDoc(settingsRef(uid), calendarSettingsToFirestore(settings), {
+    merge: true,
+  });
 }

@@ -1,5 +1,6 @@
 import type { Match } from '@/domain/match';
 import { needsSettlementAttention } from '@/features/matches/matchClosure';
+import { tournamentScheduleEndAt } from '@/features/schedule/tournamentSchedulePlaceholders';
 
 function compareKickoffAsc(a: Match, b: Match): number {
   return a.kickoffAt.getTime() - b.kickoffAt.getTime();
@@ -10,14 +11,17 @@ function compareKickoffDesc(a: Match, b: Match): number {
 }
 
 export function isUpcomingMatch(match: Match, now = new Date()): boolean {
-  return match.status !== 'cancelled' && match.kickoffAt >= now;
+  return (
+    match.status !== 'cancelled' &&
+    (tournamentScheduleEndAt(match) ?? match.kickoffAt) >= now
+  );
 }
 
 export function isHistoryMatch(match: Match, now = new Date()): boolean {
   return (
     match.status === 'completed' ||
     match.status === 'cancelled' ||
-    match.kickoffAt < now
+    (tournamentScheduleEndAt(match) ?? match.kickoffAt) < now
   );
 }
 
