@@ -24,6 +24,7 @@ import {
 } from '@/features/timeline/matchTimeline';
 import { MatchCard } from '@/ui/MatchCard';
 import { MatchTimeline } from '@/ui/MatchTimeline';
+import { AssignmentChips } from '@/ui/AssignmentChips';
 import { useI18n } from '@/i18n/I18nProvider';
 
 type Props = {
@@ -92,9 +93,10 @@ export function TournamentAgendaGroup({
             </div>
 
             <div className="rs-assignment__content">
-              <div className="rs-assignment__chips">
-                <span className="rs-pill rs-assignment__chip">Tournament</span>
-              </div>
+              <AssignmentChips
+                match={timelineMatch}
+                primaryLabel={t('tournaments.item')}
+              />
 
               <p className="rs-assignment__title">{tournament.title}</p>
 

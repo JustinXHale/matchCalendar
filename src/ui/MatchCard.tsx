@@ -8,7 +8,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   formatCardDate,
-  formatCurrency,
   formatMatchTimeWithTimezone,
   getMatchDisplayTitle,
 } from '@/domain/matchDisplay';
@@ -25,6 +24,7 @@ import {
   hasMeaningfulTimeline,
 } from '@/features/timeline/matchTimeline';
 import { MatchTimeline } from '@/ui/MatchTimeline';
+import { AssignmentChips } from '@/ui/AssignmentChips';
 import { useI18n } from '@/i18n/I18nProvider';
 
 function translatedPosition(position: string, t: ReturnType<typeof useI18n>['t']): string {
@@ -77,10 +77,6 @@ export function MatchCard({
   const title = getMatchDisplayTitle(match);
   const home = match.home?.trim();
   const away = match.away?.trim();
-  const pay =
-    match.expectedPay != null
-      ? formatCurrency(match.expectedPay, match.payCurrency, locale)
-      : null;
   const showTeams = Boolean(home || away);
   const showEventTitle = Boolean(match.title?.trim() && showTeams);
   const showTimeline =
@@ -125,33 +121,10 @@ export function MatchCard({
             </div>
 
             <div className="rs-assignment__content">
-              <div className="rs-assignment__chips" aria-label="Role, pay, and source">
-                <span className="rs-pill rs-assignment__chip">{translatedPosition(match.position, t)}</span>
-                {pay ? (
-                  <span className="rs-pill rs-assignment__chip rs-assignment__chip--pay">
-                    {pay}
-                  </span>
-                ) : null}
-                {match.source.type === 'matchreadytx' ? (
-                  <span className="rs-pill rs-pill--source rs-assignment__chip">
-                    MR Import
-                  </span>
-                ) : null}
-                {match.payStatus === 'unpaid' && match.status !== 'cancelled' ? (
-                  <span className="rs-pill rs-pill--urgent rs-assignment__chip">
-                    {t('status.unpaid')}
-                  </span>
-                ) : null}
-                {match.payStatus === 'paid' && <span className="rs-pill rs-assignment__chip">{t('status.paid')}</span>}
-                {match.payStatus === 'donated' ? (
-                  <span className="rs-pill rs-assignment__chip">{t('status.donated')}</span>
-                ) : null}
-                {match.status === 'cancelled' ? (
-                  <span className="rs-pill rs-pill--urgent rs-assignment__chip">
-                    {t('status.cancelled')}
-                  </span>
-                ) : null}
-              </div>
+              <AssignmentChips
+                match={match}
+                primaryLabel={translatedPosition(match.position, t)}
+              />
 
               {showEventTitle ? (
                 <p className="rs-assignment__event-title">{match.title}</p>

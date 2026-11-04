@@ -12,6 +12,7 @@ import {
   calendarSettingsToFirestore,
   DEFAULT_CALENDAR_SETTINGS,
 } from '../src/features/profile/calendarSettings';
+import { tournamentTimelineMatch } from '../src/features/tournaments/tournamentEvent';
 
 const now = new Date(2026, 10, 4, 12);
 const tournament: Tournament = {
@@ -20,9 +21,17 @@ const tournament: Tournament = {
   title: 'Empty Tournament',
   startDate: '2026-11-04',
   endDate: '2026-11-06',
+  matchDefaults: {
+    expectedPay: '150',
+    payStatus: 'unpaid',
+  },
   createdAt: now,
   updatedAt: now,
 };
+
+const tournamentCardMatch = tournamentTimelineMatch(tournament);
+assert.equal(tournamentCardMatch.expectedPay, 150);
+assert.equal(tournamentCardMatch.payStatus, 'unpaid');
 
 const schedule = withStandaloneTournamentPlaceholders([], [tournament]);
 assert.equal(schedule.length, 1);
