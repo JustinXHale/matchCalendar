@@ -1,5 +1,8 @@
 import type { Match } from '@/domain/match';
-import { getFlightSegments } from '@/features/matches/flightUtils';
+import {
+  getFlightJourneyStarts,
+  getFlightSegments,
+} from '@/features/matches/flightUtils';
 
 function minutesBefore(anchor: Date, at: Date): number {
   return Math.max(0, Math.round((anchor.getTime() - at.getTime()) / 60_000));
@@ -23,12 +26,17 @@ export function applyTimelineTimeEdit(
     };
   }
 
-  if (itemId === 'arrive-airport') {
-    const firstDeparture = getFirstFlightDeparture(match);
-    if (!firstDeparture) return {};
+  if (itemId === 'arrive-airport' || itemId.startsWith('arrive-airport-')) {
+    const journeyStarts = getFlightJourneyStarts(match.flight);
+    const segment = itemId === 'arrive-airport'
+      ? journeyStarts[0]
+      : journeyStarts.find(
+          (entry) => itemId === `arrive-airport-${entry.id}`,
+        );
+    if (!segment?.departureAt) return {};
 
     return {
-      airportArrivalOverrideMinutes: minutesBefore(firstDeparture, newAt),
+      airportArrivalOverrideMinutes: minutesBefore(segment.departureAt, newAt),
     };
   }
 

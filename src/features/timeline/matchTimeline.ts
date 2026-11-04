@@ -1,6 +1,10 @@
 import type { Match } from '@/domain/match';
 import type { LocalProfile } from '@/features/profile/localProfile';
-import { getFlightSegments, hasFlightSegmentData } from '@/features/matches/flightUtils';
+import {
+  getFlightJourneyStarts,
+  getFlightSegments,
+  hasFlightSegmentData,
+} from '@/features/matches/flightUtils';
 
 export type TimelineItemKind = 'factual' | 'derived' | 'custom';
 
@@ -79,22 +83,21 @@ export function buildMatchTimeline(
 ): TimelineItem[] {
   const items: TimelineItem[] = [];
 
-  const firstDeparture = getFlightSegments(match.flight)
-    .map((segment) => segment.departureAt)
-    .filter((value): value is Date => value instanceof Date)
-    .sort((a, b) => a.getTime() - b.getTime())[0];
-
   const airportArrivalMinutes =
     match.airportArrivalOverrideMinutes ??
     profile.airportArrivalMinutesBeforeFlight;
 
-  if (firstDeparture && airportArrivalMinutes > 0) {
-    items.push({
-      id: 'arrive-airport',
-      kind: 'derived',
-      at: new Date(firstDeparture.getTime() - airportArrivalMinutes * 60_000),
-      label: 'Arrive at airport',
-      detail: `${airportArrivalMinutes} min before first flight`,
+  if (airportArrivalMinutes > 0) {
+    getFlightJourneyStarts(match.flight).forEach((segment, index) => {
+      items.push({
+        id: index === 0 ? 'arrive-airport' : `arrive-airport-${segment.id}`,
+        kind: 'derived',
+        at: new Date(
+          segment.departureAt!.getTime() - airportArrivalMinutes * 60_000,
+        ),
+        label: 'Arrive at airport',
+        detail: `${airportArrivalMinutes} min before departure`,
+      });
     });
   }
 

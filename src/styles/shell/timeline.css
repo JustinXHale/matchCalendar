@@ -30,6 +30,7 @@
 .rs-timeline__day-divider time {
   color: var(--rs-color-muted);
   font: var(--rs-font-nav);
+  font-weight: 700;
   text-transform: uppercase;
 }
 
