@@ -3,6 +3,7 @@ import './backNav.test';
 import assert from 'node:assert/strict';
 import { getMatchFinanceTotals, getMoneyGlanceSummary, getSettlementPaidTotal } from '../src/features/matches/paySummary';
 import {
+  hasPendingExpenseReimbursements,
   isSettlementFullyResolved,
   needsSettlementAttention,
   updateExpenseAmount,
@@ -44,6 +45,8 @@ const paidFeeWithPendingExpense: Match = {
 };
 assert.equal(needsSettlementAttention(paidFeeWithPendingExpense), true);
 assert.equal(isSettlementFullyResolved(paidFeeWithPendingExpense), false);
+assert.equal(hasPendingExpenseReimbursements(paidFeeWithPendingExpense), true);
+assert.equal(hasPendingExpenseReimbursements(match), false);
 const duplicate: Match = { ...match, expenses: [...match.expenses!, {
   id: 'air', category: 'airfare', amount: 200, reimbursementStatus: 'reimbursed', reimbursedAmount: 150, createdAt: now,
 }, { id: 'miles', category: 'miles_driven', miles: 350, amount: 0, reimbursementStatus: 'not_expected', createdAt: now }] };

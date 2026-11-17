@@ -25,6 +25,17 @@ export function getPendingExpenseReimbursements(match: Match): Expense[] {
   );
 }
 
+export function hasPendingExpenseReimbursements(match: Match): boolean {
+  const expenses = match.expenses ?? [];
+  if (getPendingExpenseReimbursements(match).length > 0) return true;
+
+  return getTravelCostEntries(match).some(
+    (entry) =>
+      entry.reimbursementStatus === 'pending' &&
+      !travelCostAlreadyInExpenses(entry, expenses),
+  );
+}
+
 export function getOpenSettlementLabels(match: Match, now = new Date()): string[] {
   const labels: string[] = [];
 

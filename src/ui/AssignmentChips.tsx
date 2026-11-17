@@ -1,5 +1,6 @@
 import type { Match } from '@/domain/match';
 import { formatCurrency } from '@/domain/matchDisplay';
+import { hasPendingExpenseReimbursements } from '@/features/matches/matchClosure';
 import { useI18n } from '@/i18n/I18nProvider';
 
 type Props = {
@@ -33,7 +34,14 @@ export function AssignmentChips({ match, primaryLabel }: Props) {
         </span>
       ) : null}
       {match.payStatus === 'paid' ? (
-        <span className="rs-pill rs-assignment__chip">{t('status.paid')}</span>
+        <span className="rs-pill rs-assignment__chip">
+          {t('status.paidMatchFee')}
+        </span>
+      ) : null}
+      {hasPendingExpenseReimbursements(match) ? (
+        <span className="rs-pill rs-pill--urgent rs-assignment__chip">
+          {t('status.unpaidExpenses')}
+        </span>
       ) : null}
       {match.payStatus === 'donated' ? (
         <span className="rs-pill rs-assignment__chip">{t('status.donated')}</span>
