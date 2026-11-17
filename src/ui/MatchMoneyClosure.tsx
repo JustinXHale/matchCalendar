@@ -250,7 +250,7 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
         paidAt: draft.paidAt ? new Date(draft.paidAt) : new Date(),
         paymentMethod: draft.paymentMethod || undefined,
         paymentMethodDetail: paymentDetailFromDraft(draft),
-        payOwedBy: undefined,
+        payOwedBy: draft.payOwedBy.trim() || undefined,
       };
     }
 

@@ -57,13 +57,27 @@
 .rs-money-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--rs-space-md);
 }
 
-.rs-money-toolbar .rs-filter-row {
+.rs-money-payer-filter {
+  display: grid;
+  flex: 1 1 12rem;
+  gap: 0.25rem;
+  max-width: 18rem;
+  color: var(--rs-color-ink);
+  font: var(--rs-font-nav);
+}
+
+.rs-money-toolbar__controls {
+  display: flex;
   flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--rs-space-md);
   min-width: 0;
 }
 

@@ -17,6 +17,14 @@ export function AssignmentChips({ match, primaryLabel }: Props) {
 
   return (
     <div className="rs-assignment__chips" aria-label="Type, pay, and source">
+      {match.payOwedBy?.trim() ? (
+        <span
+          className="rs-pill rs-pill--ink rs-assignment__chip"
+          title={t('money.owedBy', { payer: match.payOwedBy.trim() })}
+        >
+          {match.payOwedBy.trim()}
+        </span>
+      ) : null}
       <span className="rs-pill rs-assignment__chip">{primaryLabel}</span>
       {pay ? (
         <span className="rs-pill rs-assignment__chip rs-assignment__chip--pay">

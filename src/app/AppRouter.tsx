@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider,
   Routes,
+  ScrollRestoration,
   useLocation,
 } from 'react-router-dom';
 import { MobileShell } from '@/app/MobileShell';
@@ -83,6 +84,7 @@ function AppRoutes() {
       <Routes>
         <Route path={routes.quickMatch} element={<QuickMatchModal />} />
       </Routes>
+      <ScrollRestoration />
     </>
   );
 }
