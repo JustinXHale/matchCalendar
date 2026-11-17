@@ -129,6 +129,21 @@
   overflow: hidden;
 }
 
+.rs-money-match-row--settled {
+  border-color: color-mix(in srgb, var(--rs-color-success) 55%, var(--rs-color-border));
+}
+
+.rs-money-match-row--settled,
+.rs-money-match-row--settled .rs-assignment,
+.rs-money-match-row--settled .rs-money-closure {
+  background: color-mix(in srgb, var(--rs-color-success) 9%, var(--rs-color-surface));
+}
+
+.rs-money-match-row--settled .rs-assignment__main:hover,
+.rs-money-match-row--settled .rs-assignment__main:focus-visible {
+  background: color-mix(in srgb, var(--rs-color-success) 14%, var(--rs-color-surface));
+}
+
 .rs-money-match-row .rs-assignment-wrap {
   border: 0;
   border-radius: 0;

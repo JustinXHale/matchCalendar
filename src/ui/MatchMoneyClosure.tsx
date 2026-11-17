@@ -555,18 +555,22 @@ export function MatchMoneyClosure({ match, defaultExpanded = false, onSavePatch 
 
           {draft.payChoice === 'paid' && (
             <div className="rs-settlement-pay-meta">
-              <DateTimeInput
-                id={`settlement-paid-at-${match.id}`}
+              <FormGroup
                 label="Paid date"
-                dateOnly
-                value={draft.paidAt ? fromDateTimeInputValue(draft.paidAt) : undefined}
-                onChange={(date) => {
-                  setDraft((current) => ({
-                    ...current,
-                    paidAt: date ? toDateTimeInputValue(date) : '',
-                  }));
-                }}
-              />
+                fieldId={`settlement-paid-at-${match.id}`}
+              >
+                <DateTimeInput
+                  id={`settlement-paid-at-${match.id}`}
+                  dateOnly
+                  value={draft.paidAt ? fromDateTimeInputValue(draft.paidAt) : undefined}
+                  onChange={(date) => {
+                    setDraft((current) => ({
+                      ...current,
+                      paidAt: date ? toDateTimeInputValue(date) : '',
+                    }));
+                  }}
+                />
+              </FormGroup>
                 <FormGroup label="Method" fieldId={`settlement-method-${match.id}`}>
                   <select
                     id={`settlement-method-${match.id}`}

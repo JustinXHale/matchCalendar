@@ -3,7 +3,7 @@ import { fromDateAndTimeInputs, fromDateTimeInputValue, toDateInputValue, toDate
 
 type Props = {
   id: string;
-  label: string;
+  label?: string;
   value?: Date;
   onChange: (value?: Date) => void;
   dateOnly?: boolean;

@@ -2,7 +2,11 @@ import './insights.test';
 import './backNav.test';
 import assert from 'node:assert/strict';
 import { getMatchFinanceTotals, getMoneyGlanceSummary, getSettlementPaidTotal } from '../src/features/matches/paySummary';
-import { needsSettlementAttention, updateExpenseAmount } from '../src/features/matches/matchClosure';
+import {
+  isSettlementFullyResolved,
+  needsSettlementAttention,
+  updateExpenseAmount,
+} from '../src/features/matches/matchClosure';
 import { fromDateTimeInputValue, toDateTimeInputValue } from '../src/ui/forms/formDateUtils';
 import { tournamentEvent } from '../src/features/tournaments/tournamentEvent';
 import { buildMatchFromForm, createEmptyMatchForm } from '../src/features/matches/matchFormUtils';
@@ -26,7 +30,20 @@ assert.equal(totals.combinedExpenseTotal, 230);
 assert.equal(totals.reimbursedTotal, 150);
 assert.equal(100 + totals.reimbursedTotal - totals.combinedExpenseTotal, 20);
 assert.equal(needsSettlementAttention(match), false);
+assert.equal(isSettlementFullyResolved(match), true);
 assert.equal(needsSettlementAttention({ ...match, payStatus: 'unpaid', settlementClosed: true }), true);
+const paidFeeWithPendingExpense: Match = {
+  ...match,
+  expenses: [{
+    id: 'parking-pending',
+    category: 'parking',
+    amount: 10,
+    reimbursementStatus: 'pending',
+    createdAt: now,
+  }],
+};
+assert.equal(needsSettlementAttention(paidFeeWithPendingExpense), true);
+assert.equal(isSettlementFullyResolved(paidFeeWithPendingExpense), false);
 const duplicate: Match = { ...match, expenses: [...match.expenses!, {
   id: 'air', category: 'airfare', amount: 200, reimbursementStatus: 'reimbursed', reimbursedAmount: 150, createdAt: now,
 }, { id: 'miles', category: 'miles_driven', miles: 350, amount: 0, reimbursementStatus: 'not_expected', createdAt: now }] };

@@ -1,4 +1,7 @@
-import { isPayLineOpen } from '@/features/matches/matchClosure';
+import {
+  isSettlementFullyResolved,
+  needsSettlementAttention,
+} from '@/features/matches/matchClosure';
 import { getMoneyGlanceSummary } from '@/features/matches/paySummary';
 import { routes } from '@/app/routes';
 import { MONEY_BACK } from '@/nav/backDefaults';
@@ -46,8 +49,8 @@ export function MoneyPage() {
     const matchesFilter = events.filter((match) =>
       filter === 'all' ||
       (filter === 'unpaid'
-        ? isPayLineOpen(match)
-        : match.payStatus === filter),
+        ? needsSettlementAttention(match)
+        : isSettlementFullyResolved(match)),
     );
 
     return matchesFilter.sort((a, b) => {
@@ -111,7 +114,17 @@ export function MoneyPage() {
           ? t('money.empty') : t('money.noFilterResults')}</p></div>
       ) : <ul className="rs-list">{filtered.map((match) => (
         tournaments.some((item) => item.id === match.id) ? (
-          <li key={match.id} className="rs-money-match-row">
+          <li
+            key={match.id}
+            className={[
+              'rs-money-match-row',
+              isSettlementFullyResolved(match)
+                ? 'rs-money-match-row--settled'
+                : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
             <MatchCard
               match={match}
               embedded
